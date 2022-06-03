@@ -20,7 +20,7 @@
 
 <body>
     <div id="editor"></div>
-    <button onclick="printHTML()">Print HTML</button>
+    <button type="button" onclick="printHTML()">Print HTML</button>
 </body>
 
 <script>"use strict";</script>
@@ -53,12 +53,19 @@
 
 <style>
     body {
-        margin: 0;
-        padding: 0;
+        margin: 10;
+        padding: 10;
     }
 
-    #content {
-        display: none;
+    /*
+     Need js for custom resize handle??? :
+     https://spin.atomicobject.com/2019/11/21/creating-a-resizable-html-element
+     */
+    #editor {
+        resize: vertical;
+        overflow: auto;
+
+        border: 1px solid silver;
     }
 </style>
 
