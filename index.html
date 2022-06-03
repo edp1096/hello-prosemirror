@@ -9,76 +9,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google" content="notranslate" />
 
-    <title>List rendering class</title>
+    <title>My Editor</title>
     <link rel="shortcut icon" href="#" type="image/x-icon">
 </head>
 
 <body>
-    <button type=button onclick="addHumanData()">Add human data</button>
-    <button type=button onclick="addAnimalData()">Add animal data</button>
-    <button type=button onclick="addFamilyData()">Add family data</button>
+    
 
-    <div>Name / Age / Button to show index</div>
-
-    <div id="human-container">
-        <div lr-loop="human">
-            <p lr-id="human$index">
-                <input type="checkbox" id="humansel$index" name="human$index" lr-change="alert('{{name}}/$index')" />
-                <span>{{name}} / {{age}}</span>
-                <button type="button" lr-click="showIndex($index)">Show index</button>
-            </p>
-        </div>
-    </div>
-
-    <div id="animal-container">
-        <div lr-loop="animal">
-            <div lr-if="age > 5">
-                <p>{{name}} / {{age}}</p>
-            </div>
-            <div lr-if="name == 'Bird'">
-                <p>{{name}} / {{age}}</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="planet-container">
-        <ul lr-loop="planet">
-            <li data-code="{{name}}{{distance}}">{{name}} / {{distance}}</li>
-        </ul>
-    </div>
-
-    <table id="galaxy-container">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Distance</th>
-            </tr>
-        </thead>
-        <tbody lr-loop="galaxy">
-            <tr>
-                <td lr-if="name == 'Milkyway'">Milkomeda!!</td>
-                <td lr-if="name != 'Milkyway'">{{name}}</td>
-                <td>{{distance}}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <hr />
-
-    <div id="food-container">
-        <label for="food">Food</label>
-        <select id="food" name="food" lr-loop="food">
-            <option value="{{value}}$index" lr-if="$index == myFoodIndex" selected>{{name}}</option>
-            <option value="{{value}}$index" lr-if="$index != myFoodIndex">{{name}}</option>
-        </select>
-    </div>
-
-    <list-renderer lr-loop="family">
-        <p lr-id="family$index">
-            <input type="checkbox" id="familysel$index" name="family$index" lr-change="alert('{{name}}/$index')" />
-            <span>{{name}} / {{member}} / {{age}}</span>
-        </p>
-    </list-renderer>
 </body>
 
 <script>"use strict";</script>

@@ -1,9 +1,9 @@
 import { build } from 'esbuild'
 
 build({
-    entryPoints: ["ts/list-renderer.ts"],
+    entryPoints: ["ts/myeditor.ts"],
     bundle: true,
-    outfile: "dist/list-renderer.mjs",
+    outfile: "dist/myeditor.mjs",
     minify: true,
     sourcemap: true,
     target: "es2020",

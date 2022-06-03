@@ -1,9 +1,9 @@
 import { build } from 'esbuild'
 
 build({
-    entryPoints: ["ts/list-renderer.ts"],
+    entryPoints: ["ts/myeditor.ts"],
     bundle: true,
-    outfile: "dist/list-renderer.js",
+    outfile: "dist/myeditor.js",
     minify: true,
     target: "es6",
     define: { "process.env.NODE_ENV": "production" },
