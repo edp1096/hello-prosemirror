@@ -1,0 +1,21 @@
+.ProseMirror-icon {
+    display: inline-block;
+    line-height: 0.8;
+    vertical-align: -2px;
+    /* Compensate for padding */
+    padding: 2px 8px;
+    cursor: pointer;
+}
+
+.ProseMirror-menu-disabled.ProseMirror-icon {
+    cursor: default;
+}
+
+.ProseMirror-icon svg {
+    fill: currentColor;
+    height: 1em;
+}
+
+.ProseMirror-icon span {
+    vertical-align: text-top;
+}
