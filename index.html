@@ -11,141 +11,107 @@
 
     <title>My Editor</title>
     <link rel="shortcut icon" href="#" type="image/x-icon">
+
+    <link rel="stylesheet" href="editor.css">
 </head>
 
 <body>
-    
+    <div class="full"></div>
+    <div id="content" style="display: none">
+        <h2>Demonstration Text</h2>
+
+        <p>A ProseMirror document is based on a schema, which determines the
+            kind of elements that may occur in it, and the relation they have to
+            each other. This one is based on the basic schema, with lists and
+            tables added. It allows the usual <strong>strong</strong>
+            and <em>emphasized</em> text, <code>code font</code>,
+            and <a href="http://marijnhaverbeke.nl">links</a>. There are also
+            images: <img alt="demo picture" src="img.png">.</p>
+
+        <p>On the block level you can have:</p>
+
+        <ol>
+            <li>Ordered lists (such as this one)</li>
+            <li>Bullet lists</li>
+            <li>Blockquotes</li>
+            <li>Code blocks</li>
+            <li>Tables</li>
+            <li>Horizontal rules</li>
+        </ol>
+
+        <p>It isn't hard to define your own custom elements, and include them
+            in your schema. These can be opaque 'leaf' nodes, that the user
+            manipulates through extra interfaces you provide, or nodes with
+            regular editable child nodes.</p>
+
+        <hr>
+
+        <h2>The Model</h2>
+
+        <p>Nodes can nest arbitrarily deep. Thus, the document forms a tree,
+            not dissimilar to the browser's DOM tree.</p>
+
+        <hr>
+
+        <h2>Examples</h2>
+
+        <blockquote>
+            <blockquote>
+                <p>We did not see a nested blockquote yet.</p>
+            </blockquote>
+        </blockquote>
+
+        <pre>
+<code class="lang-markdown">
+Nor did we see a code block
+Note that the content of a code block can't be styled.
+</code>
+</pre>
+
+        <p>This paragraph has<br>a hard break inside of it.</p>
+    </div>
 
 </body>
 
 <script>"use strict";</script>
 
-<script src="./dist/list-renderer.js"></script>
-<!-- Uncomment below when using dist/list-renderer.mjs -->
-<!-- <script type="module">
-    import ListRenderer from './dist/list-renderer.mjs'
+<script src="./dist/myeditor.js"></script>
 
-    const lrHuman = new ListRenderer(document.getElementById("human-container"))
-    lrHuman.render()
-
-    const lrAnimal = new ListRenderer(document.getElementById("animal-container"))
-    lrAnimal.render()
-
-    const lrPlanet = new ListRenderer(document.getElementById("planet-container"))
-    lrPlanet.render()
-
-    const lrGalaxy = new ListRenderer(document.getElementById("galaxy-container"))
-    lrGalaxy.render()
-    const lrFood = new ListRenderer(document.getElementById("food-container"))
-    lrFood.render()
-
-    window.lrAnimal = lrAnimal
-    window.lrHuman = lrHuman
-    window.lrPlanet = lrPlanet
-    window.lrGalaxy = lrGalaxy
-    window.lrFood = lrFood
-
-    const lrs = new Array()
-    const customTags = document.getElementsByTagName("list-renderer")
-    for (let i = 0; i < customTags.length; i++) {
-        lrs.push(new ListRenderer(customTags[i]))
-        lrs[lrs.length - 1].render()
+<style>
+    body {
+        font-family: Georgia;
+        margin: 0 1em 2em;
     }
 
-    window.lrs = lrs
-</script> -->
-<script>
-    async function addHumanData() {
-        human.push({ name: "Mark", age: "15" })
-        human.push({ name: "Richard", age: "25" })
-        human.push({ name: "Robert", age: "35" })
-
-        lrHuman.reload()
+    textarea {
+        width: 100%;
+        border: 1px solid silver;
+        min-height: 40em;
+        padding: 4px 8px;
     }
 
-    async function addAnimalData() {
-        animal.push({ name: "Zebra", age: "5" })
-        animal.push({ name: "Shark", age: "25" })
-        animal.push({ name: "Whale", age: "8" })
-
-        lrAnimal.reload()
+    .left,
+    .right {
+        width: 50%;
+        float: left;
     }
 
-    async function addFamilyData() {
-        family.push({ name: "Mark", member: "cousin", age: "29" })
-
-        lrs[0].reload()
+    .full {
+        max-width: 50em;
     }
 
-    function showIndex(index) { alert(index) }
-
-    const human = [
-        { name: "John", age: 30 },
-        { name: "Jane", age: 20 },
-        { name: "Joe" },
-        { name: "Sam", age: 10 },
-        { name: "Sally", age: 5 }
-    ]
-    const animal = [
-        { name: "Dog", age: 10 },
-        { name: "Cat", age: 5 },
-        { name: "Bird", age: 2 },
-        { name: "Lion", age: 10 },
-        { name: "Tiger", age: 5 },
-        { name: "Elephant", age: 2 }
-    ]
-
-    const planet = [
-        { name: "Mercury", distance: "0.39AU" },
-        { name: "Venus", distance: "0.723AU" },
-        { name: "Earth", distance: "1.0AU" },
-        { name: "Mars", distance: "1.524AU" },
-    ]
-
-    const galaxy = [
-        { name: "Milkyway", distance: "30kpc" },
-        { name: "Andromeda", distance: "67kpc" },
-        { name: "Sombrero", distance: "15kpc" },
-        { name: "Cigar", distance: "11.3kpc" },
-    ]
-
-    const food = [
-        { name: "Pizza", value: "pizza" },
-        { name: "Hamburger", value: "hamburger" },
-        { name: "Steak", value: "steak" },
-    ]
-
-    const family = [
-        { member: "father", name: "John", age: 30 },
-        { member: "mother", name: "Jane", age: 20 },
-        { member: "son", name: "Joe", age: 10 },
-        { member: "daughter", name: "Sally", age: 5 }
-    ]
-
-    const myFoodIndex = 1
-
-    // Uncomment below when using dist/list-renderer.js
-    const lrHuman = new ListRenderer(document.getElementById("human-container"))
-    lrHuman.render()
-    const lrAnimal = new ListRenderer(document.getElementById("animal-container"))
-    lrAnimal.render()
-    const lrPlanet = new ListRenderer(document.getElementById("planet-container"))
-    lrPlanet.render()
-    const lrGalaxy = new ListRenderer(document.getElementById("galaxy-container"))
-    lrGalaxy.render()
-    const lrFood = new ListRenderer(document.getElementById("food-container"))
-    lrFood.render()
-
-    const lrs = new Array()
-    const customTags = document.getElementsByTagName("list-renderer")
-    for (let i = 0; i < customTags.length; i++) {
-        lrs.push(new ListRenderer(customTags[i]))
-        lrs[lrs.length - 1].render()
+    .marked {
+        background: #ff6
     }
 
-    // document.addEventListener("DOMContentLoaded", () => {
-    //     alert(document.querySelector("[data-id='human1'] > span").innerText)
-    // })
-</script>
+    .ProseMirror-menubar-wrapper {
+        border: 1px solid silver;
+    }
+
+    .ProseMirror {
+        padding: 4px 8px 4px 14px;
+        line-height: 1.2;
+    }
+</style>
 
 </html>

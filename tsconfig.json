@@ -7,9 +7,6 @@
             "es2020",
             "dom"
         ],
-        "typeRoots": [
-            "./@types",
-            "./node_modules/@types"
-        ]
+        "moduleResolution": "node"
     },
 }

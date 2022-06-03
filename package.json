@@ -15,9 +15,7 @@
     "tslint": "^6.1.3"
   },
   "dependencies": {
-    "@types/prosemirror-model": "^1.16.2",
-    "@types/prosemirror-schema-basic": "^1.0.2",
-    "@types/prosemirror-schema-list": "^1.0.3",
+    "prosemirror-example-setup": "^1.2.0",
     "prosemirror-model": "^1.17.0",
     "prosemirror-schema-basic": "^1.2.0",
     "prosemirror-schema-list": "^1.2.0",
