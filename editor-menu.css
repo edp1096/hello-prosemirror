@@ -127,3 +127,7 @@
     box-sizing: border-box;
     overflow: visible;
 }
+
+.ProseMirror-menubar-wrapper {
+    border: 1px solid silver;
+}
