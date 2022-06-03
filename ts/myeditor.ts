@@ -1,31 +1,43 @@
 import { EditorState } from "prosemirror-state"
 import { EditorView } from "prosemirror-view"
-import { Schema, DOMParser } from "prosemirror-model"
+import { Schema, DOMParser, DOMSerializer } from "prosemirror-model"
 import { schema } from "prosemirror-schema-basic"
 import { addListNodes } from "prosemirror-schema-list"
 import { exampleSetup } from "prosemirror-example-setup"
 
-const mySchema = new Schema({
-    nodes: addListNodes(schema.spec.nodes, "paragraph block*", "block"),
-    marks: schema.spec.marks
-});
+class MyEditor {
+    schema: Schema
+    state: EditorState
+    content: HTMLElement
+    view: EditorView
 
-/* (window as any).view = new EditorView(document.querySelector("#editor") as HTMLElement, {
-    state: EditorState.create({
-        doc: DOMParser.fromSchema(mySchema).parse(document.querySelector("#content") as HTMLElement),
-        plugins: exampleSetup({ schema: mySchema })
-    })
-}) */
+    constructor(data: string, target: HTMLElement) {
+        this.content = document.implementation.createHTMLDocument().body
+        this.content.innerHTML = data
 
-let state = EditorState.create({
-    doc: DOMParser.fromSchema(mySchema).parse(document.querySelector("#content")!),
-    plugins: exampleSetup({ schema: mySchema })
-});
+        this.schema = new Schema({
+            nodes: addListNodes(schema.spec.nodes, "paragraph block*", "block"),
+            marks: schema.spec.marks
+        })
 
-(window as any).view = new EditorView(document.querySelector(".full"), { state })
+        this.state = EditorState.create({
+            doc: DOMParser.fromSchema(this.schema).parse(this.content),
+            plugins: exampleSetup({ schema: this.schema })
+        });
 
-class MyEditor { }
+        this.view = new EditorView(target, { state: this.state });
+        (window as any).view = this.view
+    }
 
-(globalThis as any).MyEditor = MyEditor
+    getHTML() {
+        const domSerializer = DOMSerializer.fromSchema(this.schema)
+        const fragment = domSerializer.serializeFragment(this.view.state.doc.content)
+        const div = document.createElement("div")
+        div.appendChild(fragment)
 
+        return div.innerHTML
+    }
+}
+
+(window as any).MyEditor = MyEditor
 export default MyEditor

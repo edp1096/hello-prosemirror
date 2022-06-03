@@ -19,9 +19,16 @@
 </head>
 
 <body>
-    <div class="full"></div>
-    <div id="content">
-        <h2>Demonstration Text</h2>
+    <div id="editor"></div>
+    <button onclick="printHTML()">Print HTML</button>
+</body>
+
+<script>"use strict";</script>
+<script src="./dist/myeditor.js"></script>
+
+<script>
+    const data = `
+    <h2>Demonstration Text</h2>
 
         <p>
             A ProseMirror document is based on a schema, which determines the
@@ -34,13 +41,15 @@
         </p>
 
         <p>This paragraph has<br>a hard break inside of it.</p>
-    </div>
+    `;
+    const editorEL = document.querySelector("#editor")
+    const editor = new MyEditor(data, editorEL)
 
-</body>
+    function printHTML() {
+        console.log(editor.getHTML())
+    }
 
-<script>"use strict";</script>
-
-<script src="./dist/myeditor.js"></script>
+</script>
 
 <style>
     body {
