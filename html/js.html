@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="-1" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google" content="notranslate" />
+
+    <title>List rendering class</title>
+    <link rel="shortcut icon" href="#" type="image/x-icon">
+</head>
+
+<body>
+    <button type=button onclick="addHumanData()">Add human data</button>
+    <button type=button onclick="addAnimalData()">Add animal data</button>
+
+    <div>Name / Age / Button to show index</div>
+
+    <div id="human-container">
+        <div lr-loop="human">
+            <p lr-id="human$index">
+                <input type="checkbox" id="humansel$index" name="human$index" lr-change="alert('{{name}}/$index')" />
+                <span>{{name}} / {{age}}</span>
+                <button type="button" lr-click="showIndex($index)">Show index</button>
+            </p>
+        </div>
+    </div>
+
+    <div id="animal-container">
+        <div lr-loop="animal">
+            <div lr-if="age > 5">
+                <p>{{name}} / {{age}}</p>
+            </div>
+            <div lr-if="name == 'Bird'">
+                <p>{{name}} / {{age}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="planet-container">
+        <ul lr-loop="planet">
+            <li data-code="{{name}}{{distance}}">{{name}} / {{distance}}</li>
+        </ul>
+    </div>
+
+    <table id="galaxy-container">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Distance</th>
+            </tr>
+        </thead>
+        <tbody lr-loop="galaxy">
+            <tr>
+                <td lr-if="name == 'Milkyway'">Milkomeda!!</td>
+                <td lr-if="name != 'Milkyway'">{{name}}</td>
+                <td>{{distance}}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr />
+
+    <div id="food-container">
+        <label for="food">Food</label>
+        <select id="food" name="food" lr-loop="food">
+            <option value="{{value}}$index" lr-if="$index == myFoodIndex" selected>{{name}}</option>
+            <option value="{{value}}$index" lr-if="$index != myFoodIndex">{{name}}</option>
+        </select>
+    </div>
+
+    <list-renderer lr-loop="family">
+        <p lr-id="family$index">
+            <input type="checkbox" id="familysel$index" name="family$index" lr-change="alert('{{name}}/$index')" />
+            <span>{{name}} / {{member}} / {{age}}</span>
+        </p>
+    </list-renderer>
+</body>
+
+<script>"use strict";</script>
+
+<script src="list-renderer.js"></script>
+<script>
+    async function addHumanData() {
+        human.push({ name: "Mark", age: "15" })
+        human.push({ name: "Richard", age: "25" })
+        human.push({ name: "Robert", age: "35" })
+
+        lrHuman.reload()
+    }
+
+    async function addAnimalData() {
+        animal.push({ name: "Zebra", age: "5" })
+        animal.push({ name: "Shark", age: "25" })
+        animal.push({ name: "Whale", age: "8" })
+
+        lrAnimal.reload()
+    }
+
+    async function addFamilyData() {
+        family.push({ name: "Mark", member: "cousin", age: "29" })
+
+        lrs[0].reload()
+    }
+
+    function showIndex(index) { alert(index) }
+
+    const human = [
+        { name: "John", age: 30 },
+        { name: "Jane", age: 20 },
+        { name: "Joe" },
+        { name: "Sam", age: 10 },
+        { name: "Sally", age: 5 }
+    ]
+    const animal = [
+        { name: "Dog", age: 10 },
+        { name: "Cat", age: 5 },
+        { name: "Bird", age: 2 },
+        { name: "Lion", age: 10 },
+        { name: "Tiger", age: 5 },
+        { name: "Elephant", age: 2 }
+    ]
+
+    const planet = [
+        { name: "Mercury", distance: "0.39AU" },
+        { name: "Venus", distance: "0.723AU" },
+        { name: "Earth", distance: "1.0AU" },
+        { name: "Mars", distance: "1.524AU" },
+    ]
+
+    const galaxy = [
+        { name: "Milkyway", distance: "30kpc" },
+        { name: "Andromeda", distance: "67kpc" },
+        { name: "Sombrero", distance: "15kpc" },
+        { name: "Cigar", distance: "11.3kpc" },
+    ]
+
+    const food = [
+        { name: "Pizza", value: "pizza" },
+        { name: "Hamburger", value: "hamburger" },
+        { name: "Steak", value: "steak" },
+    ]
+
+    const family = [
+        { member: "father", name: "John", age: 30 },
+        { member: "mother", name: "Jane", age: 20 },
+        { member: "son", name: "Joe", age: 10 },
+        { member: "daughter", name: "Sally", age: 5 }
+    ]
+
+    const myFoodIndex = 1
+
+    // Uncomment below when using dist/list-renderer.js
+    const lrHuman = new ListRenderer(document.getElementById("human-container"))
+    lrHuman.render()
+    const lrAnimal = new ListRenderer(document.getElementById("animal-container"))
+    lrAnimal.render()
+    const lrPlanet = new ListRenderer(document.getElementById("planet-container"))
+    lrPlanet.render()
+    const lrGalaxy = new ListRenderer(document.getElementById("galaxy-container"))
+    lrGalaxy.render()
+    const lrFood = new ListRenderer(document.getElementById("food-container"))
+    lrFood.render()
+
+    const lrs = new Array()
+    const customTags = document.getElementsByTagName("list-renderer")
+    for (let i = 0; i < customTags.length; i++) {
+        lrs.push(new ListRenderer(customTags[i]))
+        lrs[lrs.length - 1].render()
+    }
+
+    // document.addEventListener("DOMContentLoaded", () => {
+    //     alert(document.querySelector("[data-id='human1'] > span").innerText)
+    // })
+</script>
+
+</html>
