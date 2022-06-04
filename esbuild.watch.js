@@ -1,4 +1,4 @@
-import { build, buildSync, serve } from "esbuild"
+import { build, serve } from "esbuild"
 import fs from "fs"
 import { createServer, request } from "http"
 // import path from "path"
@@ -7,6 +7,21 @@ import { createServer, request } from "http"
 const serveDIR = "serve"
 const clients = []
 const port = 8000
+
+const watchCSS = {
+    entryPoints: ["css/editor.css"],
+    outfile: `${serveDIR}/editor.css`,
+    bundle: true,
+    minify: true,
+    watch: {
+        onRebuild(error, result) {
+            clients.forEach((res) => res.write('data: update\n\n'))
+            clients.length = 0
+            // console.log(error ? error : '...')
+        },
+    },
+}
+build(watchCSS)
 
 const watchJS = {
     entryPoints: ["ts/myeditor.ts"],
@@ -42,14 +57,6 @@ const watchMJS = {
         },
     },
 }
-
-const watchCSS = {
-    entryPoints: ["css/editor.css"],
-    outfile: `${serveDIR}/editor.css`,
-    bundle: true,
-    minify: true,
-}
-buildSync(watchCSS)
 
 let arg = process.argv[2]
 let watcher
