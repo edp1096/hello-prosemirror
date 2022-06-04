@@ -1,5 +1,9 @@
 serve/
 
+uploader/uploader.exe
+upload/**
+!upload/.gitkeep
+
 # Logs
 logs
 *.log
