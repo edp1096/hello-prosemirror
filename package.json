@@ -7,7 +7,8 @@
     "prestart": "tsc-watch",
     "mjs": "node esbuild.build-mjs.js",
     "js": "node esbuild.build-js.js",
-    "all": "node esbuild.build-mjs.js && node esbuild.build-js.js",
+    "css": "node esbuild.build-css.js",
+    "all": "node esbuild.build-mjs.js && node esbuild.build-js.js && node esbuild.build-css.js",
     "watch": "node esbuild.watch.js"
   },
   "devDependencies": {

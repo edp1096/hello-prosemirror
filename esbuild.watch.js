@@ -1,4 +1,4 @@
-import { build, serve } from "esbuild"
+import { build, buildSync, serve } from "esbuild"
 import fs from "fs"
 import { createServer, request } from "http"
 // import path from "path"
@@ -10,8 +10,8 @@ const port = 8000
 
 const watchJS = {
     entryPoints: ["ts/myeditor.ts"],
-    bundle: true,
     outfile: `${serveDIR}/myeditor.js`,
+    bundle: true,
     banner: { js: ' (() => new EventSource("/esbuild").onmessage = () => location.reload())();' },
     minify: true,
     define: { "process.env.NODE_ENV": "developemnt" },
@@ -26,8 +26,8 @@ const watchJS = {
 
 const watchMJS = {
     entryPoints: ["ts/myeditor.ts"],
-    bundle: true,
     outfile: `${serveDIR}/myeditor.mjs`,
+    bundle: true,
     banner: { js: ' (() => new EventSource("/esbuild").onmessage = () => location.reload())();' },
     minify: true,
     sourcemap: true,
@@ -42,6 +42,14 @@ const watchMJS = {
         },
     },
 }
+
+const watchCSS = {
+    entryPoints: ["css/editor.css"],
+    outfile: `${serveDIR}/editor.css`,
+    bundle: true,
+    minify: true,
+}
+buildSync(watchCSS)
 
 let arg = process.argv[2]
 let watcher
@@ -91,7 +99,7 @@ serve({ servedir: `${serveDIR}/` }, {}).then(() => {
     }).listen(port)
 }).then(() => {
     console.log(`Running server ${arg} on http://localhost:${port}`)
-    
+
     // // Open browser
     // setTimeout(() => {
     //     const op = { darwin: ['open'], linux: ['xdg-open'], win32: ['cmd', '/c', 'start'] }

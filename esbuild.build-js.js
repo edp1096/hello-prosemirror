@@ -2,8 +2,8 @@ import { build } from 'esbuild'
 
 build({
     entryPoints: ["ts/myeditor.ts"],
-    bundle: true,
     outfile: "dist/myeditor.js",
+    bundle: true,
     minify: true,
     target: "es6",
     define: { "process.env.NODE_ENV": "production" },

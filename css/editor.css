@@ -1,3 +1,7 @@
+@import "editor-icon.css";
+@import "editor-menu.css";
+@import "editor-prompt.css";
+
 .ProseMirror {
     position: relative;
 }
