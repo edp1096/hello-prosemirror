@@ -13618,9 +13618,10 @@
         this.item("Make cell red", setCellAttr("background", "#faa")),
         this.item("Make cell non-green", setCellAttr("background", null))
       ];
-      const tableDropdown = new Dropdown(tableMenu, { label: "Table" });
+      const tableDropdown = new Dropdown(tableMenu, { label: "Edit table" });
       const menu = buildMenuItems(this.schema).fullMenu;
       menu.push([tableDropdown]);
+      menu.push([this.item("P", setBlockType2(schema.nodes.paragraph))]);
       const basePlugin = this.setupBasePlugin({ schema: this.schema, menuContent: menu });
       const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI);
       const mergedPlugins = basePlugin.concat(pluginImageDropHandler);
@@ -13664,6 +13665,13 @@
     }
     setupTablePlugin() {
     }
+    icon(text, name) {
+      let span = document.createElement("span");
+      span.className = "menuicon " + name;
+      span.title = name;
+      span.textContent = text;
+      return span;
+    }
     getHTML() {
       const domSerializer = DOMSerializer.fromSchema(this.schema);
       const fragment = domSerializer.serializeFragment(this.view.state.doc.content);
@@ -13676,6 +13684,10 @@
       const image = this.schema.nodes.image.create({ src: imageURI });
       const pos = tr.selection.anchor;
       dispatchImage(this.view, pos, this.schema, imageURI);
+    }
+    addTable(state, dispatch) {
+      console.log(state, dispatch);
+      console.log("Hello table");
     }
   };
   window.MyEditor = MyEditor;

@@ -6,7 +6,7 @@ import { addListNodes } from "prosemirror-schema-list"
 
 import { keymap } from "prosemirror-keymap"
 import { history } from "prosemirror-history"
-import { baseKeymap } from "prosemirror-commands"
+import { baseKeymap, setBlockType } from "prosemirror-commands"
 import { dropCursor } from "prosemirror-dropcursor"
 import { menuBar, MenuItem, Dropdown } from "prosemirror-menu"
 import { gapCursor } from "prosemirror-gapcursor"
@@ -21,7 +21,6 @@ import {
     deleteTable
 } from "prosemirror-tables"
 import { tableEditing, columnResizing, tableNodes, fixTables } from "prosemirror-tables"
-import { CellSelection } from "prosemirror-tables"
 
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
@@ -95,10 +94,11 @@ class MyEditor {
             this.item("Make cell red", setCellAttr("background", "#faa")),
             this.item("Make cell non-green", setCellAttr("background", null))
         ]
-        const tableDropdown = new Dropdown(tableMenu, { label: "Table" })
+        const tableDropdown = new Dropdown(tableMenu, { label: "Edit table" })
 
         const menu = buildMenuItems(this.schema).fullMenu
         menu.push([tableDropdown])
+        // menu.push([this.item("P", setBlockType(schema.nodes.paragraph))])
 
         const basePlugin = this.setupBasePlugin({ schema: this.schema, menuContent: (menu as MenuItem[][]) })
         const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
@@ -163,6 +163,15 @@ class MyEditor {
 
     }
 
+    icon(text: string | null, name: string): Element {
+        let span = document.createElement("span")
+        span.className = "menuicon " + name
+        span.title = name
+        span.textContent = text
+
+        return span
+    }
+
     getHTML(): string {
         const domSerializer = DOMSerializer.fromSchema(this.schema)
         const fragment = domSerializer.serializeFragment(this.view.state.doc.content)
@@ -178,6 +187,11 @@ class MyEditor {
         const pos = tr.selection.anchor
 
         dispatchImage(this.view, pos, this.schema, imageURI)
+    }
+
+    addTable(state: EditorState, dispatch: any): void {
+        console.log(state, dispatch)
+        console.log("Hello table")
     }
 }
 
