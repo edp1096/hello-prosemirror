@@ -10,6 +10,7 @@ import { baseKeymap } from "prosemirror-commands"
 import { dropCursor } from "prosemirror-dropcursor"
 import { menuBar, MenuItem } from "prosemirror-menu"
 import { gapCursor } from "prosemirror-gapcursor"
+import { tableNodes } from "prosemirror-tables"
 
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
@@ -50,11 +51,11 @@ class MyEditor {
 
         const basePlugin = this.setupBasePlugin({ schema: this.schema })
         const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
+        const mergedPlugins = basePlugin.concat(pluginImageDropHandler)
 
         this.state = EditorState.create({
             doc: DOMParser.fromSchema(this.schema).parse(this.content),
-            plugins: basePlugin
-                .concat(pluginImageDropHandler)
+            plugins: mergedPlugins
         })
 
         this.view = new EditorView(target, { state: this.state });
@@ -71,7 +72,7 @@ class MyEditor {
         floatingMenu?: boolean
         menuContent?: MenuItem[][]
     }) {
-        let plugins = [
+        const plugins = [
             buildInputRules(options.schema),
             keymap(buildKeymap(options.schema, options.mapKeys)),
             keymap(baseKeymap),
