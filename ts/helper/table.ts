@@ -1,31 +1,21 @@
-import { EditorState } from "prosemirror-state";
-import { EditorView } from "prosemirror-view";
-import { DOMParser as PDOMParser, Schema } from "prosemirror-model";
+import { EditorState } from "prosemirror-state"
+import { EditorView } from "prosemirror-view"
+import { DOMParser as PDOMParser, Schema } from "prosemirror-model"
 import { schema as baseSchema } from "prosemirror-schema-basic"
-import { MenuItem, Dropdown } from "prosemirror-menu";
+
+import { MenuItem, Dropdown } from "prosemirror-menu"
+import { keymap } from "prosemirror-keymap"
 
 import {
-    addColumnAfter,
-    addColumnBefore,
-    deleteColumn,
-    addRowAfter,
-    addRowBefore,
-    deleteRow,
-    mergeCells,
-    splitCell,
+    addColumnAfter, addColumnBefore, deleteColumn,
+    addRowBefore, addRowAfter, deleteRow,
+    splitCell, mergeCells,
     setCellAttr,
-    toggleHeaderRow,
-    toggleHeaderColumn,
-    toggleHeaderCell,
+    toggleHeaderColumn, toggleHeaderRow, toggleHeaderCell,
     goToNextCell,
     deleteTable
 } from "prosemirror-tables"
-import {
-    tableEditing,
-    columnResizing,
-    tableNodes,
-    fixTables
-} from "prosemirror-tables"
+import { tableEditing, columnResizing, tableNodes, fixTables } from "prosemirror-tables"
 
 const schema = new Schema({
     nodes: baseSchema.spec.nodes.append(
@@ -35,8 +25,14 @@ const schema = new Schema({
             cellAttributes: {
                 background: {
                     default: null,
-                    getFromDOM(dom) { return (dom.style && dom.style.backgroundColor) || null; },
-                    setDOMAttr(value, attrs) { if (value) { attrs.style = (attrs.style || "") + `background-color: ${value};` } }
+                    getFromDOM(dom): string | null {
+                        return ((dom as HTMLElement).style && (dom as HTMLElement).style.backgroundColor) || null
+                    },
+                    setDOMAttr(value, attrs) {
+                        if (value) {
+                            attrs.style = (attrs.style || "") + `background-color: ${value};`
+                        }
+                    }
                 }
             }
         })
@@ -60,7 +56,7 @@ let tableMenu = [
     item("Toggle header cells", toggleHeaderCell),
     item("Make cell green", setCellAttr("background", "#dfd")),
     item("Make cell not-green", setCellAttr("background", null))
-];
+]
 
 const tableDropdown = new Dropdown(tableMenu, { label: "Table" })
 
@@ -69,24 +65,24 @@ const tableElementString = `
   <tr><th colspan="3" data-colwidth="100,0,0">Wide header</th></tr>
   <tr><td>One</td><td>Two</td><td>Three</td></tr>
   <tr><td>Four</td><td>Five</td><td>Six</td></tr>
-</table>`;
+</table>`
 
 const parser = new DOMParser();
-const doc = PDOMParser.fromSchema(schema)
-    .parse(parser.parseFromString(tableElementString, "text/xml").documentElement)
+const doc = PDOMParser.fromSchema(schema).parse(parser.parseFromString(tableElementString, "text/xml").documentElement)
 let state = EditorState.create({
     doc,
     plugins: [
-        columnResizing(),
+        columnResizing({}),
         tableEditing(),
         keymap({
             Tab: goToNextCell(1),
             "Shift-Tab": goToNextCell(-1)
         })
     ]
-});
-let fix = fixTables(state);
+})
+
+const fix = fixTables(state)
 if (fix) state = state.apply(fix.setMeta("addToHistory", false));
 
-document.execCommand("enableObjectResizing", false, false);
-document.execCommand("enableInlineTableEditing", false, false);
+(document as any).execCommand("enableObjectResizing", false, false);
+(document as any).execCommand("enableInlineTableEditing", false, false);
