@@ -176,50 +176,52 @@ type MenuItemResult = {
 export function buildMenuItems(schema: Schema): MenuItemResult {
     let r: MenuItemResult = {} as any
     let mark: MarkType | undefined
-    if (mark = schema.marks.strong)
-        r.toggleStrong = markItem(mark, { title: "Toggle strong style", icon: icons.strong })
-    if (mark = schema.marks.em)
-        r.toggleEm = markItem(mark, { title: "Toggle emphasis", icon: icons.em })
-    if (mark = schema.marks.code)
-        r.toggleCode = markItem(mark, { title: "Toggle code font", icon: icons.code })
-    if (mark = schema.marks.link)
-        r.toggleLink = linkItem(mark)
+    if (mark = schema.marks.strong) { r.toggleStrong = markItem(mark, { title: "Toggle strong style", icon: icons.strong }) }
+    if (mark = schema.marks.em) { r.toggleEm = markItem(mark, { title: "Toggle emphasis", icon: icons.em }) }
+    if (mark = schema.marks.code) { r.toggleCode = markItem(mark, { title: "Toggle code font", icon: icons.code }) }
+    if (mark = schema.marks.link) { r.toggleLink = linkItem(mark) }
 
     let node: NodeType | undefined
-    if (node = schema.nodes.image)
-        r.insertImage = insertImageItem(node)
-    if (node = schema.nodes.bullet_list)
+    if (node = schema.nodes.image) { r.insertImage = insertImageItem(node) }
+    if (node = schema.nodes.bullet_list) {
         r.wrapBulletList = wrapListItem(node, {
             title: "Wrap in bullet list",
             icon: icons.bulletList
         })
-    if (node = schema.nodes.ordered_list)
+    }
+    if (node = schema.nodes.ordered_list) {
         r.wrapOrderedList = wrapListItem(node, {
             title: "Wrap in ordered list",
             icon: icons.orderedList
         })
-    if (node = schema.nodes.blockquote)
+    }
+    if (node = schema.nodes.blockquote) {
         r.wrapBlockQuote = wrapItem(node, {
             title: "Wrap in block quote",
             icon: icons.blockquote
         })
-    if (node = schema.nodes.paragraph)
+    }
+    if (node = schema.nodes.paragraph) {
         r.makeParagraph = blockTypeItem(node, {
             title: "Change to paragraph",
             label: "Plain"
         })
-    if (node = schema.nodes.code_block)
+    }
+    if (node = schema.nodes.code_block) {
         r.makeCodeBlock = blockTypeItem(node, {
             title: "Change to code block",
             label: "Code"
         })
-    if (node = schema.nodes.heading)
-        for (let i = 1; i <= 10; i++)
+    }
+    if (node = schema.nodes.heading) {
+        for (let i = 1; i <= 10; i++) {
             (r as any)["makeHead" + i] = blockTypeItem(node, {
                 title: "Change to heading " + i,
                 label: "Level " + i,
                 attrs: { level: i }
             })
+        }
+    }
     if (node = schema.nodes.horizontal_rule) {
         let hr = node
         r.insertHorizontalRule = new MenuItem({

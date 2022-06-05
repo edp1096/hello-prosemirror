@@ -49,10 +49,12 @@ class MyEditor {
         })
 
         const basePlugin = this.setupBasePlugin({ schema: this.schema })
+        const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
 
         this.state = EditorState.create({
             doc: DOMParser.fromSchema(this.schema).parse(this.content),
-            plugins: basePlugin.concat(imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI))
+            plugins: basePlugin
+                .concat(pluginImageDropHandler)
         })
 
         this.view = new EditorView(target, { state: this.state });
