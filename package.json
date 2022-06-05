@@ -4,7 +4,6 @@
   "license": "ISC",
   "type": "module",
   "scripts": {
-    "prestart": "tsc-watch",
     "mjs": "node esbuild.build-mjs.js",
     "js": "node esbuild.build-js.js",
     "css": "node esbuild.build-css.js",
@@ -17,6 +16,7 @@
   },
   "dependencies": {
     "prosemirror-example-setup": "^1.2.0",
+    "prosemirror-image-uploader": "^1.0.0",
     "prosemirror-model": "^1.17.0",
     "prosemirror-schema-basic": "^1.2.0",
     "prosemirror-schema-list": "^1.2.0",

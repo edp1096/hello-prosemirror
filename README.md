@@ -1,26 +1,17 @@
 # Taste ProseMirror
 
-[Page](https://edp1096.github.io/hello-prosemirror)
+[Page](https://edp1096.github.io/hello-prosemirror) - Require own server for upload testing
 
 ## Build
 
-* All
 ```powershell
+# All
 yarn all
-```
-
-* Browser JS
-```powershell
+# Browser JS
 yarn js
-```
-
-* Module
-```powershell
+# Module
 yarn mjs
-```
-
-* CSS
-```powershell
+# CSS
 yarn css
 ```
 
@@ -28,11 +19,9 @@ yarn css
 
 * Browser JS
 ```powershell
+# Browser JS
 yarn watch js
-```
-
-* Module
-```powershell
+# Module
 yarn watch
 # or
 yarn watch mjs

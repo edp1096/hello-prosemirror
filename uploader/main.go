@@ -10,6 +10,11 @@ import (
 
 // https://tutorialedge.net/golang/go-file-upload-tutorial
 func uploadFile(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
+
 	r.ParseMultipartForm(100 << 20) // 10 << 20 specifies a maximum upload of 10 MB files
 
 	file, handler, err := r.FormFile("file")
@@ -43,9 +48,20 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, string(result))
 }
 
+func cors(handler http.Handler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		handler.ServeHTTP(w, r)
+	}
+}
+
 func setupRoutes() {
 	http.HandleFunc("/upload", uploadFile)
-	http.Handle("/files/", http.StripPrefix("/files", http.FileServer(http.Dir("../upload"))))
+	http.Handle("/files/", cors(http.StripPrefix("/files", http.FileServer(http.Dir("../upload")))))
 
 	http.ListenAndServe("127.0.0.1:8864", nil)
 }

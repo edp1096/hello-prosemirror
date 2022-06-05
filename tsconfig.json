@@ -1,11 +1,14 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "ES6",
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "lib": [
-            "es2020",
-            "dom"
+            "ES5",
+            "ES6",
+            "ES2020",
+            "DOM",
+            "DOM.Iterable"
         ],
         "moduleResolution": "node"
     },

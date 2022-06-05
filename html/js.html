@@ -16,35 +16,61 @@
 </head>
 
 <body>
+    <div>
+        <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
+        <label for="image-upload">Image:</label>
+        <input type="file" id="image-upload" multiple>
+        <button type="button" onclick="insertImage()">Upload</button>
+    </div>
     <div id="editor"></div>
-    <button type="button" onclick="printHTML()">Print HTML</button>
 </body>
 <script>"use strict";</script>
 <script src="myeditor.js"></script>
 
 <script>
     const data = `
-    <h2>Demonstration Text</h2>
+    <h2>Hello PromiseMirror</h2>
+    <p>
+        A ProseMirror document is based on a schema, which determines the
+        kind of elements that may occur in it, and the relation they have to
+        each other. This one is based on the basic schema, with lists and
+        tables added. It allows the usual <strong>strong</strong>
+        and <em>emphasized</em> text, <code>code font</code>,
+        and <a href="http://marijnhaverbeke.nl">links</a>.
+    </p>
 
-        <p>
-            A ProseMirror document is based on a schema, which determines the
-            kind of elements that may occur in it, and the relation they have to
-            each other. This one is based on the basic schema, with lists and
-            tables added. It allows the usual <strong>strong</strong>
-            and <em>emphasized</em> text, <code>code font</code>,
-            and <a href="http://marijnhaverbeke.nl">links</a>. There are also
-            images: <img alt="demo picture" src="img.png">.
-        </p>
-
-        <p>This paragraph has<br>a hard break inside of it.</p>
+    <p>This paragraph has<br>a hard break inside of it.</p>
     `;
+
+    const options = {
+        uploadActionURI: "http://localhost:8864/upload",
+        uploadAccessURI: "http://localhost:8864/files",
+    }
     const editorEL = document.querySelector("#editor")
-    const editor = new MyEditor(data, editorEL)
+    const editor = new MyEditor(data, editorEL, options)
 
     function printHTML() {
         console.log(editor.getHTML())
     }
 
+    async function insertImage() {
+        const uploadURI = "http://localhost:8864/upload"
+        const accessURI = "http://localhost:8864/files"
+
+        const files = document.querySelector("#image-upload").files
+        for (const file of files) {
+            if (file == undefined) { return } // Selected nothing
+
+            const formData = new FormData()
+            formData.append('file', file)
+
+            const r = await fetch(uploadURI, { method: 'POST', body: formData })
+            if (r.ok) {
+                const result = await r.json()
+                editor.insertImage(`${accessURI}/${result.storename}`)
+            }
+        }
+    }
 </script>
 
 <style>
