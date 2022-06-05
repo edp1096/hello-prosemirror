@@ -21,7 +21,7 @@
     "prosemirror-schema-basic": "^1.2.0",
     "prosemirror-schema-list": "^1.2.0",
     "prosemirror-state": "^1.4.0",
-    "prosemirror-tables": "^1.1.1",
+    "prosemirror-tables": "https://github.com/ProseMirror/prosemirror-tables#typescript-migration",
     "prosemirror-view": "^1.25.0"
   }
 }

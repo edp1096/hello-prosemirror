@@ -468,10 +468,9 @@ prosemirror-state@^1.0.0, prosemirror-state@^1.2.0, prosemirror-state@^1.2.2, pr
     prosemirror-model "^1.0.0"
     prosemirror-transform "^1.0.0"
 
-prosemirror-tables@^1.1.1:
+"prosemirror-tables@https://github.com/ProseMirror/prosemirror-tables#typescript-migration":
   version "1.1.1"
-  resolved "https://registry.yarnpkg.com/prosemirror-tables/-/prosemirror-tables-1.1.1.tgz#ad66300cc49500455cf1243bb129c9e7d883321e"
-  integrity sha512-LmCz4jrlqQZRsYRDzCRYf/pQ5CUcSOyqZlAj5kv67ZWBH1SVLP2U9WJEvQfimWgeRlIz0y0PQVqO1arRm1+woA==
+  resolved "https://github.com/ProseMirror/prosemirror-tables#53d5eac0749ea43a1dc3e559fc0f0443b71a04c9"
   dependencies:
     prosemirror-keymap "^1.1.2"
     prosemirror-model "^1.8.1"

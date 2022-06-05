@@ -1,4 +1,4 @@
-import { EditorState, Plugin } from "prosemirror-state"
+import { EditorState, Plugin, Selection, TextSelection } from "prosemirror-state"
 import { EditorView, Decoration, DecorationSet } from "prosemirror-view"
 import { Schema, DOMParser, DOMSerializer } from "prosemirror-model"
 import { schema } from "prosemirror-schema-basic"
@@ -8,9 +8,20 @@ import { keymap } from "prosemirror-keymap"
 import { history } from "prosemirror-history"
 import { baseKeymap } from "prosemirror-commands"
 import { dropCursor } from "prosemirror-dropcursor"
-import { menuBar, MenuItem } from "prosemirror-menu"
+import { menuBar, MenuItem, Dropdown } from "prosemirror-menu"
 import { gapCursor } from "prosemirror-gapcursor"
-import { tableNodes } from "prosemirror-tables"
+
+import {
+    addColumnAfter, addColumnBefore, deleteColumn,
+    addRowBefore, addRowAfter, deleteRow,
+    splitCell, mergeCells,
+    setCellAttr,
+    toggleHeaderColumn, toggleHeaderRow, toggleHeaderCell,
+    goToNextCell,
+    deleteTable
+} from "prosemirror-tables"
+import { tableEditing, columnResizing, tableNodes, fixTables } from "prosemirror-tables"
+import { CellSelection } from "prosemirror-tables"
 
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
@@ -44,23 +55,79 @@ class MyEditor {
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
 
+        const tableNodeSpecs = tableNodes({
+            tableGroup: "block",
+            cellContent: "block+",
+            cellAttributes: {
+                background: {
+                    default: null,
+                    getFromDOM(dom: Element): string | null {
+                        return ((dom as HTMLElement).style && (dom as HTMLElement).style.backgroundColor) || null
+                    },
+                    setDOMAttr(value: string, attrs: any): void {
+                        if (value) { attrs.style = (attrs.style || "") + `background-color: ${value};` }
+                    }
+                }
+            }
+        })
+
+        schema.spec.nodes = schema.spec.nodes.append(tableNodeSpecs)
         this.schema = new Schema({
-            nodes: addListNodes(schema.spec.nodes, "paragraph block*", "block"),
+            // nodes: addListNodes(schema.spec.nodes, "paragraph block*", "block"),
+            nodes: schema.spec.nodes,
             marks: schema.spec.marks
         })
 
-        const basePlugin = this.setupBasePlugin({ schema: this.schema })
+        const tableMenu = [
+            this.item("Insert column before", addColumnBefore),
+            this.item("Insert column after", addColumnAfter),
+            this.item("Delete column", deleteColumn),
+            this.item("Insert row before", addRowBefore),
+            this.item("Insert row after", addRowAfter),
+            this.item("Delete row", deleteRow),
+            this.item("Delete table", deleteTable),
+            this.item("Merge cells", mergeCells),
+            this.item("Split cell", splitCell),
+            this.item("Toggle header column", toggleHeaderColumn),
+            this.item("Toggle header row", toggleHeaderRow),
+            this.item("Toggle header cells", toggleHeaderCell),
+            this.item("Make cell green", setCellAttr("background", "#dfd")),
+            this.item("Make cell red", setCellAttr("background", "#faa")),
+            this.item("Make cell non-green", setCellAttr("background", null))
+        ]
+        const tableDropdown = new Dropdown(tableMenu, { label: "Table" })
+
+        const menu = buildMenuItems(this.schema).fullMenu
+        menu.push([tableDropdown])
+
+        const basePlugin = this.setupBasePlugin({ schema: this.schema, menuContent: (menu as MenuItem[][]) })
         const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
         const mergedPlugins = basePlugin.concat(pluginImageDropHandler)
+
+        const tablePlugins = [
+            columnResizing({}),
+            tableEditing(),
+            keymap({
+                Tab: goToNextCell(1),
+                "Shift-Tab": goToNextCell(-1)
+            })
+        ]
+        // mergedPlugins.push(...tablePlugins)
+        mergedPlugins.unshift(...tablePlugins)
 
         this.state = EditorState.create({
             doc: DOMParser.fromSchema(this.schema).parse(this.content),
             plugins: mergedPlugins
         })
 
+        // let fix = fixTables(this.state)
+        // if (fix) this.state = this.state.apply(fix.setMeta('addToHistory', false));
+
         this.view = new EditorView(target, { state: this.state });
         (window as any).view = this.view
     }
+
+    item(label: string, cmd: any) { return new MenuItem({ label, select: cmd, run: cmd }) }
 
     setupBasePlugin(options: {
         schema: Schema
@@ -90,6 +157,10 @@ class MyEditor {
         if (options.history !== false) { plugins.push(history()) }
 
         return plugins.concat(new Plugin({ props: { attributes: { class: "Editor-base-setup-style" } } }))
+    }
+
+    setupTablePlugin() {
+
     }
 
     getHTML(): string {

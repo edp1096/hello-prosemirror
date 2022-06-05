@@ -1,6 +1,7 @@
 @import "editor-icon.css";
 @import "editor-menu.css";
 @import "editor-prompt.css";
+@import "editor-table.css";
 
 /* Add space around the hr to make clicking it easier */
 .Editor-base-setup-style hr {

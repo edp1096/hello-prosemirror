@@ -234,9 +234,15 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
 
     let cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
     r.insertMenu = new Dropdown(cut([r.insertImage, r.insertHorizontalRule]), { label: "Insert" })
-    r.typeMenu = new Dropdown(cut([r.makeParagraph, r.makeCodeBlock, r.makeHead1 && new DropdownSubmenu(cut([
-        r.makeHead1, r.makeHead2, r.makeHead3, r.makeHead4, r.makeHead5, r.makeHead6
-    ]), { label: "Heading" })]), { label: "Type..." })
+    r.typeMenu = new Dropdown(
+        cut([
+            r.makeParagraph, r.makeCodeBlock, r.makeHead1 && new DropdownSubmenu(
+                cut([
+                    r.makeHead1, r.makeHead2, r.makeHead3, r.makeHead4, r.makeHead5, r.makeHead6
+                ]), { label: "Heading" }
+            )
+        ]), { label: "Type..." }
+    )
 
     r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink])]
     r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem,
