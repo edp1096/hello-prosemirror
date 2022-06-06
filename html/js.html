@@ -9,14 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google" content="notranslate" />
 
-    <title>List rendering class</title>
+    <title>My Editor JS</title>
     <link rel="shortcut icon" href="#" type="image/x-icon">
 
     <link rel="stylesheet" href="editor.css">
 </head>
 
 <body>
-    <div>
+    <div id="buttons">
         <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
         <label for="image-upload">Image:</label>
         <input type="file" id="image-upload" multiple>
@@ -40,6 +40,14 @@
     </p>
 
     <p>This paragraph has<br>a hard break inside of it.</p>
+
+    <table>
+        <tr>
+            <td>1</td>
+            <td>2</td>
+            <td>3</td>
+        </tr>
+    </table>
     `;
 
     const options = {

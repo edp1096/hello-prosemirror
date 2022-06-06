@@ -1,6 +1,6 @@
-import { EditorState, Plugin, Selection, TextSelection } from "prosemirror-state"
+import { EditorState, Plugin } from "prosemirror-state"
 import { EditorView, Decoration, DecorationSet } from "prosemirror-view"
-import { Schema, DOMParser, DOMSerializer } from "prosemirror-model"
+import { Schema, DOMParser, DOMSerializer, Fragment } from "prosemirror-model"
 import { schema } from "prosemirror-schema-basic"
 import { addListNodes } from "prosemirror-schema-list"
 
@@ -8,7 +8,7 @@ import { keymap } from "prosemirror-keymap"
 import { history } from "prosemirror-history"
 import { baseKeymap, setBlockType } from "prosemirror-commands"
 import { dropCursor } from "prosemirror-dropcursor"
-import { menuBar, MenuItem, Dropdown } from "prosemirror-menu"
+import { menuBar, MenuItemSpec, MenuItem, Dropdown } from "prosemirror-menu"
 import { gapCursor } from "prosemirror-gapcursor"
 
 import {
@@ -18,9 +18,9 @@ import {
     setCellAttr,
     toggleHeaderColumn, toggleHeaderRow, toggleHeaderCell,
     goToNextCell,
-    deleteTable
+    deleteTable,
+    tableEditing, columnResizing, tableNodes, fixTables
 } from "prosemirror-tables"
-import { tableEditing, columnResizing, tableNodes, fixTables } from "prosemirror-tables"
 
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
@@ -71,6 +71,7 @@ class MyEditor {
         })
 
         schema.spec.nodes = schema.spec.nodes.append(tableNodeSpecs)
+
         this.schema = new Schema({
             // nodes: addListNodes(schema.spec.nodes, "paragraph block*", "block"),
             nodes: schema.spec.nodes,
@@ -98,7 +99,9 @@ class MyEditor {
 
         const menu = buildMenuItems(this.schema).fullMenu
         menu.push([tableDropdown])
-        // menu.push([this.item("P", setBlockType(schema.nodes.paragraph))])
+
+        const menuAddTable = new MenuItem({ label: "Add table", run: this.addTable })
+        menu.push([menuAddTable])
 
         const basePlugin = this.setupBasePlugin({ schema: this.schema, menuContent: (menu as MenuItem[][]) })
         const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
@@ -189,9 +192,18 @@ class MyEditor {
         dispatchImage(this.view, pos, this.schema, imageURI)
     }
 
-    addTable(state: EditorState, dispatch: any): void {
-        console.log(state, dispatch)
-        console.log("Hello table")
+    addTable(state: EditorState, dispatch: any, view: EditorView): boolean {
+        const tr = view.state.tr
+
+        const tableRowNode = state.schema.nodes.table_row.create(undefined, Fragment.fromArray([
+            state.schema.nodes.table_cell.createAndFill()!,
+            state.schema.nodes.table_cell.createAndFill()!
+        ]))
+        const tableNode = state.schema.nodes.table.create(undefined, Fragment.fromArray([tableRowNode]))
+
+        dispatch(tr.replaceSelectionWith(tableNode).scrollIntoView())
+
+        return true
     }
 }
 
