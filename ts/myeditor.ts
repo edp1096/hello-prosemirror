@@ -26,6 +26,7 @@ import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
 import { imageDropHandler, dispatchImage } from "./helper/upload"
+import { getTableMenus, mergeTableMenu, setTableNodes } from "./helper/table"
 
 // import { exampleSetup } from "prosemirror-example-setup"
 
@@ -54,59 +55,15 @@ class MyEditor {
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
 
-        const tableNodeSpecs = tableNodes({
-            tableGroup: "block",
-            cellContent: "block+",
-            cellAttributes: {
-                background: {
-                    default: null,
-                    getFromDOM(dom: Element): string | null {
-                        return ((dom as HTMLElement).style && (dom as HTMLElement).style.backgroundColor) || null
-                    },
-                    setDOMAttr(value: string, attrs: any): void {
-                        if (value) { attrs.style = (attrs.style || "") + `background-color: ${value};` }
-                    }
-                }
-            }
-        })
+        schema.spec.nodes = setTableNodes(schema.spec.nodes)
+        const tableMenus = [getTableMenus()]
+        this.schema = new Schema({ nodes: schema.spec.nodes, marks: schema.spec.marks })
 
-        schema.spec.nodes = schema.spec.nodes.append(tableNodeSpecs)
+        const baseMenus = buildMenuItems(schema).fullMenu
+        const menus = baseMenus.concat(tableMenus)
 
-        this.schema = new Schema({
-            // nodes: addListNodes(schema.spec.nodes, "paragraph block*", "block"),
-            nodes: schema.spec.nodes,
-            marks: schema.spec.marks
-        })
-
-        const tableMenu = [
-            this.item("Insert column before", addColumnBefore),
-            this.item("Insert column after", addColumnAfter),
-            this.item("Delete column", deleteColumn),
-            this.item("Insert row before", addRowBefore),
-            this.item("Insert row after", addRowAfter),
-            this.item("Delete row", deleteRow),
-            this.item("Delete table", deleteTable),
-            this.item("Merge cells", mergeCells),
-            this.item("Split cell", splitCell),
-            this.item("Toggle header column", toggleHeaderColumn),
-            this.item("Toggle header row", toggleHeaderRow),
-            this.item("Toggle header cells", toggleHeaderCell),
-            this.item("Make cell green", setCellAttr("background", "#dfd")),
-            this.item("Make cell red", setCellAttr("background", "#faa")),
-            this.item("Make cell non-green", setCellAttr("background", null))
-        ]
-        const tableDropdown = new Dropdown(tableMenu, { label: "Edit table" })
-
-        const menu = buildMenuItems(this.schema).fullMenu
-        menu.push([tableDropdown])
-
-        const menuAddTable = new MenuItem({ label: "Add table", run: this.addTable })
-        menu.push([menuAddTable])
-
-        const basePlugin = this.setupBasePlugin({ schema: this.schema, menuContent: (menu as MenuItem[][]) })
+        const basePlugin = this.setupBasePlugin({ schema: this.schema, menuContent: (menus as MenuItem[][]) })
         const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
-        const mergedPlugins = basePlugin.concat(pluginImageDropHandler)
-
         const tablePlugins = [
             columnResizing({}),
             tableEditing(),
@@ -115,16 +72,13 @@ class MyEditor {
                 "Shift-Tab": goToNextCell(-1)
             })
         ]
-        // mergedPlugins.push(...tablePlugins)
-        mergedPlugins.unshift(...tablePlugins)
+
+        const mergedPlugins = basePlugin.concat(pluginImageDropHandler, ...tablePlugins)
 
         this.state = EditorState.create({
             doc: DOMParser.fromSchema(this.schema).parse(this.content),
             plugins: mergedPlugins
         })
-
-        // let fix = fixTables(this.state)
-        // if (fix) this.state = this.state.apply(fix.setMeta('addToHistory', false));
 
         this.view = new EditorView(target, { state: this.state });
         (window as any).view = this.view
@@ -134,9 +88,7 @@ class MyEditor {
 
     setupBasePlugin(options: {
         schema: Schema
-        mapKeys?: {
-            [key: string]: string | false
-        }
+        mapKeys?: { [key: string]: string | false }
         menuBar?: boolean
         history?: boolean
         floatingMenu?: boolean
@@ -160,10 +112,6 @@ class MyEditor {
         if (options.history !== false) { plugins.push(history()) }
 
         return plugins.concat(new Plugin({ props: { attributes: { class: "Editor-base-setup-style" } } }))
-    }
-
-    setupTablePlugin() {
-
     }
 
     icon(text: string | null, name: string): Element {
@@ -190,20 +138,6 @@ class MyEditor {
         const pos = tr.selection.anchor
 
         dispatchImage(this.view, pos, this.schema, imageURI)
-    }
-
-    addTable(state: EditorState, dispatch: any, view: EditorView): boolean {
-        const tr = view.state.tr
-
-        const tableRowNode = state.schema.nodes.table_row.create(undefined, Fragment.fromArray([
-            state.schema.nodes.table_cell.createAndFill()!,
-            state.schema.nodes.table_cell.createAndFill()!
-        ]))
-        const tableNode = state.schema.nodes.table.create(undefined, Fragment.fromArray([tableRowNode]))
-
-        dispatch(tr.replaceSelectionWith(tableNode).scrollIntoView())
-
-        return true
     }
 }
 

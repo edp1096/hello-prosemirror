@@ -10,6 +10,7 @@
             "dom",
             "dom.iterable"
         ],
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
     },
 }
