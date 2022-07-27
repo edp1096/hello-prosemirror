@@ -4,6 +4,8 @@ import { MenuItem, MenuElement } from "prosemirror-menu"
 import { EditorView } from 'prosemirror-view'
 import { TextField, openPrompt } from "./prompt"
 
+const videoFormat = ["youtube", "dailymotion", "vimeo"]
+
 export const youtubeNodeSpec: NodeSpec = {
     attrs: { uri: { default: "" } },
     inline: true,
@@ -13,13 +15,24 @@ export const youtubeNodeSpec: NodeSpec = {
     toDOM: (node: Node) => [
         "iframe",
         {
+            "video-type": "youtube",
             src: node.attrs.uri,
             width: "420",
             height: "315",
             title: "Youtube video",
             class: "video"
         }
-    ]
+    ],
+    parseDOM: [{
+        tag: "iframe[video-type]",
+        getAttrs: dom => {
+            console.log(dom)
+            const videoType = (dom as HTMLElement).getAttribute("video-type")
+            const uri = (dom as HTMLElement).getAttribute("src")
+
+            return { uri }
+        }
+    }]
 }
 
 function insertYoutube() {
@@ -41,6 +54,11 @@ function insertYoutube() {
 
                 if (dispatch) {
                     uri = (attrs.src as string).replace("youtu.be", "youtube.com/embed")
+                    uri = uri.replace("www.youtube.com/watch?v=", "youtube.com/embed/")
+                    uri = uri.replace("dai.ly", "www.dailymotion.com/embed/video")
+                    uri = uri.replace("www.dailymotion.com/video", "www.dailymotion.com/embed/video")
+                    uri = uri.replace("vimeo.com/", "player.vimeo.com/video/")
+
                     dispatch(state.tr.replaceSelectionWith(videoType.create({ uri })))
                 }
                 view.focus()
