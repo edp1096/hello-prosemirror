@@ -59,10 +59,13 @@ class MyEditor {
         const tableMenus = [getTableMenus()]
         this.schema = new Schema({ nodes: schema.spec.nodes, marks: schema.spec.marks })
 
-        const baseMenus = buildMenuItems(schema).fullMenu
+        const baseMenus = buildMenuItems(this.schema).fullMenu
         const menus = baseMenus.concat(tableMenus)
 
-        const basePlugin = this.setupBasePlugin({ schema: this.schema, menuContent: (menus as MenuItem[][]) })
+        const basePlugin = this.setupBasePlugin({
+            schema: this.schema,
+            menuContent: (menus as MenuItem[][])
+        })
         const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
         const tablePlugins = [
             columnResizing({}),
