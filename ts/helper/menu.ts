@@ -233,6 +233,7 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
     }
 
     let cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
+
     r.insertMenu = new Dropdown(cut([r.insertImage, r.insertHorizontalRule]), { label: "Insert" })
     r.typeMenu = new Dropdown(
         cut([

@@ -27,6 +27,7 @@ import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
 import { imageDropHandler, dispatchImage } from "./helper/upload"
 import { getTableMenus, mergeTableMenu, setTableNodes } from "./helper/table"
+import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
 
 // import { exampleSetup } from "prosemirror-example-setup"
 
@@ -56,14 +57,19 @@ class MyEditor {
         this.content.innerHTML = data
 
         schema.spec.nodes = setTableNodes(schema.spec.nodes)
-        const tableMenus = [getTableMenus()]
+        schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)
+        schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")
+
         this.schema = new Schema({
-            nodes: addListNodes(schema.spec.nodes, "paragraph block*", "block"),
+            nodes: schema.spec.nodes,
             marks: schema.spec.marks
         })
 
         const baseMenus = buildMenuItems(this.schema).fullMenu
-        const menus = baseMenus.concat(tableMenus)
+        const tableMenus = [getTableMenus()]
+        const youtubeMenus = [getYoutubeMenus()]
+
+        const menus = baseMenus.concat(tableMenus, youtubeMenus)
 
         const basePlugin = this.setupBasePlugin({
             schema: this.schema,
