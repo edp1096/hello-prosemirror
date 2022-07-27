@@ -57,7 +57,10 @@ class MyEditor {
 
         schema.spec.nodes = setTableNodes(schema.spec.nodes)
         const tableMenus = [getTableMenus()]
-        this.schema = new Schema({ nodes: schema.spec.nodes, marks: schema.spec.marks })
+        this.schema = new Schema({
+            nodes: addListNodes(schema.spec.nodes, "paragraph block*", "block"),
+            marks: schema.spec.marks
+        })
 
         const baseMenus = buildMenuItems(this.schema).fullMenu
         const menus = baseMenus.concat(tableMenus)
