@@ -17,8 +17,8 @@ export const youtubeNodeSpec: NodeSpec = {
         {
             "video-type": "youtube",
             src: node.attrs.uri,
-            width: "420",
-            height: "315",
+            width: "720",
+            height: "405",
             title: "Youtube video",
             class: "video"
         }
