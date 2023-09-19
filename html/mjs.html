@@ -72,7 +72,7 @@
     const editor = new MyEditor(data, editorEL, options)
 
     function printHTML() { console.log(editor.getHTML()) }
-    function clearContent() { editor.setHTML("a") }
+    function clearContent() { editor.setHTML("") }
 
     async function insertImage() {
         const uploadURI = "http://localhost:8864/upload"
