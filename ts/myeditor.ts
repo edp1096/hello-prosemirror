@@ -136,12 +136,20 @@ class MyEditor {
     }
 
     getHTML(): string {
-        const domSerializer = DOMSerializer.fromSchema(this.schema)
-        const fragment = domSerializer.serializeFragment(this.view.state.doc.content)
+        const view = this.view
+        const schema = this.schema
+        const docContent = view.state.doc.content
         const div = document.createElement("div")
+
+        const fragment = DOMSerializer.fromSchema(schema).serializeFragment(docContent)
         div.appendChild(fragment)
 
         return div.innerHTML
+    }
+
+    setHTML(content: string | null | undefined): void {
+        if (content == undefined || content == null) { content = "" }
+        this.view.dom.innerHTML = content
     }
 
     insertImage(imageURI: string): void {

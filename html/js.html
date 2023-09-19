@@ -18,6 +18,7 @@
 <body>
     <div id="buttons">
         <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
+        <button type="button" onclick="clearContent()">Clear content</button>|
         <label for="image-upload">Image:</label>
         <input type="file" id="image-upload" multiple>
         <button type="button" onclick="insertImage()">Upload</button>
@@ -69,6 +70,7 @@
     const editor = new MyEditor(data, editorEL, options)
 
     function printHTML() { console.log(editor.getHTML()) }
+    function clearContent() { editor.setHTML("") }
 
     async function insertImage() {
         const uploadURI = "http://localhost:8864/upload"
