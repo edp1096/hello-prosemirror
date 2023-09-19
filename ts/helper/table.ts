@@ -59,7 +59,7 @@ export function getTableMenus(): MenuElement[] {
     ]
 
     const tableDropdown = new Dropdown(tableMenu, { label: "Edit table" })
-    const menuAddTable = new MenuItem({ label: "Add table", run: dispatchTable })
+    const menuAddTable = new MenuItem({ label: "🏁Add table", run: dispatchTable })
 
     const menu = [tableDropdown, menuAddTable]
 

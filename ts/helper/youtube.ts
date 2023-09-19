@@ -68,7 +68,6 @@ function insertYoutube() {
 }
 
 export function getYoutubeMenus(): MenuElement[] {
-    const menuAddYoutube = new MenuItem({ label: "Add youtube", run: insertYoutube() })
-
+    const menuAddYoutube = new MenuItem({ label: "📺Add youtube", run: insertYoutube() })
     return [menuAddYoutube]
 }

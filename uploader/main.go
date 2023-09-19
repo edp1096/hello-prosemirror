@@ -3,8 +3,9 @@ package main // import "uploader"
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+	"os"
 	"path/filepath"
 )
 
@@ -25,13 +26,15 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 	defer file.Close()
 
-	tempFile, err := ioutil.TempFile("../upload", "upload-*-"+handler.Filename)
+	// tempFile, err := ioutil.TempFile("../upload", "upload-*-"+handler.Filename)
+	tempFile, err := os.CreateTemp("../upload", "upload-*-"+handler.Filename)
 	if err != nil {
 		fmt.Println(err)
 	}
 	defer tempFile.Close()
 
-	fileBytes, err := ioutil.ReadAll(file)
+	// fileBytes, err := ioutil.ReadAll(file)
+	fileBytes, err := io.ReadAll(file)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -45,7 +48,8 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 
 	result, _ := json.Marshal(resultMAP)
 
-	fmt.Fprintf(w, string(result))
+	// fmt.Fprintf(w, string(result))
+	fmt.Fprint(w, string(result))
 }
 
 func cors(handler http.Handler) http.HandlerFunc {
