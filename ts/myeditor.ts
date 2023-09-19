@@ -161,5 +161,5 @@ class MyEditor {
     }
 }
 
-(window as any).MyEditor = MyEditor
+(globalThis as any).MyEditor = MyEditor
 export default MyEditor

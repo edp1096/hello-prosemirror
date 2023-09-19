@@ -24,46 +24,72 @@
         <button type="button" onclick="insertImage()">Upload</button>
     </div>
     <div id="editor"></div>
+
+    <div>
+        <editor-other id="editor2-1" data-idx="1"></editor-other>
+    </div>
+
 </body>
+
+<!-- Comment modification editor -->
+<template id="editor2-template">
+    <link rel="stylesheet" href="css/editor.css">
+    <script src="dist/myeditor.js"></script>
+
+    <div class="editor2-container">
+        <div id="editor2"></div>
+    </div>
+
+    <style>
+        #editor2 {
+            height: 30vh;
+            resize: vertical;
+            overflow: auto;
+            border: 1px solid silver;
+        }
+    </style>
+</template>
+<!-- Comment modification editor -->
 
 <script>"use strict";</script>
 <script src="dist/myeditor.js"></script>
 
 <script>
-    const data = `
-    <h2>Hello PromiseMirror</h2>
-    <p>
-        A ProseMirror document is based on a schema, which determines the
-        kind of elements that may occur in it, and the relation they have to
-        each other. This one is based on the basic schema, with lists and
-        tables added. It allows the usual <strong>strong</strong>
-        and <em>emphasized</em> text, <code>code font</code>,
-        and <a href="http://marijnhaverbeke.nl">links</a>.
-    </p>
+    // const data = `
+    // <h2>Hello PromiseMirror</h2>
+    // <p>
+    //     A ProseMirror document is based on a schema, which determines the
+    //     kind of elements that may occur in it, and the relation they have to
+    //     each other. This one is based on the basic schema, with lists and
+    //     tables added. It allows the usual <strong>strong</strong>
+    //     and <em>emphasized</em> text, <code>code font</code>,
+    //     and <a href="http://marijnhaverbeke.nl">links</a>.
+    // </p>
 
-    <p>
-        <iframe video-type="youtube" src="https://player.vimeo.com/video/631653597" width="420" height="315" title="Youtube video" class="video"></iframe>
-    </p>
+    // <p>
+    //     <iframe video-type="youtube" src="https://player.vimeo.com/video/631653597" width="420" height="315" title="Youtube video" class="video"></iframe>
+    // </p>
 
-    <p>
-        <iframe video-type="youtube" src="https://youtube.com/embed/4TWR90KJl84" width="420" height="315" title="Youtube video" class="video"></iframe>
-    </p>
-    <p>
-        <iframe video-type="youtube" src="https://www.dailymotion.com/embed/video/x7ydf9r" width="420" height="315" title="Youtube video" class="video"></iframe>
-    </p>
+    // <p>
+    //     <iframe video-type="youtube" src="https://youtube.com/embed/4TWR90KJl84" width="420" height="315" title="Youtube video" class="video"></iframe>
+    // </p>
+    // <p>
+    //     <iframe video-type="youtube" src="https://www.dailymotion.com/embed/video/x7ydf9r" width="420" height="315" title="Youtube video" class="video"></iframe>
+    // </p>
 
-    <p>This paragraph has<br>a hard break inside of it.</p>
+    // <p>This paragraph has<br>a hard break inside of it.</p>
 
-    <table>
-        <tr>
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
-        </tr>
-    </table>
+    // <table>
+    //     <tr>
+    //         <td>1</td>
+    //         <td>2</td>
+    //         <td>3</td>
+    //     </tr>
+    // </table>
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/ZUNaYWkFcuw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    `;
+    // <iframe width="560" height="315" src="https://www.youtube.com/embed/ZUNaYWkFcuw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    // `;
+    const data = "hello"
 
     const options = {
         uploadActionURI: "http://localhost:8864/upload",
@@ -71,6 +97,28 @@
     }
     const editorEL = document.querySelector("#editor")
     const editor = new MyEditor(data, editorEL, options)
+
+
+    class modifierElement extends HTMLElement {
+        constructor() {
+            super()
+            const templateContent = document.querySelector("#editor2-template").content
+            const shadowRoot = this.attachShadow({ mode: "open" })
+            shadowRoot.appendChild(templateContent.cloneNode(true))
+        }
+    }
+    customElements.define("editor-other", modifierElement)
+
+    const editor2ROOT = document.querySelector(`editor-other#editor2-1`).shadowRoot
+    const editContent = "world"
+
+    const editor2EL = editor2ROOT.querySelector("#editor2")
+    const editor2Options = {
+        uploadActionURI: "/api/uploader",
+        uploadAccessURI: "/upload",
+    }
+    commentModifier = new MyEditor(editContent, editor2EL, editor2Options)
+
 
     function printHTML() { console.log(editor.getHTML()) }
     function clearContent() { editor.setHTML("") }
@@ -114,10 +162,14 @@
      https://spin.atomicobject.com/2019/11/21/creating-a-resizable-html-element
      */
     #editor {
+        height: 30vh;
         resize: vertical;
         overflow: auto;
-
         border: 1px solid silver;
+    }
+
+    editor-other {
+        height: 40vh;
     }
 </style>
 
