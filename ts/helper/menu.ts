@@ -210,34 +210,19 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
     let node: NodeType | undefined
     if (node = schema.nodes.image) { r.insertImage = insertImageItem(node) }
     if (node = schema.nodes.bullet_list) {
-        r.wrapBulletList = wrapListItem(node, {
-            title: "Wrap in bullet list",
-            icon: icons.bulletList
-        })
+        r.wrapBulletList = wrapListItem(node, { title: "Wrap in bullet list", icon: icons.bulletList })
     }
     if (node = schema.nodes.ordered_list) {
-        r.wrapOrderedList = wrapListItem(node, {
-            title: "Wrap in ordered list",
-            icon: icons.orderedList
-        })
+        r.wrapOrderedList = wrapListItem(node, { title: "Wrap in ordered list", icon: icons.orderedList })
     }
     if (node = schema.nodes.blockquote) {
-        r.wrapBlockQuote = wrapItem(node, {
-            title: "Wrap in block quote",
-            icon: icons.blockquote
-        })
+        r.wrapBlockQuote = wrapItem(node, { title: "Wrap in block quote", icon: icons.blockquote })
     }
     if (node = schema.nodes.paragraph) {
-        r.makeParagraph = blockTypeItem(node, {
-            title: "Change to paragraph",
-            label: "Plain"
-        })
+        r.makeParagraph = blockTypeItem(node, { title: "Change to paragraph", label: "Plain" })
     }
     if (node = schema.nodes.code_block) {
-        r.makeCodeBlock = blockTypeItem(node, {
-            title: "Change to code block",
-            label: "Code"
-        })
+        r.makeCodeBlock = blockTypeItem(node, { title: "Change to code block", label: "Code" })
     }
     if (node = schema.nodes.heading) {
         for (let i = 1; i <= 10; i++) {
