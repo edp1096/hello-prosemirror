@@ -3,6 +3,8 @@
 @import "editor-prompt.css";
 @import "editor-table.css";
 
+@import "bootstrap-icons.css";
+
 /* Add space around the hr to make clicking it easier */
 .Editor-base-setup-style hr {
     padding: 2px 10px;

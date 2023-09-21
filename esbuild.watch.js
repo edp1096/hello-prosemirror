@@ -8,9 +8,11 @@ const serveDIR = "serve"
 const clients = []
 const port = 8000
 
+const outName = "myeditor"
+
 const watchCSS = {
     entryPoints: ["css/editor.css"],
-    outfile: `${serveDIR}/editor.css`,
+    outfile: `${serveDIR}/${outName}.css`,
     bundle: true,
     minify: true,
     watch: {
@@ -20,12 +22,13 @@ const watchCSS = {
             // console.log(error ? error : '...')
         },
     },
+    loader: { ".woff": "dataurl", ".woff2": "dataurl" }
 }
 build(watchCSS)
 
 const watchJS = {
     entryPoints: ["ts/myeditor.ts"],
-    outfile: `${serveDIR}/myeditor.js`,
+    outfile: `${serveDIR}/${outName}.js`,
     bundle: true,
     banner: { js: ' (() => new EventSource("/esbuild").onmessage = () => location.reload())();' },
     minify: true,
@@ -37,6 +40,7 @@ const watchJS = {
             // console.log(error ? error : '...')
         },
     },
+    loader: { ".woff": "dataurl", ".woff2": "dataurl" }
 }
 
 const watchMJS = {
@@ -75,6 +79,8 @@ if (arg == "js") {
 
 build(watcher).catch(() => process.exit(1))
 
+
+// fs.cpSync("css/fonts", "serve/fonts/", { recursive: true })
 
 // const server = await serve(serverInfo, {})
 

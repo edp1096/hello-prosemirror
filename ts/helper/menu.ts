@@ -1,6 +1,6 @@
 import {
     wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem, liftItem,
-    selectParentNodeItem, undoItem, redoItem, icons, MenuItem, MenuElement, MenuItemSpec
+    selectParentNodeItem, undoItem, redoItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
 } from "prosemirror-menu"
 import { NodeSelection, EditorState, Command } from "prosemirror-state"
 import { Schema, NodeType, MarkType } from "prosemirror-model"
@@ -171,35 +171,40 @@ type MenuItemResult = {
     fullMenu: MenuElement[][]
 }
 
+function setIconElement(iconName: string): IconSpec {
+    const iconEL = document.createElement("i")
+    iconEL.setAttribute("class", iconName)
+    iconEL.setAttribute("style", "font-size: 1.3em; margin: -0.3em;")
+
+    const result = { dom: iconEL }
+
+    return result
+}
+
 /// Given a schema, look for default mark and node types in it and
 /// return an object with relevant menu items relating to those marks.
 export function buildMenuItems(schema: Schema): MenuItemResult {
     // https://github.com/mfoitzik/prosemirror-breakout-starter-kit#add-a-button-to-the-menu
     // https://github.com/mfoitzik/prosemirror-breakout-starter-kit/blob/master/src/js/menu/menu.js#L322
-    icons.sample1 = {
-        // width: 24, height: 24,
-        width: 20, height: 20,
-        path: "M6.85,7.08C6.85,4.37,9.45,3,12.24,3c1.64,0,3,0.49,3.9,1.28c0.77,0.65,1.46,1.73,1.46,3.24h-3.01 c0-0.31-0.05-0.59-0.15-0.85c-0.29-0.86-1.2-1.28-2.25-1.28c-1.86,0-2.34,1.02-2.34,1.7c0,0.48,0.25,0.88,0.74,1.21 C10.97,8.55,11.36,8.78,12,9H7.39C7.18,8.66,6.85,8.11,6.85,7.08z M21,12v-2H3v2h9.62c1.15,0.45,1.96,0.75,1.96,1.97 c0,1-0.81,1.67-2.28,1.67c-1.54,0-2.93-0.54-2.93-2.51H6.4c0,0.55,0.08,1.13,0.24,1.58c0.81,2.29,3.29,3.3,5.67,3.3 c2.27,0,5.3-0.89,5.3-4.05c0-0.3-0.01-1.16-0.48-1.94H21V12z"
-    }
+    // icons.sample1 = {
+    //     width: 20, height: 20,
+    //     path: "M6.85,7.08C6.85,4.37,9.45,3,12.24,3c1.64,0,3,0.49,3.9,1.28c0.77,0.65,1.46,1.73,1.46,3.24h-3.01 c0-0.31-0.05-0.59-0.15-0.85c-0.29-0.86-1.2-1.28-2.25-1.28c-1.86,0-2.34,1.02-2.34,1.7c0,0.48,0.25,0.88,0.74,1.21 C10.97,8.55,11.36,8.78,12,9H7.39C7.18,8.66,6.85,8.11,6.85,7.08z M21,12v-2H3v2h9.62c1.15,0.45,1.96,0.75,1.96,1.97 c0,1-0.81,1.67-2.28,1.67c-1.54,0-2.93-0.54-2.93-2.51H6.4c0,0.55,0.08,1.13,0.24,1.58c0.81,2.29,3.29,3.3,5.67,3.3 c2.27,0,5.3-0.89,5.3-4.05c0-0.3-0.01-1.16-0.48-1.94H21V12z"
+    // }
 
-    const im2 = document.createElement("img")
-    im2.setAttribute("src", "https://w7.pngwing.com/pngs/308/74/png-transparent-computer-icons-setting-icon-cdr-svg-setting-icon.png")
-    im2.setAttribute("width", "16em")
-    icons.sample2 = { dom: im2 }
-
-    const im3 = document.createElement("img")
-    im3.setAttribute("src", "https://icons.getbootstrap.com/assets/icons/airplane.svg")
-    im3.setAttribute("width", "16em")
-    icons.sample3 = { dom: im3 }
+    icons.bold = setIconElement("bi-type-bold")
+    icons.italic = setIconElement("bi-type-italic")
+    icons.code = setIconElement("bi-code")
+    icons.link = setIconElement("bi-link-45deg")
+    icons.bulletList = setIconElement("bi-list-ul")
+    icons.orderedList = setIconElement("bi-list-ol")
+    icons.blockquote = setIconElement("bi-quote")
 
     let r: MenuItemResult = {} as any
     let mark: MarkType | undefined
-    if (mark = schema.marks.strong) { r.toggleStrong = markItem(mark, { title: "Toggle strong style", icon: icons.strong }) }
-    if (mark = schema.marks.em) { r.toggleEm = markItem(mark, { title: "Toggle emphasis", icon: icons.em }) }
-    // if (mark = schema.marks.code) { r.toggleCode = markItem(mark, { title: "Toggle code font", icon: icons.code }) }
-    if (mark = schema.marks.code) { r.toggleCode = markItem(mark, { title: "Toggle code font", icon: icons.sample1 }) }
-    if (mark = schema.marks.code) { r.toggleCode = markItem(mark, { title: "Toggle code font", icon: icons.sample2 }) }
-    if (mark = schema.marks.code) { r.toggleCode = markItem(mark, { title: "Toggle code font", icon: icons.sample3 }) }
+
+    if (mark = schema.marks.strong) { r.toggleStrong = markItem(mark, { title: "Toggle strong style", icon: icons.bold }) }
+    if (mark = schema.marks.em) { r.toggleEm = markItem(mark, { title: "Toggle emphasis", icon: icons.italic }) }
+    if (mark = schema.marks.code) { r.toggleCode = markItem(mark, { title: "Toggle code font", icon: icons.code }) }
     if (mark = schema.marks.link) { r.toggleLink = linkItem(mark) }
 
     let node: NodeType | undefined
