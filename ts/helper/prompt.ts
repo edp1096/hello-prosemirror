@@ -18,12 +18,13 @@ export function openPrompt(options: {
     }
 
     let domFields: HTMLElement[] = []
-    for (let name in options.fields) domFields.push(options.fields[name].render())
+    for (let name in options.fields) { domFields.push(options.fields[name].render()) }
 
     let submitButton = document.createElement("button")
     submitButton.type = "submit"
     submitButton.className = prefix + "-submit"
     submitButton.textContent = "OK"
+
     let cancelButton = document.createElement("button")
     cancelButton.type = "button"
     cancelButton.className = prefix + "-cancel"
@@ -32,9 +33,8 @@ export function openPrompt(options: {
 
     let form = wrapper.appendChild(document.createElement("form"))
     if (options.title) form.appendChild(document.createElement("h5")).textContent = options.title
-    domFields.forEach(field => {
-        form.appendChild(document.createElement("div")).appendChild(field)
-    })
+    domFields.forEach(field => { form.appendChild(document.createElement("div")).appendChild(field) })
+
     let buttons = form.appendChild(document.createElement("div"))
     buttons.className = prefix + "-buttons"
     buttons.appendChild(submitButton)
@@ -67,13 +67,13 @@ export function openPrompt(options: {
             submit()
         } else if (e.keyCode == 9) {
             window.setTimeout(() => {
-                if (!wrapper.contains(document.activeElement)) close()
+                if (!wrapper.contains(document.activeElement)) { close() }
             }, 500)
         }
     })
 
     let input = form.elements[0] as HTMLElement
-    if (input) input.focus()
+    if (input) { input.focus() }
 }
 
 function getValues(fields: { [name: string]: Field }, domFields: readonly HTMLElement[]) {
@@ -103,42 +103,26 @@ function reportInvalid(dom: HTMLElement, message: string) {
 
 /// The type of field that `openPrompt` expects to be passed to it.
 export abstract class Field {
-    /// Create a field with the given options. Options support by all
-    /// field types are:
+    /// Create a field with the given options. Options support by all field types are:
     constructor(
         /// @internal
         readonly options: {
-            /// The starting value for the field.
-            value?: any
-
-            /// The label for the field.
-            label: string
-
-            /// Whether the field is required.
-            required?: boolean
-
-            /// A function to validate the given value. Should return an
-            /// error message if it is not valid.
-            validate?: (value: any) => string | null
-
-            /// A cleanup function for field values.
-            clean?: (value: any) => any
+            value?: any /// The starting value for the field.
+            label: string /// The label for the field.
+            required?: boolean /// Whether the field is required.
+            validate?: (value: any) => string | null /// A function to validate the given value. Should return an error message if it is not valid.
+            clean?: (value: any) => any /// A cleanup function for field values.
         }
     ) { }
 
-    /// Render the field to the DOM. Should be implemented by all subclasses.
-    abstract render(): HTMLElement
 
-    /// Read the field's value from its DOM node.
-    read(dom: HTMLElement) { return (dom as any).value }
-
-    /// A field-type-specific validation function.
-    validateType(value: any): string | null { return null }
+    abstract render(): HTMLElement /// Render the field to the DOM. Should be implemented by all subclasses.
+    read(dom: HTMLElement) { return (dom as any).value } /// Read the field's value from its DOM node.
+    validateType(value: any): string | null { return null } /// A field-type-specific validation function.
 
     /// @internal
     validate(value: any): string | null {
-        if (!value && this.options.required)
-            return "Required field"
+        if (!value && this.options.required) { return "Required field" }
         return this.validateType(value) || (this.options.validate ? this.options.validate(value) : null)
     }
 
@@ -155,15 +139,14 @@ export class TextField extends Field {
         input.placeholder = this.options.label
         input.value = this.options.value || ""
         input.autocomplete = "off"
+
         return input
     }
 }
 
 
-/// A field class for dropdown fields based on a plain `<select>`
-/// tag. Expects an option `options`, which should be an array of
-/// `{value: string, label: string}` objects, or a function taking a
-/// `ProseMirror` instance and returning such an array.
+/// A field class for dropdown fields based on a plain `<select>` tag.
+/// Expects an option `options`, which should be an array of `{value: string, label: string}` objects, or a function taking a `ProseMirror` instance and returning such an array.
 export class SelectField extends Field {
     render() {
         let select = document.createElement("select")

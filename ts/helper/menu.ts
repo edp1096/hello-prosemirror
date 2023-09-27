@@ -1,15 +1,14 @@
 import {
-    wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem,
+    wrapItem, blockTypeItem, Dropdown, DropdownSubmenu,
     selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
 } from "prosemirror-menu"
 import { undo, redo } from "prosemirror-history"
 import { NodeSelection, EditorState, Command } from "prosemirror-state"
 import { Schema, NodeType, MarkType } from "prosemirror-model"
-import { toggleMark, lift } from "prosemirror-commands"
+import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
 import { TextField, openPrompt } from "./prompt"
 
-// Helpers to create specific types of items
 
 function canInsert(state: EditorState, nodeType: NodeType) {
     let $from = state.selection.$from
@@ -17,6 +16,7 @@ function canInsert(state: EditorState, nodeType: NodeType) {
         let index = $from.index(d)
         if ($from.node(d).canReplaceWith(index, index, nodeType)) return true
     }
+
     return false
 }
 
@@ -108,40 +108,18 @@ function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
 }
 
 type MenuItemResult = {
-    /// A menu item to toggle the [strong mark](#schema-basic.StrongMark).
-    toggleStrong?: MenuItem
+    toggleStrong?: MenuItem /// A menu item to toggle the [strong mark](#schema-basic.StrongMark).
+    toggleEm?: MenuItem /// A menu item to toggle the [emphasis mark](#schema-basic.EmMark).
+    toggleCode?: MenuItem /// A menu item to toggle the [code font mark](#schema-basic.CodeMark).
+    toggleLink?: MenuItem /// A menu item to toggle the [link mark](#schema-basic.LinkMark).
+    insertImage?: MenuItem /// A menu item to insert an [image](#schema-basic.Image).
+    wrapBulletList?: MenuItem /// A menu item to wrap the selection in a [bullet list](#schema-list.BulletList).
+    wrapOrderedList?: MenuItem /// A menu item to wrap the selection in an [ordered list](#schema-list.OrderedList).
+    wrapBlockQuote?: MenuItem /// A menu item to wrap the selection in a [block quote](#schema-basic.BlockQuote).
+    makeParagraph?: MenuItem /// A menu item to set the current textblock to be a normal [paragraph](#schema-basic.Paragraph).
+    makeCodeBlock?: MenuItem /// A menu item to set the current textblock to be a [code block](#schema-basic.CodeBlock).
 
-    /// A menu item to toggle the [emphasis mark](#schema-basic.EmMark).
-    toggleEm?: MenuItem
-
-    /// A menu item to toggle the [code font mark](#schema-basic.CodeMark).
-    toggleCode?: MenuItem
-
-    /// A menu item to toggle the [link mark](#schema-basic.LinkMark).
-    toggleLink?: MenuItem
-
-    /// A menu item to insert an [image](#schema-basic.Image).
-    insertImage?: MenuItem
-
-    /// A menu item to wrap the selection in a [bullet list](#schema-list.BulletList).
-    wrapBulletList?: MenuItem
-
-    /// A menu item to wrap the selection in an [ordered list](#schema-list.OrderedList).
-    wrapOrderedList?: MenuItem
-
-    /// A menu item to wrap the selection in a [block quote](#schema-basic.BlockQuote).
-    wrapBlockQuote?: MenuItem
-
-    /// A menu item to set the current textblock to be a normal
-    /// [paragraph](#schema-basic.Paragraph).
-    makeParagraph?: MenuItem
-
-    /// A menu item to set the current textblock to be a
-    /// [code block](#schema-basic.CodeBlock).
-    makeCodeBlock?: MenuItem
-
-    /// Menu items to set the current textblock to be a
-    /// [heading](#schema-basic.Heading) of level _N_.
+    /// Menu items to set the current textblock to be a [heading](#schema-basic.Heading) of level _N_.
     makeHead1?: MenuItem
     makeHead2?: MenuItem
     makeHead3?: MenuItem
@@ -149,26 +127,14 @@ type MenuItemResult = {
     makeHead5?: MenuItem
     makeHead6?: MenuItem
 
-    /// A menu item to insert a horizontal rule.
-    insertHorizontalRule?: MenuItem
-
-    /// A dropdown containing the `insertImage` and
-    /// `insertHorizontalRule` items.
-    insertMenu: Dropdown
-
-    /// A dropdown containing the items for making the current
-    /// textblock a paragraph, code block, or heading.
-    typeMenu: Dropdown
-
-    /// Array of block-related menu items.
-    blockMenu: MenuElement[][]
-
-    /// Inline-markup related menu items.
-    inlineMenu: MenuElement[][]
+    insertHorizontalRule?: MenuItem /// A menu item to insert a horizontal rule.
+    insertMenu: Dropdown /// A dropdown containing the `insertImage` and `insertHorizontalRule` items.
+    typeMenu: Dropdown /// A dropdown containing the items for making the current textblock a paragraph, code block, or heading.
+    blockMenu: MenuElement[][] /// Array of block-related menu items.
+    inlineMenu: MenuElement[][] /// Inline-markup related menu items.
 
     /// An array of arrays of menu elements for use as the full menu
-    /// for, for example the [menu
-    /// bar](https://github.com/prosemirror/prosemirror-menu#user-content-menubar).
+    /// for, for example the [menu bar](https://github.com/prosemirror/prosemirror-menu#user-content-menubar).
     fullMenu: MenuElement[][]
 }
 
@@ -185,13 +151,6 @@ function setIconElement(iconName: string): IconSpec {
 /// Given a schema, look for default mark and node types in it and
 /// return an object with relevant menu items relating to those marks.
 export function buildMenuItems(schema: Schema): MenuItemResult {
-    // https://github.com/mfoitzik/prosemirror-breakout-starter-kit#add-a-button-to-the-menu
-    // https://github.com/mfoitzik/prosemirror-breakout-starter-kit/blob/master/src/js/menu/menu.js#L322
-    // icons.sample1 = {
-    //     width: 20, height: 20,
-    //     path: "M6.85,7.08C6.85,4.37,9.45,3,12.24,3c1.64,0,3,0.49,3.9,1.28c0.77,0.65,1.46,1.73,1.46,3.24h-3.01 c0-0.31-0.05-0.59-0.15-0.85c-0.29-0.86-1.2-1.28-2.25-1.28c-1.86,0-2.34,1.02-2.34,1.7c0,0.48,0.25,0.88,0.74,1.21 C10.97,8.55,11.36,8.78,12,9H7.39C7.18,8.66,6.85,8.11,6.85,7.08z M21,12v-2H3v2h9.62c1.15,0.45,1.96,0.75,1.96,1.97 c0,1-0.81,1.67-2.28,1.67c-1.54,0-2.93-0.54-2.93-2.51H6.4c0,0.55,0.08,1.13,0.24,1.58c0.81,2.29,3.29,3.3,5.67,3.3 c2.27,0,5.3-0.89,5.3-4.05c0-0.3-0.01-1.16-0.48-1.94H21V12z"
-    // }
-
     icons.bold = setIconElement("bi-type-bold")
     icons.italic = setIconElement("bi-type-italic")
     icons.code = setIconElement("bi-code")
@@ -202,6 +161,12 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
     icons.undo = setIconElement("bi-arrow-counterclockwise")
     icons.redo = setIconElement("bi-arrow-clockwise")
     icons.outdent = setIconElement("bi-text-indent-right")
+    icons.paragraph = setIconElement("bi-text-paragraph")
+    icons.upload = setIconElement("bi-upload")
+
+    const uploadEL = document.createElement("input")
+    uploadEL.setAttribute("type", "file")
+    uploadEL.setAttribute("multiple", "")
 
     let r: MenuItemResult = {} as any
     let mark: MarkType | undefined
@@ -247,26 +212,11 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
         })
     }
 
-    const undoItem = new MenuItem({
-        title: "Undo last change",
-        run: undo,
-        enable: state => undo(state),
-        icon: icons.undo
-    })
-
-    const redoItem = new MenuItem({
-        title: "Redo last undone change",
-        run: redo,
-        enable: state => redo(state),
-        icon: icons.redo
-    })
-
-    const outdent = new MenuItem({
-        title: "Lift out of enclosing block",
-        run: lift,
-        select: state => lift(state),
-        icon: icons.outdent
-    })
+    const undoItem = new MenuItem({ title: "Undo last change", run: undo, enable: state => undo(state), icon: icons.undo })
+    const redoItem = new MenuItem({ title: "Redo last undone change", run: redo, enable: state => redo(state), icon: icons.redo })
+    const outdentItem = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: icons.outdent })
+    // join up = shift + enter
+    const joinUpItem = new MenuItem({ title: "Join with above block", run: joinUp, select: state => joinUp(state), icon: icons.paragraph })
 
     let cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
@@ -282,7 +232,7 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
     )
 
     r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink])]
-    r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdent, selectParentNodeItem])]
+    r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdentItem, selectParentNodeItem])]
     r.fullMenu = r.inlineMenu.concat([[r.insertMenu, r.typeMenu]], [[undoItem, redoItem]], r.blockMenu)
 
     return r

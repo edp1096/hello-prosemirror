@@ -46,7 +46,6 @@ async function uploadImage(view: EditorView, schema: Schema, event: Event, files
         const r = await fetch(uploadURI, { method: 'POST', body: formData })
         if (r.ok) {
             const result = await r.json()
-
             const pos = view.posAtCoords({ left: (event as MouseEvent).clientX, top: (event as MouseEvent).clientY })
             dispatchImage(view, pos!.pos, schema, `${accessURI}/${result.storename}`)
         }

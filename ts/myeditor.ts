@@ -60,10 +60,7 @@ class MyEditor {
         schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)
         schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")
 
-        this.schema = new Schema({
-            nodes: schema.spec.nodes,
-            marks: schema.spec.marks
-        })
+        this.schema = new Schema({ nodes: schema.spec.nodes, marks: schema.spec.marks })
 
         const baseMenus = buildMenuItems(this.schema).fullMenu
         const tableMenus = [getTableMenus()]
@@ -71,18 +68,11 @@ class MyEditor {
 
         const menus = baseMenus.concat(tableMenus, youtubeMenus)
 
-        const basePlugin = this.setupBasePlugin({
-            schema: this.schema,
-            menuContent: (menus as MenuItem[][])
-        })
+        const basePlugin = this.setupBasePlugin({ schema: this.schema, menuContent: (menus as MenuItem[][]) })
         const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
         const tablePlugins = [
-            columnResizing({}),
-            tableEditing(),
-            keymap({
-                Tab: goToNextCell(1),
-                "Shift-Tab": goToNextCell(-1)
-            })
+            columnResizing({}), tableEditing(),
+            keymap({ Tab: goToNextCell(1), "Shift-Tab": goToNextCell(-1) })
         ]
 
         const mergedPlugins = basePlugin.concat(pluginImageDropHandler, ...tablePlugins)
