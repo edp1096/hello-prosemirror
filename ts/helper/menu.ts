@@ -1,10 +1,11 @@
 import {
-    wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem, liftItem,
-    selectParentNodeItem, undoItem, redoItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
+    wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem,
+    selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
 } from "prosemirror-menu"
+import { undo, redo } from "prosemirror-history"
 import { NodeSelection, EditorState, Command } from "prosemirror-state"
 import { Schema, NodeType, MarkType } from "prosemirror-model"
-import { toggleMark } from "prosemirror-commands"
+import { toggleMark, lift } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
 import { TextField, openPrompt } from "./prompt"
 
@@ -198,6 +199,9 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
     icons.bulletList = setIconElement("bi-list-ul")
     icons.orderedList = setIconElement("bi-list-ol")
     icons.blockquote = setIconElement("bi-quote")
+    icons.undo = setIconElement("bi-arrow-counterclockwise")
+    icons.redo = setIconElement("bi-arrow-clockwise")
+    icons.outdent = setIconElement("bi-text-indent-right")
 
     let r: MenuItemResult = {} as any
     let mark: MarkType | undefined
@@ -243,6 +247,27 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
         })
     }
 
+    const undoItem = new MenuItem({
+        title: "Undo last change",
+        run: undo,
+        enable: state => undo(state),
+        icon: icons.undo
+    })
+
+    const redoItem = new MenuItem({
+        title: "Redo last undone change",
+        run: redo,
+        enable: state => redo(state),
+        icon: icons.redo
+    })
+
+    const outdent = new MenuItem({
+        title: "Lift out of enclosing block",
+        run: lift,
+        select: state => lift(state),
+        icon: icons.outdent
+    })
+
     let cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
     r.insertMenu = new Dropdown(cut([r.insertImage, r.insertHorizontalRule]), { label: "Insert" })
@@ -257,7 +282,7 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
     )
 
     r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink])]
-    r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, liftItem, selectParentNodeItem])]
+    r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdent, selectParentNodeItem])]
     r.fullMenu = r.inlineMenu.concat([[r.insertMenu, r.typeMenu]], [[undoItem, redoItem]], r.blockMenu)
 
     return r
