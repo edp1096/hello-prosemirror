@@ -26,7 +26,8 @@ import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
 import { imageDropHandler, dispatchImage } from "./helper/upload"
-import { getTableMenus, mergeTableMenu, setTableNodes } from "./helper/table"
+// import { getTableMenus, mergeTableMenu, setTableNodes } from "./helper/table"
+import { getTableMenus, setTableNodes } from "./helper/table"
 import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
 
 // import { exampleSetup } from "prosemirror-example-setup"
@@ -62,12 +63,12 @@ class MyEditor {
 
         this.schema = new Schema({ nodes: schema.spec.nodes, marks: schema.spec.marks })
 
-        const baseMenus = buildMenuItems(this.schema).fullMenu
-        const tableMenus = [getTableMenus()]
-        const youtubeMenus = [getYoutubeMenus()]
-
-        const menus = baseMenus.concat(tableMenus, youtubeMenus)
-
+        // const baseMenus = buildMenuItems(this.schema).fullMenu
+        // const tableMenus = [getTableMenus()]
+        // const youtubeMenus = [getYoutubeMenus()]
+        // const menus = baseMenus.concat(tableMenus, youtubeMenus)
+        const menus = buildMenuItems(this.schema).fullMenu
+        
         const basePlugin = this.setupBasePlugin({ schema: this.schema, menuContent: (menus as MenuItem[][]) })
         const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
         const tablePlugins = [

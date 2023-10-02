@@ -1,12 +1,14 @@
 import { NodeSelection, EditorState } from "prosemirror-state"
 import { NodeSpec, Node, Attrs } from "prosemirror-model"
-import { MenuItem, MenuElement } from "prosemirror-menu"
+import { MenuItem, MenuElement, MenuItemSpec } from "prosemirror-menu"
 import { EditorView } from 'prosemirror-view'
+
 import { TextField, openPrompt } from "./prompt"
+import { setIconElement } from "./utils"
 
 const videoFormat = ["youtube", "dailymotion", "vimeo"]
 
-export const youtubeNodeSpec: NodeSpec = {
+const youtubeNodeSpec: NodeSpec = {
     attrs: { uri: { default: "" } },
     inline: true,
     group: "inline",
@@ -67,7 +69,14 @@ function insertYoutube() {
     }
 }
 
-export function getYoutubeMenus(): MenuElement[] {
-    const menuAddYoutube = new MenuItem({ label: "📺Add youtube", run: insertYoutube() })
-    return [menuAddYoutube]
+function getYoutubeMenus(): MenuElement[] {
+    const menuItem = {
+        title: "Add youtube",
+        icon: setIconElement("bi-youtube"),
+        run: insertYoutube()
+    }
+
+    return [new MenuItem(menuItem)]
 }
+
+export { youtubeNodeSpec, getYoutubeMenus }

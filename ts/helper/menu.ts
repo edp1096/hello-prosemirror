@@ -8,6 +8,9 @@ import { Schema, NodeType, MarkType } from "prosemirror-model"
 import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
 import { TextField, openPrompt } from "./prompt"
+import { getYoutubeMenus } from "./youtube"
+import { getTableMenus } from "./table"
+import { setIconElement } from "./utils"
 
 
 function canInsert(state: EditorState, nodeType: NodeType) {
@@ -138,16 +141,6 @@ type MenuItemResult = {
     fullMenu: MenuElement[][]
 }
 
-function setIconElement(iconName: string): IconSpec {
-    const iconEL = document.createElement("i")
-    iconEL.setAttribute("class", iconName)
-    iconEL.setAttribute("style", "font-size: 1.3em; margin: -0.3em;")
-
-    const result = { dom: iconEL }
-
-    return result
-}
-
 /// Given a schema, look for default mark and node types in it and
 /// return an object with relevant menu items relating to those marks.
 export function buildMenuItems(schema: Schema): MenuItemResult {
@@ -215,7 +208,7 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
     const undoItem = new MenuItem({ title: "Undo last change", run: undo, enable: state => undo(state), icon: icons.undo })
     const redoItem = new MenuItem({ title: "Redo last undone change", run: redo, enable: state => redo(state), icon: icons.redo })
     const outdentItem = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: icons.outdent })
-    // join up = shift + enter
+    // TODO: join up -> shift + enter support
     const joinUpItem = new MenuItem({ title: "Join with above block", run: joinUp, select: state => joinUp(state), icon: icons.paragraph })
 
     let cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
@@ -233,7 +226,11 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
 
     r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink])]
     r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdentItem, selectParentNodeItem])]
-    r.fullMenu = r.inlineMenu.concat([[r.insertMenu, r.typeMenu]], [[undoItem, redoItem]], r.blockMenu)
+
+    const menuTable = [getTableMenus()]
+    const menuWebvideo = [getYoutubeMenus()]
+
+    r.fullMenu = r.inlineMenu.concat([[r.insertMenu, r.typeMenu]], [[undoItem, redoItem]], r.blockMenu, menuWebvideo, menuTable)
 
     return r
 }
