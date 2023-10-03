@@ -27,7 +27,7 @@ import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
 import { imageDropHandler, dispatchImage } from "./helper/upload"
 // import { getTableMenus, mergeTableMenu, setTableNodes } from "./helper/table"
-import { getTableMenus, setTableNodes } from "./helper/table"
+import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
 import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
 
 // import { exampleSetup } from "prosemirror-example-setup"
@@ -69,11 +69,16 @@ class MyEditor {
         // const menus = baseMenus.concat(tableMenus, youtubeMenus)
         const menus = buildMenuItems(this.schema).fullMenu
         
-        const basePlugin = this.setupBasePlugin({ schema: this.schema, menuContent: (menus as MenuItem[][]) })
+        const basePlugin = this.setupBasePlugin({
+            schema: this.schema,
+            menuContent: (menus as MenuItem[][]),
+            floatingMenu: false
+        })
         const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
         const tablePlugins = [
             columnResizing({}), tableEditing(),
-            keymap({ Tab: goToNextCell(1), "Shift-Tab": goToNextCell(-1) })
+            keymap({ Tab: goToNextCell(1), "Shift-Tab": goToNextCell(-1) }),
+            tableContextMenuHandler()
         ]
 
         const mergedPlugins = basePlugin.concat(pluginImageDropHandler, ...tablePlugins)
@@ -84,6 +89,7 @@ class MyEditor {
         })
 
         this.view = new EditorView(target, { state: this.state });
+
         (window as any).view = this.view
     }
 
@@ -105,9 +111,9 @@ class MyEditor {
             gapCursor(),
         ]
 
-        if (options.menuBar !== false) {
+        if (options.menuBar != false) {
             plugins.push(menuBar({
-                floating: options.floatingMenu !== false,
+                floating: options.floatingMenu != false,
                 content: options.menuContent || buildMenuItems(options.schema).fullMenu
             }))
         }

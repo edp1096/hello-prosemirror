@@ -28,7 +28,6 @@ const youtubeNodeSpec: NodeSpec = {
     parseDOM: [{
         tag: "iframe[video-type]",
         getAttrs: dom => {
-            console.log(dom)
             const videoType = (dom as HTMLElement).getAttribute("video-type")
             const uri = (dom as HTMLElement).getAttribute("src")
 

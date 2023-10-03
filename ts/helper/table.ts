@@ -1,6 +1,6 @@
 import OrderedMap from 'orderedmap'
 
-import { EditorState } from "prosemirror-state"
+import { EditorState, Plugin } from "prosemirror-state"
 import { Schema, DOMParser, DOMSerializer, Fragment, NodeType, NodeSpec } from "prosemirror-model"
 import { menuBar, MenuItemSpec, MenuItem, MenuElement, Dropdown } from "prosemirror-menu"
 import { EditorView } from "prosemirror-view"
@@ -42,7 +42,6 @@ function setTableNodes(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
 
 function dispatchTable(state: EditorState, dispatch: any, view: EditorView): boolean {
     const tr = view.state.tr
-
     const tableRowNode = state.schema.nodes.table_row.create(undefined, Fragment.fromArray([
         state.schema.nodes.table_cell.createAndFill()!,
         state.schema.nodes.table_cell.createAndFill()!
@@ -111,17 +110,41 @@ function getTableMenus(): MenuElement[] {
         icon: setIconElement("bi-pencil-square")
     }
 
-    // Context menu - https://prosemirror.net/examples/tooltip
-
-
-
     const tableMenu = [
         new MenuItem(menuItemAddTable),
-        new MenuItem({ title: "Delete table", icon: setIconElement("bi-file-excel"), select: deleteTable, run: deleteTable }),
+        // new MenuItem({ title: "Delete table", icon: setIconElement("bi-file-excel"), select: deleteTable, run: deleteTable }),
         new Dropdown(dropdownItemsEditTable, menuItemEditTable),
     ]
 
     return tableMenu
 }
 
-export { setTableNodes, getTableMenus }
+// Context menu
+// https://discuss.prosemirror.net/t/make-right-click-on-a-cellselection-area-work-as-expect/2675/3
+// https://prosemirror.net/examples/tooltip
+function tableContextMenuHandler(): Plugin<any> {
+    const plugin = new Plugin({
+        props: {
+            handleDOMEvents: {
+                mouseup: function (view: EditorView, event: MouseEvent,): void {
+                    const root = view.dom
+                    let node = (event.target as HTMLElement)
+
+                    if (event.button == 2) {
+                        while (node && node != root) {
+                            if (node.nodeName === 'TD' || node.nodeName === 'TH') {
+                                console.log("haha", node.nodeName)
+                                break
+                            }
+                            node = node.parentNode as HTMLElement
+                        }
+                    }
+                }
+            }
+        }
+    })
+
+    return plugin
+}
+
+export { setTableNodes, getTableMenus, tableContextMenuHandler }
