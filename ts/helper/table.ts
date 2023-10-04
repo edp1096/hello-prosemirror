@@ -123,6 +123,10 @@ function getTableMenus(): MenuElement[] {
 // https://discuss.prosemirror.net/t/make-right-click-on-a-cellselection-area-work-as-expect/2675/3
 // https://prosemirror.net/examples/tooltip
 function tableContextMenuHandler(): Plugin<any> {
+    const menuContainer = document.createElement("div")
+    menuContainer.className = "ContextMenu"
+    menuContainer.innerHTML = "hahaha"
+
     const plugin = new Plugin({
         props: {
             handleDOMEvents: {
@@ -133,7 +137,29 @@ function tableContextMenuHandler(): Plugin<any> {
                     if (event.button == 2) {
                         while (node && node != root) {
                             if (node.nodeName === 'TD' || node.nodeName === 'TH') {
-                                console.log("haha", node.nodeName)
+                                const $targetPos = view.state.doc.resolve(view.posAtDOM(node, 0))
+                                const pos = view.posAtCoords({ left: (event as MouseEvent).clientX, top: (event as MouseEvent).clientY })
+                                event.preventDefault()
+                                event.stopPropagation()
+
+                                menuContainer.style.left = `${pos?.pos}`
+                                menuContainer.style.top = `${pos?.pos}`
+                                view.dom.parentNode?.appendChild(menuContainer)
+
+                                menuContainer.style.display = ""
+                                let { from, to } = view.state.selection
+                                
+                                let start = view.coordsAtPos(from), end = view.coordsAtPos(to) // These are in screen coordinates
+                                let box = menuContainer!.offsetParent!.getBoundingClientRect() // The box in which the tooltip is positioned, to use as base
+
+                                // Find a center-ish x position from the selection endpoints (when
+                                // crossing lines, end may be more to the left)
+                                let left = Math.max((start.left + end.left) / 2, start.left + 3)
+                                menuContainer.style.left = (left - box.left) + "px"
+                                menuContainer.style.bottom = (box.bottom - start.top) + "px"
+                                menuContainer.textContent = String(to - from)
+
+                                console.log("haha", node.nodeName, pos)
                                 break
                             }
                             node = node.parentNode as HTMLElement
