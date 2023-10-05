@@ -68,7 +68,7 @@ class MyEditor {
         // const youtubeMenus = [getYoutubeMenus()]
         // const menus = baseMenus.concat(tableMenus, youtubeMenus)
         const menus = buildMenuItems(this.schema).fullMenu
-        
+
         const basePlugin = this.setupBasePlugin({
             schema: this.schema,
             menuContent: (menus as MenuItem[][]),
@@ -90,7 +90,20 @@ class MyEditor {
 
         this.view = new EditorView(target, { state: this.state });
 
-        (window as any).view = this.view
+        const editorContainer = this.view.dom.parentElement?.parentElement as HTMLElement
+        const menubar = editorContainer.firstElementChild?.firstElementChild as HTMLElement
+
+        const menubarPaddingTOP = parseInt((menubar.ownerDocument.defaultView?.getComputedStyle(menubar, null).getPropertyValue("padding-top"))?.replaceAll("px", "")!)
+        const menubarPaddingBOT = parseInt((menubar.ownerDocument.defaultView?.getComputedStyle(menubar, null).getPropertyValue("padding-bottom"))?.replaceAll("px", "")!)
+        const domPaddingTOP = parseInt(this.view.dom.ownerDocument.defaultView?.getComputedStyle(this.view.dom, null).getPropertyValue("padding-top")?.replaceAll("px", "")!)
+        const domPaddingBOT = parseInt(this.view.dom.ownerDocument.defaultView?.getComputedStyle(this.view.dom, null).getPropertyValue("padding-bottom")?.replaceAll("px", "")!)
+        const divScrollHeightCorrection = menubar.clientHeight + menubarPaddingTOP + menubarPaddingBOT + domPaddingTOP + domPaddingBOT
+
+        this.view.dom.style.maxHeight = `${editorContainer.clientHeight - divScrollHeightCorrection}px`
+        this.view.dom.style.overflowY = "auto"
+
+        const w = window as any
+        w.view = this.view
     }
 
     item(label: string, cmd: any) { return new MenuItem({ label, select: cmd, run: cmd }) }

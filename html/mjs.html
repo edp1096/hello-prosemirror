@@ -97,13 +97,7 @@
     window.clearContent = clearContent
     window.insertImage = insertImage
 
-    document.addEventListener("DOMContentLoaded", async () => {
-        const buttonsEL = document.querySelector("#buttons")
-        // const editorHeight = 200 + "px"
-        // editorEL.style.height = editorHeight
-        const editorMaxHeight = window.innerHeight - buttonsEL.offsetHeight - 2 + "px"
-        editorEL.style.maxHeight = editorMaxHeight
-    })
+    document.addEventListener("DOMContentLoaded", async () => { })
 </script>
 
 <style>
@@ -117,9 +111,9 @@
      https://spin.atomicobject.com/2019/11/21/creating-a-resizable-html-element
      */
     #editor {
+        height: 90vh;
         resize: vertical;
-        overflow: auto;
-
+        overflow: hidden;
         border: 1px solid silver;
     }
 </style>
