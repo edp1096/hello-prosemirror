@@ -15,6 +15,24 @@
     <link rel="stylesheet" href="myeditor.css">
 </head>
 
+<style>
+    body {
+        margin: 10;
+        padding: 10;
+    }
+
+    /*
+     Need js for custom resize handle??? :
+     https://spin.atomicobject.com/2019/11/21/creating-a-resizable-html-element
+     */
+    #editor {
+        height: 90vh;
+        resize: vertical;
+        overflow: hidden;
+        border: 1px solid silver;
+    }
+</style>
+
 <body>
     <div id="buttons">
         <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
@@ -99,23 +117,5 @@
 
     document.addEventListener("DOMContentLoaded", async () => { })
 </script>
-
-<style>
-    body {
-        margin: 10;
-        padding: 10;
-    }
-
-    /*
-     Need js for custom resize handle??? :
-     https://spin.atomicobject.com/2019/11/21/creating-a-resizable-html-element
-     */
-    #editor {
-        height: 90vh;
-        resize: vertical;
-        overflow: hidden;
-        border: 1px solid silver;
-    }
-</style>
 
 </html>

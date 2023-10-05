@@ -90,6 +90,13 @@ class MyEditor {
 
         this.view = new EditorView(target, { state: this.state });
 
+        this.setupHeight()
+
+        const w = window as any
+        w.view = this.view
+    }
+
+    setupHeight() {
         const editorContainer = this.view.dom.parentElement?.parentElement as HTMLElement
         const menubar = editorContainer.firstElementChild?.firstElementChild as HTMLElement
 
@@ -99,11 +106,8 @@ class MyEditor {
         const domPaddingBOT = parseInt(this.view.dom.ownerDocument.defaultView?.getComputedStyle(this.view.dom, null).getPropertyValue("padding-bottom")?.replaceAll("px", "")!)
         const divScrollHeightCorrection = menubar.clientHeight + menubarPaddingTOP + menubarPaddingBOT + domPaddingTOP + domPaddingBOT
 
-        this.view.dom.style.maxHeight = `${editorContainer.clientHeight - divScrollHeightCorrection}px`
+        this.view.dom.style.height = `${editorContainer.clientHeight - divScrollHeightCorrection}px`
         this.view.dom.style.overflowY = "auto"
-
-        const w = window as any
-        w.view = this.view
     }
 
     item(label: string, cmd: any) { return new MenuItem({ label, select: cmd, run: cmd }) }

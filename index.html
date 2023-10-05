@@ -15,7 +15,33 @@
     <link rel="stylesheet" href="dist/myeditor.css">
 </head>
 
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    /*
+         Need js for custom resize handle??? :
+         https://spin.atomicobject.com/2019/11/21/creating-a-resizable-html-element
+         */
+    #editor {
+        height: 30vh;
+        resize: vertical;
+        overflow: hidden;
+        border: 1px solid silver;
+    }
+
+    editor-other {
+        height: 40vh;
+    }
+</style>
+
 <body>
+    <p>
+    <h2>Editor in shadow DOM</h2>
+    </p>
+
     <div id="buttons">
         <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
         <button type="button" onclick="clearContent()">Clear content</button>|
@@ -25,8 +51,12 @@
     </div>
     <div id="editor"></div>
 
+    <p>
+    <h2>Editor in DOM</h2>
+    </p>
+
     <div>
-        <!-- <editor-other id="editor2-1" data-idx="1"></editor-other> -->
+        <editor-other id="editor2-1" data-idx="1"></editor-other>
     </div>
 
 </body>
@@ -144,29 +174,7 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", async () => {})
+    document.addEventListener("DOMContentLoaded", async () => { })
 </script>
-
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-    }
-
-    /*
-     Need js for custom resize handle??? :
-     https://spin.atomicobject.com/2019/11/21/creating-a-resizable-html-element
-     */
-    #editor {
-        height: 30vh;
-        resize: vertical;
-        overflow: hidden;
-        border: 1px solid silver;
-    }
-
-    editor-other {
-        height: 40vh;
-    }
-</style>
 
 </html>
