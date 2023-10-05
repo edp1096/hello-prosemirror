@@ -92,6 +92,7 @@ class MyEditor {
             for (let el of els) {
                 if (el.target == editorContainer) {
                     this.setupHeight(editorContainer)
+                    break
                 }
             }
         })
