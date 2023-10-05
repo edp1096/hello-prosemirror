@@ -45,7 +45,7 @@ class MyEditor {
     uploadActionURI: string
     uploadAccessURI: string
 
-    constructor(data: string, target: HTMLElement, options: EditorOptionType) {
+    constructor(data: string, editorContainer: HTMLElement, options: EditorOptionType) {
         this.uploadActionURI = "http://localhost:8864/upload"
         this.uploadAccessURI = "http://localhost:8864/files"
 
@@ -88,16 +88,22 @@ class MyEditor {
             plugins: mergedPlugins
         })
 
-        this.view = new EditorView(target, { state: this.state });
+        const resizeObserver = new ResizeObserver((els) => {
+            for (let el of els) {
+                if (el.target == editorContainer) {
+                    this.setupHeight(editorContainer)
+                }
+            }
+        })
+        resizeObserver.observe(editorContainer)
 
-        this.setupHeight()
+        this.view = new EditorView(editorContainer, { state: this.state })
 
-        const w = window as any
+        const w = globalThis as any
         w.view = this.view
     }
 
-    setupHeight() {
-        const editorContainer = this.view.dom.parentElement?.parentElement as HTMLElement
+    setupHeight(editorContainer: HTMLElement) {
         const menubar = editorContainer.firstElementChild?.firstElementChild as HTMLElement
 
         const menubarPaddingTOP = parseInt((menubar.ownerDocument.defaultView?.getComputedStyle(menubar, null).getPropertyValue("padding-top"))?.replaceAll("px", "")!)
