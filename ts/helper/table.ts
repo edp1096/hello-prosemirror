@@ -143,6 +143,7 @@ function tableContextMenuHandler(): Plugin<any> {
                     }
                 },
                 contextmenu: function (view: EditorView, event: MouseEvent,): void {
+                    const editorContainer = view.dom.parentElement?.parentElement as HTMLElement
                     const root = view.dom
                     let node = (event.target as HTMLElement)
 
@@ -154,16 +155,18 @@ function tableContextMenuHandler(): Plugin<any> {
                             menuContainer.style.display = ""
                             view.dom.parentNode?.appendChild(menuContainer)
 
-                            const pos = view.posAtCoords({ left: (event as MouseEvent).clientX, top: (event as MouseEvent).clientY })
-                            const { from, to } = view.state.selection
-                            const start = view.coordsAtPos(from), end = view.coordsAtPos(to)
-                            const box = menuContainer!.offsetParent!.getBoundingClientRect()
-                            const left = Math.max((start.left + end.left) / 2, start.left + 3)
+                            let px = (event as MouseEvent).clientX
+                            let py = (event as MouseEvent).clientY
+                            const editorBoundingBox = editorContainer.getBoundingClientRect()
+                            const contextBoundingBox = menuContainer.getBoundingClientRect()
 
-                            menuContainer.style.left = (left - box.left) + "px"
-                            menuContainer.style.bottom = (box.bottom - start.top) + "px"
+                            if ((py + contextBoundingBox.height) > (globalThis as any).innerHeight) {
+                                py -= contextBoundingBox.height
+                            }
 
-                            console.log("Positions:", node.nodeName, pos, (event as MouseEvent).clientX, (event as MouseEvent).clientY)
+                            menuContainer.style.left = px + "px"
+                            menuContainer.style.top = py + "px"
+
                             break
                         }
                         node = node.parentNode as HTMLElement
