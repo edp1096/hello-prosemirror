@@ -125,45 +125,48 @@ function getTableMenus(): MenuElement[] {
 function tableContextMenuHandler(): Plugin<any> {
     const menuContainer = document.createElement("div")
     menuContainer.className = "ContextMenu"
-    menuContainer.innerHTML = "hahaha"
+    menuContainer.innerHTML = "<p>a</p><p>a</p><p>a</p><p>Hello</p>"
 
     const plugin = new Plugin({
         props: {
             handleDOMEvents: {
                 mouseup: function (view: EditorView, event: MouseEvent,): void {
+                    switch (event.button) {
+                        case 0: // Left mouse button
+                            menuContainer.style.display = "none"
+                            // view.dom.parentNode?.removeChild(menuContainer) // Error when not appeneded so, keep appended
+                            break
+                        case 1: // Wheel button
+                            break
+                        case 2: // Right mouse button
+                            break
+                    }
+                },
+                contextmenu: function (view: EditorView, event: MouseEvent,): void {
                     const root = view.dom
                     let node = (event.target as HTMLElement)
 
-                    if (event.button == 2) {
-                        while (node && node != root) {
-                            if (node.nodeName === 'TD' || node.nodeName === 'TH') {
-                                const $targetPos = view.state.doc.resolve(view.posAtDOM(node, 0))
-                                const pos = view.posAtCoords({ left: (event as MouseEvent).clientX, top: (event as MouseEvent).clientY })
-                                event.preventDefault()
-                                event.stopPropagation()
+                    while (node && node != root) {
+                        if (node.nodeName === 'TD' || node.nodeName === 'TH') {
+                            event.preventDefault()
+                            event.stopPropagation()
 
-                                menuContainer.style.left = `${pos?.pos}`
-                                menuContainer.style.top = `${pos?.pos}`
-                                view.dom.parentNode?.appendChild(menuContainer)
+                            menuContainer.style.display = ""
+                            view.dom.parentNode?.appendChild(menuContainer)
 
-                                menuContainer.style.display = ""
-                                let { from, to } = view.state.selection
-                                
-                                let start = view.coordsAtPos(from), end = view.coordsAtPos(to) // These are in screen coordinates
-                                let box = menuContainer!.offsetParent!.getBoundingClientRect() // The box in which the tooltip is positioned, to use as base
+                            const pos = view.posAtCoords({ left: (event as MouseEvent).clientX, top: (event as MouseEvent).clientY })
+                            const { from, to } = view.state.selection
+                            const start = view.coordsAtPos(from), end = view.coordsAtPos(to)
+                            const box = menuContainer!.offsetParent!.getBoundingClientRect()
+                            const left = Math.max((start.left + end.left) / 2, start.left + 3)
 
-                                // Find a center-ish x position from the selection endpoints (when
-                                // crossing lines, end may be more to the left)
-                                let left = Math.max((start.left + end.left) / 2, start.left + 3)
-                                menuContainer.style.left = (left - box.left) + "px"
-                                menuContainer.style.bottom = (box.bottom - start.top) + "px"
-                                menuContainer.textContent = String(to - from)
+                            menuContainer.style.left = (left - box.left) + "px"
+                            menuContainer.style.bottom = (box.bottom - start.top) + "px"
 
-                                console.log("haha", node.nodeName, pos)
-                                break
-                            }
-                            node = node.parentNode as HTMLElement
+                            console.log("Positions:", node.nodeName, pos, (event as MouseEvent).clientX, (event as MouseEvent).clientY)
+                            break
                         }
+                        node = node.parentNode as HTMLElement
                     }
                 }
             }
