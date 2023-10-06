@@ -125,7 +125,9 @@ function getTableMenus(): MenuElement[] {
 function tableContextMenuHandler(): Plugin<any> {
     const menuContainer = document.createElement("div")
     menuContainer.className = "ContextMenu"
-    menuContainer.innerHTML = "<p>a</p><p>a</p><p>a</p><p>Hello</p>"
+    menuContainer.innerHTML = ""
+
+    const tableCellNodes = ["TH", "TD"]
 
     const plugin = new Plugin({
         props: {
@@ -148,9 +150,14 @@ function tableContextMenuHandler(): Plugin<any> {
                     let node = (event.target as HTMLElement)
 
                     while (node && node != root) {
-                        if (node.nodeName === 'TD' || node.nodeName === 'TH') {
+                        if (tableCellNodes.includes(node.nodeName)) {
                             event.preventDefault()
                             event.stopPropagation()
+
+                            const contextMenuItem = item("Insert column before", addColumnBefore)
+                            console.log(contextMenuItem.render(view))
+
+                            menuContainer.innerHTML = `${contextMenuItem.render(view).dom.innerHTML}<p>a</p><p>a</p><p>a</p><p>Hello</p>`
 
                             menuContainer.style.display = ""
                             view.dom.parentNode?.appendChild(menuContainer)
@@ -166,6 +173,10 @@ function tableContextMenuHandler(): Plugin<any> {
 
                             menuContainer.style.left = px + "px"
                             menuContainer.style.top = py + "px"
+
+                            // // Test - Insert column before
+                            // addColumnBefore(view.state, view.dispatch);
+                            // (setCellAttr("background", "#faa"))(view.state, view.dispatch)
 
                             break
                         }
