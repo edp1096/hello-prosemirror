@@ -122,13 +122,15 @@ function getTableMenus(): MenuElement[] {
 
 const contextMenuContainer = document.createElement("div")
 
-function getContextMenuItem(menuName: string, fn: VoidFunction): HTMLElement {
+function getContextMenuItem(menuName: string, fn: VoidFunction|null): HTMLElement {
     const contextMenuItem = document.createElement("div") as HTMLElement
     contextMenuItem.className = "ContextMenuItem"
     contextMenuItem.textContent = menuName
-    contextMenuItem.onclick = () => {
-        fn()
-        contextMenuContainer.style.display = "none"
+    if (fn != null) {
+        contextMenuItem.onclick = () => {
+            fn()
+            contextMenuContainer.style.display = "none"
+        }
     }
 
     return contextMenuItem
@@ -142,14 +144,19 @@ function prepareContextMenuItems(view: EditorView) {
     const menuItemAddRowAfter = getContextMenuItem("Insert row after", () => addRowAfter(view.state, view.dispatch))
     const menuItemDeleteRow = getContextMenuItem("Delete row", () => deleteRow(view.state, view.dispatch))
     const menuItemDeleteTable = getContextMenuItem("Delete table", () => deleteTable(view.state, view.dispatch))
+
     const menuItemMergeCells = getContextMenuItem("Merge cells", () => mergeCells(view.state, view.dispatch))
     const menuItemRestoreMergedCell = getContextMenuItem("Restore merged cell", () => splitCell(view.state, view.dispatch))
+
     const menuItemToggleHeaderColumn = getContextMenuItem("Toggle header column", () => toggleHeaderColumn(view.state, view.dispatch))
     const menuItemToggleHeaderRow = getContextMenuItem("Toggle header row", () => toggleHeaderRow(view.state, view.dispatch))
     const menuItemToggleHeaderCells = getContextMenuItem("Toggle header cells", () => toggleHeaderCell(view.state, view.dispatch))
+
     const menuItemMakeCellGreen = getContextMenuItem("Make cell green", () => (setCellAttr("background", "#dfd"))(view.state, view.dispatch))
     const menuItemMakeCellRed = getContextMenuItem("Make cell red", () => (setCellAttr("background", "#faa"))(view.state, view.dispatch))
     const menuItemMakeCellNoColor = getContextMenuItem("Make cell no color", () => (setCellAttr("background", null))(view.state, view.dispatch))
+
+    const menuItemSplitter = document.createElement("hr") as HTMLElement
 
     contextMenuContainer.appendChild(menuItemAddColumnBefore)
     contextMenuContainer.appendChild(menuItemAddColumnAfter)
@@ -158,11 +165,20 @@ function prepareContextMenuItems(view: EditorView) {
     contextMenuContainer.appendChild(menuItemAddRowAfter)
     contextMenuContainer.appendChild(menuItemDeleteRow)
     contextMenuContainer.appendChild(menuItemDeleteTable)
+
+    contextMenuContainer.appendChild(menuItemSplitter.cloneNode())
+
     contextMenuContainer.appendChild(menuItemMergeCells)
     contextMenuContainer.appendChild(menuItemRestoreMergedCell)
+
+    contextMenuContainer.appendChild(menuItemSplitter.cloneNode())
+
     contextMenuContainer.appendChild(menuItemToggleHeaderColumn)
     contextMenuContainer.appendChild(menuItemToggleHeaderRow)
     contextMenuContainer.appendChild(menuItemToggleHeaderCells)
+
+    contextMenuContainer.appendChild(menuItemSplitter.cloneNode())
+
     contextMenuContainer.appendChild(menuItemMakeCellGreen)
     contextMenuContainer.appendChild(menuItemMakeCellRed)
     contextMenuContainer.appendChild(menuItemMakeCellNoColor)
@@ -217,10 +233,6 @@ function tableContextMenuHandler(): Plugin<any> {
 
                             contextMenuContainer.style.left = px + "px"
                             contextMenuContainer.style.top = py + "px"
-
-                            // // Test - Insert column before
-                            // addColumnBefore(view.state, view.dispatch);
-                            // (setCellAttr("background", "#faa"))(view.state, view.dispatch)
 
                             break
                         }

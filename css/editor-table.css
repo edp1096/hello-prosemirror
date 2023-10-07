@@ -50,11 +50,18 @@
 }
 
 .ContextMenu {
-    position: absolute;
     z-index: 1100;
-    background-color: #ddd;
+    position: absolute;
+    padding: 0.3em;
+    background-color: #fff;
+    border: 1px solid #ccc;
+}
+
+.ContextMenuItem {
+    padding: 0.1em;
 }
 
 .ContextMenuItem:hover {
-    background-color: sandybrown;
+    color: #ffe;
+    background-color: gray;
 }
