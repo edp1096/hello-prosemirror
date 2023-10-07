@@ -122,10 +122,20 @@ function getTableMenus(): MenuElement[] {
 
 const contextMenuContainer = document.createElement("div")
 
-function getContextMenuItem(menuName: string, fn: VoidFunction|null): HTMLElement {
+function getContextMenuItem(fn: VoidFunction | null, menuName: string, iconName: string | null = null, iconRotate: Number = 0): HTMLElement {
     const contextMenuItem = document.createElement("div") as HTMLElement
     contextMenuItem.className = "ContextMenuItem"
-    contextMenuItem.textContent = menuName
+
+    const menuIcon = document.createElement("i") as HTMLElement
+    const menuText = document.createElement("span") as HTMLElement
+
+    menuIcon.setAttribute("class", `bi ${iconName}`)
+    if (iconName) { menuIcon.setAttribute("style", `transform: rotate(${iconRotate}deg); display: inline-block;`) }
+    menuText.innerText = ` ${menuName}`
+
+    contextMenuItem.appendChild(menuIcon)
+    contextMenuItem.appendChild(menuText)
+
     if (fn != null) {
         contextMenuItem.onclick = () => {
             fn()
@@ -137,24 +147,24 @@ function getContextMenuItem(menuName: string, fn: VoidFunction|null): HTMLElemen
 }
 
 function prepareContextMenuItems(view: EditorView) {
-    const menuItemAddColumnBefore = getContextMenuItem("Insert column before", () => addColumnBefore(view.state, view.dispatch))
-    const menuItemAddColumnAfter = getContextMenuItem("Insert column after", () => addColumnAfter(view.state, view.dispatch))
-    const menuItemDeleteColumn = getContextMenuItem("Delete column", () => deleteColumn(view.state, view.dispatch))
-    const menuItemAddRowBefore = getContextMenuItem("Insert row before", () => addRowBefore(view.state, view.dispatch))
-    const menuItemAddRowAfter = getContextMenuItem("Insert row after", () => addRowAfter(view.state, view.dispatch))
-    const menuItemDeleteRow = getContextMenuItem("Delete row", () => deleteRow(view.state, view.dispatch))
-    const menuItemDeleteTable = getContextMenuItem("Delete table", () => deleteTable(view.state, view.dispatch))
+    const menuItemAddColumnBefore = getContextMenuItem(() => addColumnBefore(view.state, view.dispatch), "Insert column before", "bi-node-plus", 180)
+    const menuItemAddColumnAfter = getContextMenuItem(() => addColumnAfter(view.state, view.dispatch), "Insert column after", "bi-node-plus")
+    const menuItemDeleteColumn = getContextMenuItem(() => deleteColumn(view.state, view.dispatch), "Delete column", "bi-file-minus")
+    const menuItemAddRowBefore = getContextMenuItem(() => addRowBefore(view.state, view.dispatch), "Insert row before", "bi-node-plus", 270)
+    const menuItemAddRowAfter = getContextMenuItem(() => addRowAfter(view.state, view.dispatch), "Insert row after", "bi-node-plus", 90)
+    const menuItemDeleteRow = getContextMenuItem(() => deleteRow(view.state, view.dispatch), "Delete row", "bi-x-square")
+    const menuItemDeleteTable = getContextMenuItem(() => deleteTable(view.state, view.dispatch), "Delete table", "bi-trash")
 
-    const menuItemMergeCells = getContextMenuItem("Merge cells", () => mergeCells(view.state, view.dispatch))
-    const menuItemRestoreMergedCell = getContextMenuItem("Restore merged cell", () => splitCell(view.state, view.dispatch))
+    const menuItemMergeCells = getContextMenuItem(() => mergeCells(view.state, view.dispatch), "Merge cells", "bi-union")
+    const menuItemRestoreMergedCell = getContextMenuItem(() => splitCell(view.state, view.dispatch), "Restore merged cell", "bi-arrow-counterclockwise")
 
-    const menuItemToggleHeaderColumn = getContextMenuItem("Toggle header column", () => toggleHeaderColumn(view.state, view.dispatch))
-    const menuItemToggleHeaderRow = getContextMenuItem("Toggle header row", () => toggleHeaderRow(view.state, view.dispatch))
-    const menuItemToggleHeaderCells = getContextMenuItem("Toggle header cells", () => toggleHeaderCell(view.state, view.dispatch))
+    const menuItemToggleHeaderColumn = getContextMenuItem(() => toggleHeaderColumn(view.state, view.dispatch), "Toggle header column", "bi-type-h1")
+    const menuItemToggleHeaderRow = getContextMenuItem(() => toggleHeaderRow(view.state, view.dispatch), "Toggle header row", "bi-type-h1")
+    const menuItemToggleHeaderCells = getContextMenuItem(() => toggleHeaderCell(view.state, view.dispatch), "Toggle header cells", "bi-type-h1")
 
-    const menuItemMakeCellGreen = getContextMenuItem("Make cell green", () => (setCellAttr("background", "#dfd"))(view.state, view.dispatch))
-    const menuItemMakeCellRed = getContextMenuItem("Make cell red", () => (setCellAttr("background", "#faa"))(view.state, view.dispatch))
-    const menuItemMakeCellNoColor = getContextMenuItem("Make cell no color", () => (setCellAttr("background", null))(view.state, view.dispatch))
+    const menuItemMakeCellGreen = getContextMenuItem(() => (setCellAttr("background", "#dfd"))(view.state, view.dispatch), "Make cell green")
+    const menuItemMakeCellRed = getContextMenuItem(() => (setCellAttr("background", "#faa"))(view.state, view.dispatch), "Make cell red")
+    const menuItemMakeCellNoColor = getContextMenuItem(() => (setCellAttr("background", null))(view.state, view.dispatch), "Make cell no color")
 
     const menuItemSplitter = document.createElement("hr") as HTMLElement
 
