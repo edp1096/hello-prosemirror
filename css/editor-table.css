@@ -58,10 +58,11 @@
 }
 
 .ContextMenuItem {
+    color: #666;
     padding: 0.1em;
 }
 
 .ContextMenuItem:hover {
-    color: #ffe;
-    background-color: gray;
+    background-color: #f2f2f2;
+    cursor: pointer;
 }
