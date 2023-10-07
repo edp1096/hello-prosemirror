@@ -73,6 +73,8 @@ function insertImage(imageURI: string): void {
 }
 
 async function uploadHandler() {
+    if (inputFileForm.files == null) { return }
+
     for (const file of inputFileForm.files!) {
         if (file == undefined) { return [] } // Selected nothing
 
