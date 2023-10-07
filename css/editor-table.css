@@ -52,4 +52,9 @@
 .ContextMenu {
     position: absolute;
     z-index: 1100;
+    background-color: #ddd;
+}
+
+.ContextMenuItem:hover {
+    background-color: sandybrown;
 }

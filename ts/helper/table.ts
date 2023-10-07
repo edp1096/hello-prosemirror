@@ -1,6 +1,6 @@
 import OrderedMap from 'orderedmap'
 
-import { EditorState, Plugin } from "prosemirror-state"
+import { EditorState, Plugin, Transaction } from "prosemirror-state"
 import { Schema, DOMParser, DOMSerializer, Fragment, NodeType, NodeSpec } from "prosemirror-model"
 import { menuBar, MenuItemSpec, MenuItem, MenuElement, Dropdown } from "prosemirror-menu"
 import { EditorView } from "prosemirror-view"
@@ -110,11 +110,8 @@ function getTableMenus(): MenuElement[] {
         icon: setIconElement("bi-pencil-square")
     }
 
-    const tableMenu = [
-        new MenuItem(menuItemAddTable),
-        // new MenuItem({ title: "Delete table", icon: setIconElement("bi-file-excel"), select: deleteTable, run: deleteTable }),
-        new Dropdown(dropdownItemsEditTable, menuItemEditTable),
-    ]
+    // const tableMenu = [new MenuItem(menuItemAddTable), new Dropdown(dropdownItemsEditTable, menuItemEditTable)]
+    const tableMenu = [new MenuItem(menuItemAddTable)]
 
     return tableMenu
 }
@@ -122,10 +119,24 @@ function getTableMenus(): MenuElement[] {
 // Context menu
 // https://discuss.prosemirror.net/t/make-right-click-on-a-cellselection-area-work-as-expect/2675/3
 // https://prosemirror.net/examples/tooltip
+
+const contextMenuContainer = document.createElement("div")
+
+function getContextMenuItem(menuName: string, fn: VoidFunction): HTMLElement {
+    const contextMenuItem = document.createElement("div") as HTMLElement
+    contextMenuItem.className = "ContextMenuItem"
+    contextMenuItem.textContent = menuName
+    contextMenuItem.onclick = () => {
+        fn()
+        contextMenuContainer.style.display = "none"
+    }
+
+    return contextMenuItem
+}
+
 function tableContextMenuHandler(): Plugin<any> {
-    const menuContainer = document.createElement("div")
-    menuContainer.className = "ContextMenu"
-    menuContainer.innerHTML = ""
+    contextMenuContainer.className = "ContextMenu"
+    contextMenuContainer.innerHTML = ""
 
     const tableCellNodes = ["TH", "TD"]
 
@@ -135,7 +146,7 @@ function tableContextMenuHandler(): Plugin<any> {
                 mouseup: function (view: EditorView, event: MouseEvent,): void {
                     switch (event.button) {
                         case 0: // Left mouse button
-                            menuContainer.style.display = "none"
+                            contextMenuContainer.style.display = "none"
                             // view.dom.parentNode?.removeChild(menuContainer) // Error when not appeneded so, keep appended
                             break
                         case 1: // Wheel button
@@ -154,25 +165,54 @@ function tableContextMenuHandler(): Plugin<any> {
                             event.preventDefault()
                             event.stopPropagation()
 
-                            const contextMenuItem = item("Insert column before", addColumnBefore)
-                            console.log(contextMenuItem.render(view))
+                            contextMenuContainer.innerHTML = ``
 
-                            menuContainer.innerHTML = `${contextMenuItem.render(view).dom.innerHTML}<p>a</p><p>a</p><p>a</p><p>Hello</p>`
+                            const menuItemAddColumnBefore = getContextMenuItem("Insert column before", () => addColumnBefore(view.state, view.dispatch))
+                            const menuItemAddColumnAfter = getContextMenuItem("Insert column after", () => addColumnAfter(view.state, view.dispatch))
+                            const menuItemDeleteColumn = getContextMenuItem("Delete column", () => deleteColumn(view.state, view.dispatch))
+                            const menuItemAddRowBefore = getContextMenuItem("Insert row before", () => addRowBefore(view.state, view.dispatch))
+                            const menuItemAddRowAfter = getContextMenuItem("Insert row after", () => addRowAfter(view.state, view.dispatch))
+                            const menuItemDeleteRow = getContextMenuItem("Delete row", () => deleteRow(view.state, view.dispatch))
+                            const menuItemDeleteTable = getContextMenuItem("Delete table", () => deleteTable(view.state, view.dispatch))
+                            const menuItemMergeCells = getContextMenuItem("Merge cells", () => mergeCells(view.state, view.dispatch))
+                            const menuItemSplitCell = getContextMenuItem("Split cells", () => splitCell(view.state, view.dispatch))
+                            const menuItemToggleHeaderColumn = getContextMenuItem("Toggle header column", () => toggleHeaderColumn(view.state, view.dispatch))
+                            const menuItemToggleHeaderRow = getContextMenuItem("Toggle header row", () => toggleHeaderRow(view.state, view.dispatch))
+                            const menuItemToggleHeaderCells = getContextMenuItem("Toggle header cells", () => toggleHeaderCell(view.state, view.dispatch))
+                            const menuItemMakeCellGreen = getContextMenuItem("Make cell green", () => (setCellAttr("background", "#dfd"))(view.state, view.dispatch))
+                            const menuItemMakeCellRed = getContextMenuItem("Make cell red", () => (setCellAttr("background", "#faa"))(view.state, view.dispatch))
+                            const menuItemMakeCellNoColor = getContextMenuItem("Make cell no color", () => (setCellAttr("background", null))(view.state, view.dispatch))
 
-                            menuContainer.style.display = ""
-                            view.dom.parentNode?.appendChild(menuContainer)
+                            contextMenuContainer.appendChild(menuItemAddColumnBefore)
+                            contextMenuContainer.appendChild(menuItemAddColumnAfter)
+                            contextMenuContainer.appendChild(menuItemDeleteColumn)
+                            contextMenuContainer.appendChild(menuItemAddRowBefore)
+                            contextMenuContainer.appendChild(menuItemAddRowAfter)
+                            contextMenuContainer.appendChild(menuItemDeleteRow)
+                            contextMenuContainer.appendChild(menuItemDeleteTable)
+                            contextMenuContainer.appendChild(menuItemMergeCells)
+                            contextMenuContainer.appendChild(menuItemSplitCell)
+                            contextMenuContainer.appendChild(menuItemToggleHeaderColumn)
+                            contextMenuContainer.appendChild(menuItemToggleHeaderRow)
+                            contextMenuContainer.appendChild(menuItemToggleHeaderCells)
+                            contextMenuContainer.appendChild(menuItemMakeCellGreen)
+                            contextMenuContainer.appendChild(menuItemMakeCellRed)
+                            contextMenuContainer.appendChild(menuItemMakeCellNoColor)
+
+                            contextMenuContainer.style.display = ""
+                            view.dom.parentNode?.appendChild(contextMenuContainer)
 
                             let px = (event as MouseEvent).clientX
                             let py = (event as MouseEvent).clientY
                             const editorBoundingBox = editorContainer.getBoundingClientRect()
-                            const contextBoundingBox = menuContainer.getBoundingClientRect()
+                            const contextBoundingBox = contextMenuContainer.getBoundingClientRect()
 
                             if ((py + contextBoundingBox.height) > (globalThis as any).innerHeight) {
                                 py -= contextBoundingBox.height
                             }
 
-                            menuContainer.style.left = px + "px"
-                            menuContainer.style.top = py + "px"
+                            contextMenuContainer.style.left = px + "px"
+                            contextMenuContainer.style.top = py + "px"
 
                             // // Test - Insert column before
                             // addColumnBefore(view.state, view.dispatch);
