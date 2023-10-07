@@ -175,7 +175,6 @@ class MyEditor {
 
     insertImage(imageURI: string): void {
         const tr = this.view.state.tr
-        const image = this.schema.nodes.image.create({ src: imageURI })
         const pos = tr.selection.anchor
 
         dispatchImage(this.view, pos, this.schema, imageURI)

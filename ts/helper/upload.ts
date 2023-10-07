@@ -6,6 +6,14 @@ import { setIconElement } from "./utils"
 
 const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/svg+xml"]
 
+let editorView: EditorView
+
+let uploadURI = "http://localhost:8864/upload"
+let accessURI = "http://localhost:8864/files"
+
+const inputFileForm = document.createElement("input")
+inputFileForm.onchange = uploadHandler
+
 function dispatchImage(view: EditorView, pos: number, schema: Schema, imageURI: string): void {
     const tr = view.state.tr
     const image = schema.nodes.image.create({ src: imageURI })
@@ -47,10 +55,36 @@ function imageDropHandler(schema: Schema, uploadURI: string, accessURI: string):
 }
 
 function callBrowseFile(state: EditorState, dispatch: any, view: EditorView): boolean {
-    alert("hello upload")
+    inputFileForm.type = "file"
+    inputFileForm.multiple = true
+    inputFileForm.click()
 
+    editorView = view
 
     return true
+}
+
+function insertImage(imageURI: string): void {
+    const tr = editorView.state.tr
+    const image = editorView.state.schema.nodes.image.create({ src: imageURI })
+    const pos = tr.selection.anchor
+
+    dispatchImage(editorView, pos, editorView.state.schema, imageURI)
+}
+
+async function uploadHandler() {
+    for (const file of inputFileForm.files!) {
+        if (file == undefined) { return [] } // Selected nothing
+
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const r = await fetch(uploadURI, { method: 'POST', body: formData })
+        if (r.ok) {
+            const result = await r.json()
+            insertImage(`${accessURI}/${result.storename}`)
+        }
+    }
 }
 
 function getImageUploadMenus(): MenuElement[] {
