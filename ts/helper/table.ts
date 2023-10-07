@@ -18,8 +18,6 @@ import {
     tableEditing, columnResizing, tableNodes, fixTables
 } from "prosemirror-tables"
 
-function item(label: string, cmd: any) { return new MenuItem({ label, select: cmd, run: cmd }) }
-
 function setTableNodes(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
     const tableNodeSpecs = tableNodes({
         tableGroup: "block",
@@ -53,64 +51,8 @@ function dispatchTable(state: EditorState, dispatch: any, view: EditorView): boo
     return true
 }
 
-// export const mergeTableMenu = (menus: MenuElement[][]): MenuElement[][] => {
-//     const tableMenu = [
-//         item("Insert column before", addColumnBefore),
-//         item("Insert column after", addColumnAfter),
-//         item("Delete column", deleteColumn),
-//         item("Insert row before", addRowBefore),
-//         item("Insert row after", addRowAfter),
-//         item("Delete row", deleteRow),
-//         item("Delete table", deleteTable),
-//         item("Merge cells", mergeCells),
-//         item("Split cell", splitCell),
-//         item("Toggle header column", toggleHeaderColumn),
-//         item("Toggle header row", toggleHeaderRow),
-//         item("Toggle header cells", toggleHeaderCell),
-//         item("Make cell green", setCellAttr("background", "#dfd")),
-//         item("Make cell red", setCellAttr("background", "#faa")),
-//         item("Make cell non-green", setCellAttr("background", null))
-//     ]
-//     const tableDropdown = new Dropdown(tableMenu, { label: "Edit table" })
-//     const menuAddTable = new MenuItem({ label: "Add table", run: dispatchTable })
-
-//     menus.push([tableDropdown])
-//     menus.push([menuAddTable])
-
-//     return menus
-// }
-
 function getTableMenus(): MenuElement[] {
-    const dropdownItemsEditTable = [
-        item("Insert column before", addColumnBefore),
-        item("Insert column after", addColumnAfter),
-        item("Delete column", deleteColumn),
-        item("Insert row before", addRowBefore),
-        item("Insert row after", addRowAfter),
-        item("Delete row", deleteRow),
-        item("Delete table", deleteTable),
-        item("Merge cells", mergeCells),
-        item("Split cell", splitCell),
-        item("Toggle header column", toggleHeaderColumn),
-        item("Toggle header row", toggleHeaderRow),
-        item("Toggle header cells", toggleHeaderCell),
-        item("Make cell green", setCellAttr("background", "#dfd")),
-        item("Make cell red", setCellAttr("background", "#faa")),
-        item("Make cell non-green", setCellAttr("background", null))
-    ]
-
-    const menuItemAddTable = {
-        title: "Add table",
-        icon: setIconElement("bi-table"),
-        run: dispatchTable
-    }
-    const menuItemEditTable = {
-        label: "Edit",
-        title: "Edit table",
-        icon: setIconElement("bi-pencil-square")
-    }
-
-    // const tableMenu = [new MenuItem(menuItemAddTable), new Dropdown(dropdownItemsEditTable, menuItemEditTable)]
+    const menuItemAddTable = { title: "Add table", icon: setIconElement("bi-table"), run: dispatchTable }
     const tableMenu = [new MenuItem(menuItemAddTable)]
 
     return tableMenu

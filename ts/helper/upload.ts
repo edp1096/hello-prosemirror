@@ -1,35 +1,12 @@
-// Source: https://github.com/shoobyban/prosemirror-dropimage
-/* 
-MIT License
-
-Copyright (c) 2020 Sam Ban
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
- */
-
-import { Plugin } from "prosemirror-state"
+import { EditorState, Plugin } from "prosemirror-state"
 import { EditorView } from "prosemirror-view"
 import { Schema } from "prosemirror-model"
+import { menuBar, MenuItemSpec, MenuItem, MenuElement, Dropdown } from "prosemirror-menu"
+import { setIconElement } from "./utils"
 
 const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/svg+xml"]
 
-export function dispatchImage(view: EditorView, pos: number, schema: Schema, imageURI: string): void {
+function dispatchImage(view: EditorView, pos: number, schema: Schema, imageURI: string): void {
     const tr = view.state.tr
     const image = schema.nodes.image.create({ src: imageURI })
 
@@ -52,7 +29,7 @@ async function uploadImage(view: EditorView, schema: Schema, event: Event, files
     }
 }
 
-export function imageDropHandler(schema: Schema, uploadURI: string, accessURI: string): Plugin<any> {
+function imageDropHandler(schema: Schema, uploadURI: string, accessURI: string): Plugin<any> {
     const plugin = new Plugin({
         props: {
             handleDOMEvents: {
@@ -68,3 +45,20 @@ export function imageDropHandler(schema: Schema, uploadURI: string, accessURI: s
 
     return plugin
 }
+
+function callBrowseFile(state: EditorState, dispatch: any, view: EditorView): boolean {
+    alert("hello upload")
+
+
+    return true
+}
+
+function getImageUploadMenus(): MenuElement[] {
+    const menuItemUploadImage = { title: "Upload image", icon: setIconElement("bi-image"), run: callBrowseFile }
+    // const menuItemUploadImage = { title: "Add table", icon: setIconElement("bi-image") }
+    const uploadMenu = [new MenuItem(menuItemUploadImage)]
+
+    return uploadMenu
+}
+
+export { dispatchImage, imageDropHandler, getImageUploadMenus }

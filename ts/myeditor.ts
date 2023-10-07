@@ -25,7 +25,7 @@ import {
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
-import { imageDropHandler, dispatchImage } from "./helper/upload"
+import { imageDropHandler, dispatchImage, getImageUploadMenus } from "./helper/upload"
 // import { getTableMenus, mergeTableMenu, setTableNodes } from "./helper/table"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
 import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"

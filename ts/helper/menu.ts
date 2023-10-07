@@ -9,6 +9,7 @@ import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
 import { TextField, openPrompt } from "./prompt"
 import { getYoutubeMenus } from "./youtube"
+import { getImageUploadMenus } from "./upload"
 import { getTableMenus } from "./table"
 import { setIconElement } from "./utils"
 
@@ -228,9 +229,10 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
     r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdentItem, selectParentNodeItem])]
 
     const menuTable = [getTableMenus()]
+    const menuUpload = [getImageUploadMenus()]
     const menuWebvideo = [getYoutubeMenus()]
 
-    r.fullMenu = r.inlineMenu.concat([[r.insertMenu, r.typeMenu]], [[undoItem, redoItem]], r.blockMenu, menuWebvideo, menuTable)
+    r.fullMenu = r.inlineMenu.concat([[r.insertMenu, r.typeMenu]], [[undoItem, redoItem]], r.blockMenu, menuTable, menuUpload, menuWebvideo)
 
     return r
 }
