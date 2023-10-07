@@ -37,9 +37,6 @@
     <div id="buttons">
         <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
         <button type="button" onclick="clearContent()">Clear content</button>|
-        <label for="image-upload">Image:</label>
-        <input type="file" id="image-upload" multiple>
-        <button type="button" onclick="insertImage()">Upload</button>
     </div>
     <div id="editor"></div>
 </body>
@@ -92,28 +89,8 @@
     function printHTML() { console.log(editor.getHTML()) }
     function clearContent() { editor.setHTML("") }
 
-    async function insertImage() {
-        const uploadURI = "http://localhost:8864/upload"
-        const accessURI = "http://localhost:8864/files"
-
-        const files = document.querySelector("#image-upload").files
-        for (const file of files) {
-            if (file == undefined) { return } // Selected nothing
-
-            const formData = new FormData()
-            formData.append('file', file)
-
-            const r = await fetch(uploadURI, { method: 'POST', body: formData })
-            if (r.ok) {
-                const result = await r.json()
-                editor.insertImage(`${accessURI}/${result.storename}`)
-            }
-        }
-    }
-
     window.printHTML = printHTML
     window.clearContent = clearContent
-    window.insertImage = insertImage
 
     document.addEventListener("DOMContentLoaded", async () => { })
 </script>
