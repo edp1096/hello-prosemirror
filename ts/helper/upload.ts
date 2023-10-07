@@ -8,11 +8,18 @@ const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/svg+xml"]
 
 let editorView: EditorView
 
-let uploadURI = "http://localhost:8864/upload"
-let accessURI = "http://localhost:8864/files"
+// let UploadURI = "http://localhost:8864/upload"
+// let AccessURI = "http://localhost:8864/files"
+let UploadURI = ""
+let AccessURI = ""
 
 const inputFileForm = document.createElement("input")
 inputFileForm.onchange = uploadHandler
+
+function setURIs(uploadURI:string, accessURI:string) {
+    UploadURI = uploadURI
+    AccessURI = accessURI
+}
 
 function dispatchImage(view: EditorView, pos: number, schema: Schema, imageURI: string): void {
     const tr = view.state.tr
@@ -81,10 +88,10 @@ async function uploadHandler() {
         const formData = new FormData()
         formData.append('file', file)
 
-        const r = await fetch(uploadURI, { method: 'POST', body: formData })
+        const r = await fetch(UploadURI, { method: 'POST', body: formData })
         if (r.ok) {
             const result = await r.json()
-            insertImage(`${accessURI}/${result.storename}`)
+            insertImage(`${AccessURI}/${result.storename}`)
         }
     }
 }
@@ -97,4 +104,4 @@ function getImageUploadMenus(): MenuElement[] {
     return uploadMenu
 }
 
-export { dispatchImage, imageDropHandler, getImageUploadMenus }
+export { dispatchImage, imageDropHandler, getImageUploadMenus, setURIs }

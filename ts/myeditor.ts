@@ -25,7 +25,7 @@ import {
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
-import { imageDropHandler, dispatchImage, getImageUploadMenus } from "./helper/upload"
+import { imageDropHandler, dispatchImage, getImageUploadMenus, setURIs } from "./helper/upload"
 // import { getTableMenus, mergeTableMenu, setTableNodes } from "./helper/table"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
 import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
@@ -54,19 +54,16 @@ class MyEditor {
             if (options.uploadAccessURI != undefined) { this.uploadAccessURI = options.uploadAccessURI }
         }
 
+        setURIs(this.uploadActionURI, this.uploadAccessURI)
+
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
 
         schema.spec.nodes = setTableNodes(schema.spec.nodes)
         schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)
         schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")
-
         this.schema = new Schema({ nodes: schema.spec.nodes, marks: schema.spec.marks })
 
-        // const baseMenus = buildMenuItems(this.schema).fullMenu
-        // const tableMenus = [getTableMenus()]
-        // const youtubeMenus = [getYoutubeMenus()]
-        // const menus = baseMenus.concat(tableMenus, youtubeMenus)
         const menus = buildMenuItems(this.schema).fullMenu
 
         const basePlugin = this.setupBasePlugin({
