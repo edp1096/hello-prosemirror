@@ -207,10 +207,10 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
 
     let cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
-    const menuInsert = cut([itemInsertImage, itemInsertHR])
     const menuTypes = cut([
         itemLineSetPlain, // line as plain
         itemLineSetCode, // line as code
+        itemInsertHR, // Add horizontal line
         r.makeHead1 && new Dropdown(cut([
             r.makeHead1,
             r.makeHead2,
@@ -225,9 +225,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const redoItem = new MenuItem({ title: "Redo last undone change", run: redo, enable: state => redo(state), icon: icons.redo })
     const menuHistory = [undoItem, redoItem]
 
-    const menuTable = getTableMenus()
-    const menuUpload = getImageUploadMenus()
-    const menuWebvideo = getYoutubeMenus()
+    const menuInsert = cut([itemInsertImage, getImageUploadMenus(), getYoutubeMenus(), getTableMenus()])
 
     const menuInline: MenuElement[][] = [cut([itemToggleStrong, itemToggleEM, itemToggleCode, itemToggleLink])]
     const menuBlock = cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdentItem, selectParentNodeItem])
@@ -235,8 +233,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const result = menuInline.concat(
         [menuTypes],
         [menuHistory],
-        [menuTable],
-        [menuInsert, menuUpload, menuWebvideo],
+        [menuInsert],
         [menuBlock]
     )
 

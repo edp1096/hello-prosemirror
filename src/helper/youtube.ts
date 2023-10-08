@@ -69,14 +69,14 @@ function insertYoutube() {
     }
 }
 
-function getYoutubeMenus(): MenuElement[] {
+function getYoutubeMenus(): MenuElement {
     const menuItem = {
         title: "Add youtube",
         icon: setIconElement("bi-youtube"),
         run: insertYoutube()
     }
 
-    return [new MenuItem(menuItem)]
+    return new MenuItem(menuItem)
 }
 
 export { youtubeNodeSpec, getYoutubeMenus }

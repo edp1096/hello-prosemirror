@@ -52,11 +52,11 @@ function dispatchTable(state: EditorState, dispatch: any, view: EditorView): boo
     return true
 }
 
-function getTableMenus(): MenuElement[] {
+function getTableMenus(): MenuElement {
     const menuItemAddTable = { title: "Add table", icon: setIconElement("bi-table"), run: dispatchTable }
     const tableMenu = new MenuItem(menuItemAddTable)
 
-    return [tableMenu]
+    return tableMenu
 }
 
 // Context menu
