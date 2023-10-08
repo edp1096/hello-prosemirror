@@ -235,7 +235,7 @@ function buildMenuItems(schema: Schema): MenuItemResult {
     r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink])]
     r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdentItem, selectParentNodeItem])]
 
-    r.fullMenu = r.inlineMenu.concat([[undoItem, redoItem]], [[r.insertMenu, r.typeMenu]], r.blockMenu, menuTable, menuUpload, menuWebvideo)
+    r.fullMenu = r.inlineMenu.concat([[r.insertMenu, r.typeMenu]], [[undoItem, redoItem]], r.blockMenu, menuTable, menuUpload, menuWebvideo)
 
     return r
 }
