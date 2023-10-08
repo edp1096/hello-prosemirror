@@ -28,6 +28,7 @@ function insertImageItem(nodeType: NodeType) {
     return new MenuItem({
         title: "Insert image",
         label: "Image",
+        icon: setIconElement("bi-image"),
         enable(state) { return canInsert(state, nodeType) },
         run(state, _, view) {
             let { from, to } = state.selection, attrs = null
@@ -115,16 +116,9 @@ function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
 }
 
 type MenuItemResult = {
-    toggleStrong?: MenuItem /// A menu item to toggle the [strong mark](#schema-basic.StrongMark).
-    toggleEm?: MenuItem /// A menu item to toggle the [emphasis mark](#schema-basic.EmMark).
-    toggleCode?: MenuItem /// A menu item to toggle the [code font mark](#schema-basic.CodeMark).
-    toggleLink?: MenuItem /// A menu item to toggle the [link mark](#schema-basic.LinkMark).
-    insertImage?: MenuItem /// A menu item to insert an [image](#schema-basic.Image).
     wrapBulletList?: MenuItem /// A menu item to wrap the selection in a [bullet list](#schema-list.BulletList).
     wrapOrderedList?: MenuItem /// A menu item to wrap the selection in an [ordered list](#schema-list.OrderedList).
     wrapBlockQuote?: MenuItem /// A menu item to wrap the selection in a [block quote](#schema-basic.BlockQuote).
-    makeParagraph?: MenuItem /// A menu item to set the current textblock to be a normal [paragraph](#schema-basic.Paragraph).
-    makeCodeBlock?: MenuItem /// A menu item to set the current textblock to be a [code block](#schema-basic.CodeBlock).
 
     /// Menu items to set the current textblock to be a [heading](#schema-basic.Heading) of level _N_.
     makeHead1?: MenuItem
@@ -133,23 +127,15 @@ type MenuItemResult = {
     makeHead4?: MenuItem
     makeHead5?: MenuItem
     makeHead6?: MenuItem
-
-    insertHorizontalRule?: MenuItem /// A menu item to insert a horizontal rule.
-    insertMenu: Dropdown /// A dropdown containing the `insertImage` and `insertHorizontalRule` items.
-    typeMenu: Dropdown /// A dropdown containing the items for making the current textblock a paragraph, code block, or heading.
-    blockMenu: MenuElement[][] /// Array of block-related menu items.
-    inlineMenu: MenuElement[][] /// Inline-markup related menu items.
-
-    /// An array of arrays of menu elements for use as the full menu
-    /// for, for example the [menu bar](https://github.com/prosemirror/prosemirror-menu#user-content-menubar).
-    fullMenu: MenuElement[][]
 }
 
-function buildMenuItems(schema: Schema): MenuItemResult {
+function buildMenuItems(schema: Schema): MenuElement[][] {
     icons.bold = setIconElement("bi-type-bold")
     icons.italic = setIconElement("bi-type-italic")
     icons.code = setIconElement("bi-code")
     icons.link = setIconElement("bi-link-45deg")
+    icons.textPlain = setIconElement("bi-type")
+    icons.textCode = setIconElement("bi-code")
     icons.bulletList = setIconElement("bi-list-ul")
     icons.orderedList = setIconElement("bi-list-ol")
     icons.blockquote = setIconElement("bi-quote")
@@ -166,34 +152,41 @@ function buildMenuItems(schema: Schema): MenuItemResult {
     let r: MenuItemResult = {} as any
     let mark: MarkType | undefined
 
-    if (mark = schema.marks.strong) { r.toggleStrong = markItem(mark, { title: "Toggle strong style", icon: icons.bold }) }
-    if (mark = schema.marks.em) { r.toggleEm = markItem(mark, { title: "Toggle emphasis", icon: icons.italic }) }
-    if (mark = schema.marks.code) { r.toggleCode = markItem(mark, { title: "Toggle code font", icon: icons.code }) }
-    if (mark = schema.marks.link) { r.toggleLink = linkItem(mark) }
+    let itemToggleStrong, itemToggleEM, itemToggleCode, itemToggleLink
+    let itemInsertImage, itemInsertHR
+    let itemLineSetPlain, itemLineSetCode
+
+    if (mark = schema.marks.strong) { itemToggleStrong = markItem(mark, { title: "Toggle strong style", icon: icons.bold }) }
+    if (mark = schema.marks.em) { itemToggleEM = markItem(mark, { title: "Toggle emphasis", icon: icons.italic }) }
+    if (mark = schema.marks.code) { itemToggleCode = markItem(mark, { title: "Toggle code font", icon: icons.code }) }
+    if (mark = schema.marks.link) { itemToggleLink = linkItem(mark) }
 
     let node: NodeType | undefined
 
-    if (node = schema.nodes.image) { r.insertImage = insertImageItem(node) }
+    if (node = schema.nodes.image) {
+        itemInsertImage = insertImageItem(node)
+    }
     if (node = schema.nodes.horizontal_rule) {
-        let hr = node
-        r.insertHorizontalRule = new MenuItem({
+        let hr = node // variable node not work so, copy it
+        itemInsertHR = new MenuItem({
             title: "Insert horizontal rule",
             label: "Horizontal rule",
+            icon: setIconElement("bi-hr"),
             enable(state) { return canInsert(state, hr) },
             run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(hr.create())) }
         })
     }
     if (node = schema.nodes.paragraph) {
-        r.makeParagraph = blockTypeItem(node, { title: "Change to paragraph", label: "Plain" })
+        itemLineSetPlain = blockTypeItem(node, { title: "Change to plain text", label: "Plain", icon: icons.textPlain })
     }
     if (node = schema.nodes.code_block) {
-        r.makeCodeBlock = blockTypeItem(node, { title: "Change to code block", label: "Code" })
+        itemLineSetCode = blockTypeItem(node, { title: "Change to code block", label: "Code", icon: icons.textCode })
     }
     if (node = schema.nodes.heading) {
         for (let i = 1; i <= 10; i++) {
             (r as any)["makeHead" + i] = blockTypeItem(node, {
                 title: "Change to heading " + i,
-                label: "Level " + i,
+                label: "H" + i,
                 attrs: { level: i }
             })
         }
@@ -214,30 +207,40 @@ function buildMenuItems(schema: Schema): MenuItemResult {
 
     let cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
-    r.insertMenu = new Dropdown(cut([r.insertImage, r.insertHorizontalRule]), { label: "Insert" })
-    r.typeMenu = new Dropdown(
-        cut([
-            r.makeParagraph, r.makeCodeBlock, r.makeHead1 && new DropdownSubmenu(
-                cut([
-                    r.makeHead1, r.makeHead2, r.makeHead3, r.makeHead4, r.makeHead5, r.makeHead6
-                ]), { label: "Heading" }
-            )
-        ]), { label: "Type..." }
-    )
+    const menuInsert = cut([itemInsertImage, itemInsertHR])
+    const menuTypes = cut([
+        itemLineSetPlain, // line as plain
+        itemLineSetCode, // line as code
+        r.makeHead1 && new Dropdown(cut([
+            r.makeHead1,
+            r.makeHead2,
+            r.makeHead3,
+            r.makeHead4,
+            r.makeHead5,
+            r.makeHead6
+        ]), { label: "H1" }) // line as heading
+    ])
 
     const undoItem = new MenuItem({ title: "Undo last change", run: undo, enable: state => undo(state), icon: icons.undo })
     const redoItem = new MenuItem({ title: "Redo last undone change", run: redo, enable: state => redo(state), icon: icons.redo })
+    const menuHistory = [undoItem, redoItem]
 
-    const menuTable = [getTableMenus()]
-    const menuUpload = [getImageUploadMenus()]
-    const menuWebvideo = [getYoutubeMenus()]
+    const menuTable = getTableMenus()
+    const menuUpload = getImageUploadMenus()
+    const menuWebvideo = getYoutubeMenus()
 
-    r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink])]
-    r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdentItem, selectParentNodeItem])]
+    const menuInline: MenuElement[][] = [cut([itemToggleStrong, itemToggleEM, itemToggleCode, itemToggleLink])]
+    const menuBlock = cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdentItem, selectParentNodeItem])
 
-    r.fullMenu = r.inlineMenu.concat([[r.insertMenu, r.typeMenu]], [[undoItem, redoItem]], r.blockMenu, menuTable, menuUpload, menuWebvideo)
+    const result = menuInline.concat(
+        [menuTypes],
+        [menuHistory],
+        [menuTable],
+        [menuInsert, menuUpload, menuWebvideo],
+        [menuBlock]
+    )
 
-    return r
+    return result
 }
 
 export { buildMenuItems }

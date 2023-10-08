@@ -62,7 +62,7 @@ class MyEditor {
         schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")
         this.schema = new Schema({ nodes: schema.spec.nodes, marks: schema.spec.marks })
 
-        const menus = buildMenuItems(this.schema).fullMenu
+        const menus = buildMenuItems(this.schema)
 
         const basePlugin = this.setupBasePlugin({
             schema: this.schema,
@@ -133,7 +133,7 @@ class MyEditor {
         if (options.menuBar != false) {
             plugins.push(menuBar({
                 floating: options.floatingMenu != false,
-                content: options.menuContent || buildMenuItems(options.schema).fullMenu
+                content: options.menuContent || buildMenuItems(options.schema)
             }))
         }
 

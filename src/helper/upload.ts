@@ -98,8 +98,7 @@ async function uploadHandler() {
 }
 
 function getImageUploadMenus(): MenuElement[] {
-    const menuItemUploadImage = { title: "Upload image", icon: setIconElement("bi-image"), run: callBrowseFile }
-    // const menuItemUploadImage = { title: "Add table", icon: setIconElement("bi-image") }
+    const menuItemUploadImage = { title: "Upload images", icon: setIconElement("bi-images"), run: callBrowseFile }
     const uploadMenu = [new MenuItem(menuItemUploadImage)]
 
     return uploadMenu
