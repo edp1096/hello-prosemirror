@@ -57,9 +57,12 @@ function cmdItem(cmd: Command, options: Partial<MenuItemSpec>) {
         label: options.title as string | undefined,
         run: cmd
     }
-    for (let prop in options) (passedOptions as any)[prop] = (options as any)[prop]
-    if (!options.enable && !options.select)
+    for (let prop in options) {
+        (passedOptions as any)[prop] = (options as any)[prop]
+    }
+    if (!options.enable && !options.select) {
         passedOptions[options.enable ? "enable" : "select"] = state => cmd(state)
+    }
 
     return new MenuItem(passedOptions)
 }
@@ -142,9 +145,7 @@ type MenuItemResult = {
     fullMenu: MenuElement[][]
 }
 
-/// Given a schema, look for default mark and node types in it and
-/// return an object with relevant menu items relating to those marks.
-export function buildMenuItems(schema: Schema): MenuItemResult {
+function buildMenuItems(schema: Schema): MenuItemResult {
     icons.bold = setIconElement("bi-type-bold")
     icons.italic = setIconElement("bi-type-italic")
     icons.code = setIconElement("bi-code")
@@ -171,15 +172,16 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
     if (mark = schema.marks.link) { r.toggleLink = linkItem(mark) }
 
     let node: NodeType | undefined
+
     if (node = schema.nodes.image) { r.insertImage = insertImageItem(node) }
-    if (node = schema.nodes.bullet_list) {
-        r.wrapBulletList = wrapListItem(node, { title: "Wrap in bullet list", icon: icons.bulletList })
-    }
-    if (node = schema.nodes.ordered_list) {
-        r.wrapOrderedList = wrapListItem(node, { title: "Wrap in ordered list", icon: icons.orderedList })
-    }
-    if (node = schema.nodes.blockquote) {
-        r.wrapBlockQuote = wrapItem(node, { title: "Wrap in block quote", icon: icons.blockquote })
+    if (node = schema.nodes.horizontal_rule) {
+        let hr = node
+        r.insertHorizontalRule = new MenuItem({
+            title: "Insert horizontal rule",
+            label: "Horizontal rule",
+            enable(state) { return canInsert(state, hr) },
+            run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(hr.create())) }
+        })
     }
     if (node = schema.nodes.paragraph) {
         r.makeParagraph = blockTypeItem(node, { title: "Change to paragraph", label: "Plain" })
@@ -196,18 +198,16 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
             })
         }
     }
-    if (node = schema.nodes.horizontal_rule) {
-        let hr = node
-        r.insertHorizontalRule = new MenuItem({
-            title: "Insert horizontal rule",
-            label: "Horizontal rule",
-            enable(state) { return canInsert(state, hr) },
-            run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(hr.create())) }
-        })
+    if (node = schema.nodes.bullet_list) {
+        r.wrapBulletList = wrapListItem(node, { title: "Wrap in bullet list", icon: icons.bulletList })
+    }
+    if (node = schema.nodes.ordered_list) {
+        r.wrapOrderedList = wrapListItem(node, { title: "Wrap in ordered list", icon: icons.orderedList })
+    }
+    if (node = schema.nodes.blockquote) {
+        r.wrapBlockQuote = wrapItem(node, { title: "Wrap in block quote", icon: icons.blockquote })
     }
 
-    const undoItem = new MenuItem({ title: "Undo last change", run: undo, enable: state => undo(state), icon: icons.undo })
-    const redoItem = new MenuItem({ title: "Redo last undone change", run: redo, enable: state => redo(state), icon: icons.redo })
     const outdentItem = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: icons.outdent })
     // TODO: join up -> shift + enter support
     const joinUpItem = new MenuItem({ title: "Join with above block", run: joinUp, select: state => joinUp(state), icon: icons.paragraph })
@@ -225,14 +225,19 @@ export function buildMenuItems(schema: Schema): MenuItemResult {
         ]), { label: "Type..." }
     )
 
-    r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink])]
-    r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdentItem, selectParentNodeItem])]
+    const undoItem = new MenuItem({ title: "Undo last change", run: undo, enable: state => undo(state), icon: icons.undo })
+    const redoItem = new MenuItem({ title: "Redo last undone change", run: redo, enable: state => redo(state), icon: icons.redo })
 
     const menuTable = [getTableMenus()]
     const menuUpload = [getImageUploadMenus()]
     const menuWebvideo = [getYoutubeMenus()]
 
-    r.fullMenu = r.inlineMenu.concat([[r.insertMenu, r.typeMenu]], [[undoItem, redoItem]], r.blockMenu, menuTable, menuUpload, menuWebvideo)
+    r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink])]
+    r.blockMenu = [cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdentItem, selectParentNodeItem])]
+
+    r.fullMenu = r.inlineMenu.concat([[undoItem, redoItem]], [[r.insertMenu, r.typeMenu]], r.blockMenu, menuTable, menuUpload, menuWebvideo)
 
     return r
 }
+
+export { buildMenuItems }
