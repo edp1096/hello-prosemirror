@@ -3,7 +3,7 @@ import { buildSync } from 'esbuild'
 const outName = "myeditor"
 
 buildSync({
-    entryPoints: ["css/editor.css"],
+    entryPoints: ["src/css/editor.css"],
     outfile: `dist/${outName}.css`,
     bundle: true,
     minify: true,

@@ -11,7 +11,7 @@ const port = 8000
 const outName = "myeditor"
 
 const watchCSS = {
-    entryPoints: ["css/editor.css"],
+    entryPoints: ["src/css/editor.css"],
     outfile: `${serveDIR}/${outName}.css`,
     bundle: true,
     minify: true,
@@ -27,7 +27,7 @@ const watchCSS = {
 build(watchCSS)
 
 const watchJS = {
-    entryPoints: ["ts/myeditor.ts"],
+    entryPoints: ["src/myeditor.ts"],
     outfile: `${serveDIR}/${outName}.js`,
     bundle: true,
     banner: { js: ' (() => new EventSource("/esbuild").onmessage = () => location.reload())();' },
@@ -44,7 +44,7 @@ const watchJS = {
 }
 
 const watchMJS = {
-    entryPoints: ["ts/myeditor.ts"],
+    entryPoints: ["src/myeditor.ts"],
     outfile: `${serveDIR}/myeditor.mjs`,
     bundle: true,
     banner: { js: ' (() => new EventSource("/esbuild").onmessage = () => location.reload())();' },
@@ -80,7 +80,7 @@ if (arg == "js") {
 build(watcher).catch(() => process.exit(1))
 
 
-// fs.cpSync("css/fonts", "serve/fonts/", { recursive: true })
+// fs.cpSync("src/css/fonts", "serve/fonts/", { recursive: true })
 
 // const server = await serve(serverInfo, {})
 

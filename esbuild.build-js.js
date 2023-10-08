@@ -1,7 +1,7 @@
 import { build } from 'esbuild'
 
 build({
-    entryPoints: ["ts/myeditor.ts"],
+    entryPoints: ["src/myeditor.ts"],
     outfile: "dist/myeditor.js",
     bundle: true,
     minify: true,
