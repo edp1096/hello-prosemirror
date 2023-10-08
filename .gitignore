@@ -1,8 +1,8 @@
 serve/
 
-dev/uploader/uploader.exe
-dev/upload/**
-!dev/upload/.gitkeep
+watchplace/uploader/uploader.exe
+watchplace/upload/**
+!watchplace/upload/.gitkeep
 
 # Logs
 logs
@@ -48,7 +48,7 @@ build/Release
 node_modules/
 jspm_packages/
 
-# Snowpack dependency directory (https://snowpack.dev/)
+# Snowpack dependency directory (https://snowpack.watchplace/)
 web_modules/
 
 # TypeScript cache

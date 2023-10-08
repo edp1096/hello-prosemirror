@@ -35,7 +35,7 @@ yarn watch mjs
 
 ## Run Uploader
 ```powershell
-cd dev/uploader
+cd watchplace/uploader
 ./run.cmd
 ```
 
