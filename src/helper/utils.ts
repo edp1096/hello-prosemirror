@@ -1,5 +1,6 @@
 import { IconSpec } from "prosemirror-menu"
 
+
 function setIconElement(iconName: string): IconSpec {
     const iconEL = document.createElement("i")
     iconEL.setAttribute("class", iconName)

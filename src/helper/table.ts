@@ -18,6 +18,7 @@ import {
     tableEditing, columnResizing, tableNodes, fixTables
 } from "prosemirror-tables"
 
+
 function setTableNodes(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
     const tableNodeSpecs = tableNodes({
         tableGroup: "block",

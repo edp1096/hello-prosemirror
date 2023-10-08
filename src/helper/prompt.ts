@@ -1,5 +1,6 @@
 import { Attrs } from "prosemirror-model"
 
+
 const prefix = "ProseMirror-prompt"
 
 export function openPrompt(options: {

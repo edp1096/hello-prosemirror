@@ -4,6 +4,7 @@ import { Schema } from "prosemirror-model"
 import { menuBar, MenuItemSpec, MenuItem, MenuElement, Dropdown } from "prosemirror-menu"
 import { setIconElement } from "./utils"
 
+
 const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/svg+xml"]
 
 let editorView: EditorView

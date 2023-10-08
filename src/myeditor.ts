@@ -26,11 +26,9 @@ import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
 import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/upload"
-// import { getTableMenus, mergeTableMenu, setTableNodes } from "./helper/table"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
 import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
 
-// import { exampleSetup } from "prosemirror-example-setup"
 
 interface EditorOptionType {
     uploadActionURI: string

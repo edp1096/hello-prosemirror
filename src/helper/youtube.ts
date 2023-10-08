@@ -6,6 +6,7 @@ import { EditorView } from 'prosemirror-view'
 import { TextField, openPrompt } from "./prompt"
 import { setIconElement } from "./utils"
 
+
 const videoFormat = ["youtube", "dailymotion", "vimeo"]
 
 const youtubeNodeSpec: NodeSpec = {
