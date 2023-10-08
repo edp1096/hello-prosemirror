@@ -16,7 +16,7 @@ let AccessURI = ""
 const inputFileForm = document.createElement("input")
 inputFileForm.onchange = uploadHandler
 
-function setURIs(uploadURI:string, accessURI:string) {
+function setUploadURIs(uploadURI:string, accessURI:string) {
     UploadURI = uploadURI
     AccessURI = accessURI
 }
@@ -104,4 +104,4 @@ function getImageUploadMenus(): MenuElement[] {
     return uploadMenu
 }
 
-export { dispatchImage, imageDropHandler, getImageUploadMenus, setURIs }
+export { dispatchImage, imageDropHandler, getImageUploadMenus, setUploadURIs }

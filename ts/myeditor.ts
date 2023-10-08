@@ -25,7 +25,7 @@ import {
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
-import { imageDropHandler, dispatchImage, getImageUploadMenus, setURIs } from "./helper/upload"
+import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/upload"
 // import { getTableMenus, mergeTableMenu, setTableNodes } from "./helper/table"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
 import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
@@ -54,7 +54,7 @@ class MyEditor {
             if (options.uploadAccessURI != undefined) { this.uploadAccessURI = options.uploadAccessURI }
         }
 
-        setURIs(this.uploadActionURI, this.uploadAccessURI)
+        setUploadURIs(this.uploadActionURI, this.uploadAccessURI)
 
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
