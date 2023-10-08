@@ -33,6 +33,12 @@ yarn watch
 yarn watch mjs
 ```
 
+## Run Uploader
+```powershell
+cd dev/uploader
+./run.cmd
+```
+
 ## Source
 * https://prosemirror.net/examples/basic
 * https://github.com/ProseMirror/prosemirror-example-setup

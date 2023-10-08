@@ -70,11 +70,11 @@ if (!fs.existsSync(serveDIR)) { fs.mkdirSync(serveDIR) }
 if (arg == "js") {
     arg = "js"
     watcher = watchJS
-    fs.copyFile("html/js.html", `${serveDIR}/index.html`, (err) => { if (err) throw err })
+    fs.copyFile("dev/html/js.html", `${serveDIR}/index.html`, (err) => { if (err) throw err })
 } else {
     arg = "mjs"
     watcher = watchMJS
-    fs.copyFile("html/mjs.html", `${serveDIR}/index.html`, (err) => { if (err) throw err })
+    fs.copyFile("dev/html/mjs.html", `${serveDIR}/index.html`, (err) => { if (err) throw err })
 }
 
 build(watcher).catch(() => process.exit(1))

@@ -1,8 +1,8 @@
 serve/
 
-uploader/uploader.exe
-upload/**
-!upload/.gitkeep
+dev/uploader/uploader.exe
+dev/upload/**
+!dev/upload/.gitkeep
 
 # Logs
 logs
