@@ -117,98 +117,67 @@ function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
     return cmdItem(wrapInList(nodeType, (options as any).attrs), options)
 }
 
-type MenuItemResult = {
-    wrapBulletList?: MenuItem /// A menu item to wrap the selection in a [bullet list](#schema-list.BulletList).
-    wrapOrderedList?: MenuItem /// A menu item to wrap the selection in an [ordered list](#schema-list.OrderedList).
-    wrapBlockQuote?: MenuItem /// A menu item to wrap the selection in a [block quote](#schema-basic.BlockQuote).
-}
-
 function buildMenuItems(schema: Schema): MenuElement[][] {
-    let r: MenuItemResult = {} as any
-    let mark: MarkType | undefined
+    const itemToggleStrong = (schema.marks.strong) ? markItem(schema.marks.strong, { title: "Toggle strong style", icon: setIconElement("bi-type-bold") }) : undefined
+    const itemToggleEM = (schema.marks.em) ? markItem(schema.marks.em, { title: "Toggle emphasis", icon: setIconElement("bi-type-italic") }) : undefined
+    const itemToggleCode = (schema.marks.code) ? markItem(schema.marks.code, { title: "Toggle code font", icon: setIconElement("bi-code") }) : undefined
+    const itemToggleLink = (schema.marks.link) ? linkItem(schema.marks.link, setIconElement("bi-link-45deg")) : undefined
 
-    let itemToggleStrong, itemToggleEM, itemToggleCode, itemToggleLink
-    let itemInsertImage, itemInsertHR
-    let itemLineSetPlain, itemLineSetCode
+    const itemAlignLeft = (schema.nodes.alignleft) ? wrapItem(schema.nodes.alignleft, { title: "Align left", icon: setIconElement("bi-text-left") }) : undefined
+    const itemAlignCenter = (schema.nodes.aligncenter) ? wrapItem(schema.nodes.aligncenter, { title: "Align center", icon: setIconElement("bi-text-center") }) : undefined
+    const itemAlignRight = (schema.nodes.alignright) ? wrapItem(schema.nodes.alignright, { title: "Align right", icon: setIconElement("bi-text-right") }) : undefined
+
+    const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Plain", icon: setIconElement("bi-type") }) : undefined
+    const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("bi-code") }) : undefined
     const itemsHeading: MenuItem[] = new Array<MenuItem>;
-
-    let itemAlignLeft, itemAlignCenter, itemAlignRight
-
-    if (mark = schema.marks.strong) { itemToggleStrong = markItem(mark, { title: "Toggle strong style", icon: setIconElement("bi-type-bold") }) }
-    if (mark = schema.marks.em) { itemToggleEM = markItem(mark, { title: "Toggle emphasis", icon: setIconElement("bi-type-italic") }) }
-    if (mark = schema.marks.code) { itemToggleCode = markItem(mark, { title: "Toggle code font", icon: setIconElement("bi-code") }) }
-    if (mark = schema.marks.link) { itemToggleLink = linkItem(mark, setIconElement("bi-link-45deg")) }
-
-    let node: NodeType | undefined
-
-    if (node = schema.nodes.image) {
-        itemInsertImage = insertImageItem(node)
-    }
-    if (node = schema.nodes.paragraph) {
-        itemLineSetPlain = blockTypeItem(node, { title: "Change to plain text", label: "Plain", icon: setIconElement("bi-type") })
-    }
-    if (node = schema.nodes.code_block) {
-        itemLineSetCode = blockTypeItem(node, { title: "Change to code block", label: "Code", icon: setIconElement("bi-code") })
-    }
-    if (node = schema.nodes.heading) {
+    if (schema.nodes.heading) {
         for (let i = 1; i <= 6; i++) {
-            itemsHeading.push(blockTypeItem(node, { title: "Change to heading " + i, label: "H" + i, attrs: { level: i } }))
+            itemsHeading.push(blockTypeItem(schema.nodes.heading, { title: "Change to heading " + i, label: "H" + i, attrs: { level: i } }))
         }
     }
-    if (node = schema.nodes.horizontal_rule) {
-        let hr = node // variable node not work so, copy it
-        itemInsertHR = new MenuItem({
-            title: "Insert horizontal rule",
-            label: "Horizontal rule",
-            icon: setIconElement("bi-hr"),
-            enable(state) { return canInsert(state, hr) },
-            run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(hr.create())) }
-        })
-    }
-    if (node = schema.nodes.bullet_list) {
-        r.wrapBulletList = wrapListItem(node, { title: "Wrap in bullet list", icon: setIconElement("bi-list-ul") })
-    }
-    if (node = schema.nodes.ordered_list) {
-        r.wrapOrderedList = wrapListItem(node, { title: "Wrap in ordered list", icon: setIconElement("bi-list-ol") })
-    }
-    if (node = schema.nodes.blockquote) {
-        r.wrapBlockQuote = wrapItem(node, { title: "Wrap in block quote", icon: setIconElement("bi-quote") })
-    }
 
-    if (schema.nodes.alignleft) {
-        itemAlignLeft = blockTypeItem(schema.nodes.alignleft, { title: "Align left", icon: setIconElement("bi-text-left") })
-    }
-    if (schema.nodes.aligncenter) {
-        itemAlignCenter = blockTypeItem(schema.nodes.aligncenter, { title: "Align center", icon: setIconElement("bi-text-center") })
-    }
-    if (schema.nodes.alignright) {
-        itemAlignRight = blockTypeItem(schema.nodes.alignright, { title: "Align right", icon: setIconElement("bi-text-right") })
-    }
+    const itemUndo = new MenuItem({ title: "Undo last change", run: undo, enable: state => undo(state), icon: setIconElement("bi-arrow-counterclockwise") })
+    const itemRedo = new MenuItem({ title: "Redo last undone change", run: redo, enable: state => redo(state), icon: setIconElement("bi-arrow-clockwise") })
 
-    const outdentItem = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: setIconElement("bi-text-indent-right") })
+    const itemInsertHR = (schema.nodes.horizontal_rule) ? new MenuItem({
+        title: "Insert horizontal rule",
+        label: "Horizontal rule",
+        icon: setIconElement("bi-hr"),
+        enable(state) { return canInsert(state, schema.nodes.horizontal_rule) },
+        run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(schema.nodes.horizontal_rule.create())) }
+    }) : undefined
+    const itemInsertTable = getTableMenus()
+    const itemInsertImage = (schema.nodes.image) ? insertImageItem(schema.nodes.image) : undefined
+    const itemUploadImage = getImageUploadMenus()
+    const itemInsertYoutube = getYoutubeMenus()
+
+    const itemBulletList = (schema.nodes.bullet_list) ? wrapListItem(schema.nodes.bullet_list, { title: "Wrap in bullet list", icon: setIconElement("bi-list-ul") }) : undefined
+    const itemOrderedList = (schema.nodes.ordered_list) ? wrapListItem(schema.nodes.ordered_list, { title: "Wrap in ordered list", icon: setIconElement("bi-list-ol") }) : undefined
+    const itemBlockQuote = (schema.nodes.blockquote) ? wrapItem(schema.nodes.blockquote, { title: "Wrap in block quote", icon: setIconElement("bi-quote") }) : undefined
     // TODO: join up -> Key event "shift + enter" support
-    const joinUpItem = new MenuItem({ title: "Join with above block", run: joinUp, select: state => joinUp(state), icon: setIconElement("bi-text-paragraph") })
+    const itemJoinUp = new MenuItem({ title: "Join with above block", run: joinUp, select: state => joinUp(state), icon: setIconElement("bi-text-paragraph") })
+    const itemOutdent = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: setIconElement("bi-text-indent-right") })
 
     const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
-    const menuLineType = cut([itemLineSetPlain, itemLineSetCode, new Dropdown(cut(itemsHeading), { label: "H1" })])
-
-    const undoItem = new MenuItem({ title: "Undo last change", run: undo, enable: state => undo(state), icon: setIconElement("bi-arrow-counterclockwise") })
-    const redoItem = new MenuItem({ title: "Redo last undone change", run: redo, enable: state => redo(state), icon: setIconElement("bi-arrow-clockwise") })
-    const menuHistory = [undoItem, redoItem]
-
-    const menuInsert = cut([itemInsertHR, getTableMenus(), itemInsertImage, getImageUploadMenus(), getYoutubeMenus()])
-
     const menuInline: MenuElement[][] = [cut([
         itemToggleStrong, itemToggleEM, itemToggleCode, itemToggleLink,
-        itemAlignLeft, itemAlignCenter, itemAlignRight
+        itemAlignLeft, itemAlignCenter, itemAlignRight,
+        // itemAlignLeftMark, itemAlignCenterMark, itemAlignRightMark
     ])]
+    const menuLineType = cut([itemLineSetPlain, itemLineSetCode, new Dropdown(cut(itemsHeading), { label: "H1" })])
+    const menuHistory = [itemUndo, itemRedo]
+    const menuInsertUpload = cut([
+        itemInsertHR, itemInsertTable,
+        itemInsertImage, itemUploadImage,
+        itemInsertYoutube
+    ])
     const menuBlock = cut([
-        r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote,
-        joinUpItem, outdentItem, selectParentNodeItem
+        itemBulletList, itemOrderedList, itemBlockQuote,
+        itemJoinUp, itemOutdent, selectParentNodeItem
     ])
 
-    const result = menuInline.concat([menuLineType], [menuHistory], [menuInsert], [menuBlock])
+    const result = menuInline.concat([menuLineType], [menuHistory], [menuInsertUpload], [menuBlock])
 
     return result
 }

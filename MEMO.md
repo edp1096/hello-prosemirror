@@ -1,10 +1,10 @@
 ## TODO
 
-* Correct Youtube `from` time
-* Alignment
-* Text color
-* Text under-line, cancel line
-* Table
+* [ ] Correct Youtube `from` time
+* [x] Alignment
+* [ ] Text color
+* [ ] Text under-line, cancel line
+* [ ] Table
     * cell colors
     * table size
 
