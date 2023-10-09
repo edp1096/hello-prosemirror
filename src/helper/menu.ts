@@ -120,6 +120,8 @@ function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
 function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemToggleStrong = (schema.marks.strong) ? markItem(schema.marks.strong, { title: "Toggle strong style", icon: setIconElement("bi-type-bold") }) : undefined
     const itemToggleEM = (schema.marks.em) ? markItem(schema.marks.em, { title: "Toggle emphasis", icon: setIconElement("bi-type-italic") }) : undefined
+    const itemToggleStrike = (schema.marks.strike) ? markItem(schema.marks.strike, { title: "Toggle strike", icon: setIconElement("bi-type-strikethrough") }) : undefined
+    const itemToggleUnderline = (schema.marks.underline) ? markItem(schema.marks.underline, { title: "Toggle underline", icon: setIconElement("bi-type-underline") }) : undefined
     const itemToggleCode = (schema.marks.code) ? markItem(schema.marks.code, { title: "Toggle code font", icon: setIconElement("bi-code") }) : undefined
     const itemToggleLink = (schema.marks.link) ? linkItem(schema.marks.link, setIconElement("bi-link-45deg")) : undefined
 
@@ -161,7 +163,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
     const menuInline: MenuElement[][] = [cut([
-        itemToggleStrong, itemToggleEM, itemToggleCode, itemToggleLink,
+        itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink,
         itemAlignLeft, itemAlignCenter, itemAlignRight,
         // itemAlignLeftMark, itemAlignCenterMark, itemAlignRightMark
     ])]
