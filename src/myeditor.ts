@@ -25,6 +25,7 @@ import {
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
+import { setAlignNodes } from "./helper/alignment"
 import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/upload"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
 import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
@@ -57,6 +58,9 @@ class MyEditor {
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
 
+        schema.spec.nodes = setAlignNodes(schema.spec.nodes, "left")
+        schema.spec.nodes = setAlignNodes(schema.spec.nodes, "center")
+        schema.spec.nodes = setAlignNodes(schema.spec.nodes, "right")
         schema.spec.nodes = setTableNodes(schema.spec.nodes)
         schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)
         schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")

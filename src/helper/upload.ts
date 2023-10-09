@@ -14,8 +14,10 @@ let editorView: EditorView
 let UploadURI = ""
 let AccessURI = ""
 
-const inputFileForm = document.createElement("input")
-inputFileForm.onchange = uploadHandler
+const uploadFileForm = document.createElement("input")
+uploadFileForm.setAttribute("type", "file")
+uploadFileForm.setAttribute("multiple", "")
+uploadFileForm.onchange = uploadHandler
 
 function setUploadURIs(uploadURI:string, accessURI:string) {
     UploadURI = uploadURI
@@ -63,9 +65,9 @@ function imageDropHandler(schema: Schema, uploadURI: string, accessURI: string):
 }
 
 function callBrowseFile(state: EditorState, dispatch: any, view: EditorView): boolean {
-    inputFileForm.type = "file"
-    inputFileForm.multiple = true
-    inputFileForm.click()
+    uploadFileForm.type = "file"
+    uploadFileForm.multiple = true
+    uploadFileForm.click()
 
     editorView = view
 
@@ -81,9 +83,9 @@ function insertImage(imageURI: string): void {
 }
 
 async function uploadHandler() {
-    if (inputFileForm.files == null) { return }
+    if (uploadFileForm.files == null) { return }
 
-    for (const file of inputFileForm.files!) {
+    for (const file of uploadFileForm.files!) {
         if (file == undefined) { return [] } // Selected nothing
 
         const formData = new FormData()
