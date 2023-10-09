@@ -119,14 +119,6 @@ type MenuItemResult = {
     wrapBulletList?: MenuItem /// A menu item to wrap the selection in a [bullet list](#schema-list.BulletList).
     wrapOrderedList?: MenuItem /// A menu item to wrap the selection in an [ordered list](#schema-list.OrderedList).
     wrapBlockQuote?: MenuItem /// A menu item to wrap the selection in a [block quote](#schema-basic.BlockQuote).
-
-    /// Menu items to set the current textblock to be a [heading](#schema-basic.Heading) of level _N_.
-    makeHead1?: MenuItem
-    makeHead2?: MenuItem
-    makeHead3?: MenuItem
-    makeHead4?: MenuItem
-    makeHead5?: MenuItem
-    makeHead6?: MenuItem
 }
 
 function buildMenuItems(schema: Schema): MenuElement[][] {
@@ -155,6 +147,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     let itemToggleStrong, itemToggleEM, itemToggleCode, itemToggleLink
     let itemInsertImage, itemInsertHR
     let itemLineSetPlain, itemLineSetCode
+    const itemsHeading: MenuItem[] = new Array<MenuItem>
 
     if (mark = schema.marks.strong) { itemToggleStrong = markItem(mark, { title: "Toggle strong style", icon: icons.bold }) }
     if (mark = schema.marks.em) { itemToggleEM = markItem(mark, { title: "Toggle emphasis", icon: icons.italic }) }
@@ -166,6 +159,17 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     if (node = schema.nodes.image) {
         itemInsertImage = insertImageItem(node)
     }
+    if (node = schema.nodes.paragraph) {
+        itemLineSetPlain = blockTypeItem(node, { title: "Change to plain text", label: "Plain", icon: icons.textPlain })
+    }
+    if (node = schema.nodes.code_block) {
+        itemLineSetCode = blockTypeItem(node, { title: "Change to code block", label: "Code", icon: icons.textCode })
+    }
+    if (node = schema.nodes.heading) {
+        for (let i = 1; i <= 6; i++) {
+            itemsHeading.push(blockTypeItem(node, { title: "Change to heading " + i, label: "H" + i, attrs: { level: i } }))
+        }
+    }
     if (node = schema.nodes.horizontal_rule) {
         let hr = node // variable node not work so, copy it
         itemInsertHR = new MenuItem({
@@ -175,21 +179,6 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
             enable(state) { return canInsert(state, hr) },
             run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(hr.create())) }
         })
-    }
-    if (node = schema.nodes.paragraph) {
-        itemLineSetPlain = blockTypeItem(node, { title: "Change to plain text", label: "Plain", icon: icons.textPlain })
-    }
-    if (node = schema.nodes.code_block) {
-        itemLineSetCode = blockTypeItem(node, { title: "Change to code block", label: "Code", icon: icons.textCode })
-    }
-    if (node = schema.nodes.heading) {
-        for (let i = 1; i <= 10; i++) {
-            (r as any)["makeHead" + i] = blockTypeItem(node, {
-                title: "Change to heading " + i,
-                label: "H" + i,
-                attrs: { level: i }
-            })
-        }
     }
     if (node = schema.nodes.bullet_list) {
         r.wrapBulletList = wrapListItem(node, { title: "Wrap in bullet list", icon: icons.bulletList })
@@ -202,40 +191,23 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     }
 
     const outdentItem = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: icons.outdent })
-    // TODO: join up -> shift + enter support
+    // TODO: join up -> Key event "shift + enter" support
     const joinUpItem = new MenuItem({ title: "Join with above block", run: joinUp, select: state => joinUp(state), icon: icons.paragraph })
 
-    let cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
+    const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
-    const menuTypes = cut([
-        itemLineSetPlain, // line as plain
-        itemLineSetCode, // line as code
-        itemInsertHR, // Add horizontal line
-        r.makeHead1 && new Dropdown(cut([
-            r.makeHead1,
-            r.makeHead2,
-            r.makeHead3,
-            r.makeHead4,
-            r.makeHead5,
-            r.makeHead6
-        ]), { label: "H1" }) // line as heading
-    ])
+    const menuLineType = cut([itemLineSetPlain, itemLineSetCode, new Dropdown(cut(itemsHeading), { label: "H1" })])
 
     const undoItem = new MenuItem({ title: "Undo last change", run: undo, enable: state => undo(state), icon: icons.undo })
     const redoItem = new MenuItem({ title: "Redo last undone change", run: redo, enable: state => redo(state), icon: icons.redo })
     const menuHistory = [undoItem, redoItem]
 
-    const menuInsert = cut([itemInsertImage, getImageUploadMenus(), getYoutubeMenus(), getTableMenus()])
+    const menuInsert = cut([itemInsertHR, getTableMenus(), itemInsertImage, getImageUploadMenus(), getYoutubeMenus()])
 
     const menuInline: MenuElement[][] = [cut([itemToggleStrong, itemToggleEM, itemToggleCode, itemToggleLink])]
     const menuBlock = cut([r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem, outdentItem, selectParentNodeItem])
 
-    const result = menuInline.concat(
-        [menuTypes],
-        [menuHistory],
-        [menuInsert],
-        [menuBlock]
-    )
+    const result = menuInline.concat([menuLineType], [menuHistory], [menuInsert], [menuBlock])
 
     return result
 }
