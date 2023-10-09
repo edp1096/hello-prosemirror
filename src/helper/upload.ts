@@ -17,6 +17,7 @@ let AccessURI = ""
 const uploadFileForm = document.createElement("input")
 uploadFileForm.setAttribute("type", "file")
 uploadFileForm.setAttribute("multiple", "")
+uploadFileForm.setAttribute("accept", ".jpg,.png,.bmp")
 uploadFileForm.onchange = uploadHandler
 
 function setUploadURIs(uploadURI:string, accessURI:string) {
