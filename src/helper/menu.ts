@@ -165,7 +165,6 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const menuInline: MenuElement[][] = [cut([
         itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink,
         itemAlignLeft, itemAlignCenter, itemAlignRight,
-        // itemAlignLeftMark, itemAlignCenterMark, itemAlignRightMark
     ])]
     const menuLineType = cut([itemLineSetPlain, itemLineSetCode, new Dropdown(cut(itemsHeading), { label: "H1" })])
     const menuHistory = [itemUndo, itemRedo]
