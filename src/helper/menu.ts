@@ -130,7 +130,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemAlignRight = (schema.nodes.alignright) ? wrapItem(schema.nodes.alignright, { title: "Align right", icon: setIconElement("bi-text-right") }) : undefined
 
     const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Plain", icon: setIconElement("bi-type") }) : undefined
-    const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("bi-code") }) : undefined
+    const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("bi-code-slash") }) : undefined
     const itemsHeading: MenuItem[] = new Array<MenuItem>;
     if (schema.nodes.heading) {
         for (let i = 1; i <= 6; i++) {
