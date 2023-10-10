@@ -46,7 +46,7 @@
         <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
         <button type="button" onclick="clearContent()">Clear content</button>|
 
-        <input type="color" onfocusout="closeColorPicker()" list="color-set" style="display: none;" placeholder="Set color" />
+        <input type="color" onfocusout="getColorAndClose(this, event)" onchange="getColorAndClose(this, event)" list="myeditor-color-set" style="display: none;" placeholder="Set color" />
         <datalist id="color-set">
             <option value="#000000"></option>
             <option value="#333333"></option>
@@ -124,9 +124,11 @@
         setTimeout(() => { colorPicker.click() }, 100)
     }
 
-    function closeColorPicker() {
-        const colorPicker = document.querySelector('input[type=color]')
-        colorPicker.style.display = "none"
+    function getColorAndClose(self, event) {
+        self.style.display = "none"
+        if (event.type == "change") {
+            console.log(self.value)
+        }
     }
 </script>
 
