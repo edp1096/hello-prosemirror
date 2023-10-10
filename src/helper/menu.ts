@@ -4,13 +4,14 @@ import {
 } from "prosemirror-menu"
 import { undo, redo } from "prosemirror-history"
 import { NodeSelection, EditorState, Command } from "prosemirror-state"
-import { Schema, NodeType, MarkType } from "prosemirror-model"
+import { Schema, NodeType, MarkType, MarkSpec } from "prosemirror-model"
 import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
 
 import { TextField, openPrompt } from "./prompt"
-import { getYoutubeMenus } from "./youtube"
+import { getFontSizeList } from "./textstyle"
 import { getImageUploadMenus } from "./upload"
+import { getYoutubeMenus } from "./youtube"
 import { getTableMenus } from "./table"
 import { setIconElement } from "./utils"
 
@@ -118,6 +119,14 @@ function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
 }
 
 function buildMenuItems(schema: Schema): MenuElement[][] {
+    const itemsFontSize: MenuItem[] = new Array<MenuItem>;
+    const fontSizeList = getFontSizeList()
+    for (let i = 0; i < fontSizeList.length; i++) {
+        if (schema.marks[`fontsize${fontSizeList[i]}`]) {
+            itemsFontSize.push(markItem(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
+        }
+    }
+
     const itemToggleStrong = (schema.marks.strong) ? markItem(schema.marks.strong, { title: "Toggle strong style", icon: setIconElement("bi-type-bold") }) : undefined
     const itemToggleEM = (schema.marks.em) ? markItem(schema.marks.em, { title: "Toggle emphasis", icon: setIconElement("bi-type-italic") }) : undefined
     const itemToggleStrike = (schema.marks.strike) ? markItem(schema.marks.strike, { title: "Toggle strike", icon: setIconElement("bi-type-strikethrough") }) : undefined
@@ -163,6 +172,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
     const menuInline: MenuElement[][] = [cut([
+        new Dropdown(cut(itemsFontSize), { label: "Font" }),
         itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink,
         itemAlignLeft, itemAlignCenter, itemAlignRight,
     ])]

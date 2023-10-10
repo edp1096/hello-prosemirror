@@ -27,6 +27,7 @@ import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
 import { setAlignSchemaNode } from "./helper/alignment"
+import { getFontSizeList, setFontSizeSchemaNode } from "./helper/textstyle"
 import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/upload"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
 import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
@@ -58,6 +59,11 @@ class MyEditor {
 
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
+
+        const fontSizeList = getFontSizeList()
+        for (let i=0; i < fontSizeList.length; i++) {
+            schema.spec.marks = setFontSizeSchemaNode(schema.spec.marks, fontSizeList[i])
+        }
 
         schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "left")
         schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "center")
