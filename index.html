@@ -45,6 +45,24 @@
     <div id="buttons">
         <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
         <button type="button" onclick="clearContent()">Clear content</button>|
+
+        <input type="color" onfocusout="closeColorPicker()" list="color-set" style="display: none;" placeholder="Set color" />
+        <datalist id="color-set">
+            <option value="#000000"></option>
+            <option value="#333333"></option>
+            <option value="#666666"></option>
+            <option value="#999999"></option>
+            <option value="#cccccc"></option>
+
+            <option value="#ff0000">Red</option>
+            <option value="#ffa500">Orange</option>
+            <option value="#ffff00">Yellow</option>
+            <option value="#008000">Green</option>
+            <option value="#0000ff">Blue</option>
+            <option value="#4b0082">Indigo</option>
+            <option value="#ee82ee">Violet</option>
+        </datalist>
+        <button onclick="showColorPicker(event)">Text Color</button>
     </div>
     <div id="editor"></div>
 
@@ -81,6 +99,37 @@
 <!-- Comment modification editor -->
 
 <script>"use strict";</script>
+
+<script>
+    function showColorPicker(event) {
+        const colorPicker = document.querySelector('input[type=color]')
+
+        colorPicker.style.display = "none"
+
+        colorPicker.style.color = "transparent"
+        colorPicker.style.backgroundColor = "transparent"
+        colorPicker.style.border = "0px solid transparent"
+
+        colorPicker.style.position = "absolute"
+        colorPicker.style.left = `${event.pageX}px`
+        colorPicker.style.top = `${event.pageY}px`
+
+        colorPicker.style.width = "1px"
+        colorPicker.style.height = "1px"
+        colorPicker.style.display = "block"
+
+        colorPicker.style.zIndex = "-1"
+
+        colorPicker.focus()
+        setTimeout(() => { colorPicker.click() }, 100)
+    }
+
+    function closeColorPicker() {
+        const colorPicker = document.querySelector('input[type=color]')
+        colorPicker.style.display = "none"
+    }
+</script>
+
 <script src="dist/myeditor.js"></script>
 
 <script>
