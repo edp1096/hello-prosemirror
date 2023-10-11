@@ -3,17 +3,19 @@ import { Schema, NodeSpec, Node, MarkSpec, DOMOutputSpec } from "prosemirror-mod
 
 
 // https://discuss.prosemirror.net/t/implementing-alignment/731
-// Buggy but currently there's no way
 function setAlignSchemaNode(nodes: OrderedMap<NodeSpec>, direction: string): OrderedMap<NodeSpec> {
     const alignNodeSpecs: NodeSpec = {
         group: 'block',
+        content: "inline+",
         attrs: { style: { default: `text-align: ${direction}` } },
-        content: "block*",
+        defining: true,
         parseDOM: [
             { tag: "p" },
-            { style: `text-align: ${direction}` }
+            { style: `text-align: left` },
+            { style: `text-align: center` },
+            { style: `text-align: right` },
         ],
-        toDOM(node: Node) { return ["p", { style: node.attrs.style }, 0] },
+        toDOM(node) { return ["p", { style: node.attrs.style }, 0] },
     }
 
     nodes = nodes.addToEnd(`align${direction}`, alignNodeSpecs)

@@ -134,9 +134,9 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemToggleCode = (schema.marks.code) ? markItem(schema.marks.code, { title: "Toggle code font", icon: setIconElement("bi-code") }) : undefined
     const itemToggleLink = (schema.marks.link) ? linkItem(schema.marks.link, setIconElement("bi-link-45deg")) : undefined
 
-    const itemAlignLeft = (schema.nodes.alignleft) ? wrapItem(schema.nodes.alignleft, { title: "Align left", icon: setIconElement("bi-text-left") }) : undefined
-    const itemAlignCenter = (schema.nodes.aligncenter) ? wrapItem(schema.nodes.aligncenter, { title: "Align center", icon: setIconElement("bi-text-center") }) : undefined
-    const itemAlignRight = (schema.nodes.alignright) ? wrapItem(schema.nodes.alignright, { title: "Align right", icon: setIconElement("bi-text-right") }) : undefined
+    const itemAlignLeft = (schema.nodes.alignleft) ? blockTypeItem(schema.nodes.alignleft, { title: "Align left", icon: setIconElement("bi-text-left") }) : undefined
+    const itemAlignCenter = (schema.nodes.aligncenter) ? blockTypeItem(schema.nodes.aligncenter, { title: "Align center", icon: setIconElement("bi-text-center") }) : undefined
+    const itemAlignRight = (schema.nodes.alignright) ? blockTypeItem(schema.nodes.alignright, { title: "Align right", icon: setIconElement("bi-text-right") }) : undefined
 
     const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Plain", icon: setIconElement("bi-type") }) : undefined
     const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("bi-code-slash") }) : undefined
