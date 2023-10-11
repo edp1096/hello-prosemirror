@@ -3,7 +3,7 @@ import {
     selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
 } from "prosemirror-menu"
 import { undo, redo } from "prosemirror-history"
-import { NodeSelection, EditorState, TextSelection, SelectionRange, Command } from "prosemirror-state"
+import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
 import { Schema, Attrs, Node, NodeType, MarkType, MarkSpec } from "prosemirror-model"
 import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
@@ -85,6 +85,70 @@ function markItem(markType: MarkType, options: Partial<MenuItemSpec>) {
     return cmdItem(toggleMark(markType), passedOptions)
 }
 
+function markApplies(doc: Node, ranges: SelectionRange[], type: MarkType) {
+    for (let i = 0; i < ranges.length; i++) {
+        let { $from, $to } = ranges[i];
+        let can = $from.depth === 0 ? doc.type.allowsMarkType(type) : false;
+        doc.nodesBetween($from.pos, $to.pos, (node) => {
+            if (can) return false;
+            can = node.inlineContent && node.type.allowsMarkType(type);
+        });
+        if (can) return true;
+    }
+    return false;
+}
+
+function setMark(markType: MarkType, attrs?: | { [key: string]: any; } | undefined): Command {
+    return (state: EditorState, dispatch: ((tr: Transaction) => void) | undefined) => {
+        let { empty, $cursor, ranges } = state.selection as TextSelection
+        if ((empty && !$cursor) || !markApplies(state.doc, ranges as SelectionRange[], markType)) {
+            return false
+        }
+        if (dispatch) {
+            if ($cursor) {
+                dispatch(state.tr.addStoredMark(markType.create(attrs)))
+            } else {
+                let tr = state.tr;
+                for (let i = 0; i < ranges.length; i++) {
+                    let { $from, $to } = ranges[i];
+
+                    let from = $from.pos,
+                        to = $to.pos,
+                        start = $from.nodeAfter,
+                        end = $to.nodeBefore;
+                    let spaceStart =
+                        start &&
+                            start.isText &&
+                            start.text !== null &&
+                            start.text !== undefined
+                            ? /^\s*/.exec(start.text)?.[0].length ?? 0
+                            : 0;
+                    let spaceEnd =
+                        end && end.isText && end.text !== null && end.text !== undefined
+                            ? /\s*$/.exec(end.text)?.[0].length ?? 0
+                            : 0;
+                    if (from + spaceStart < to) {
+                        from += spaceStart;
+                        to -= spaceEnd;
+                    }
+                    tr.addMark(from, to, markType.create(attrs));
+                }
+                dispatch(tr.scrollIntoView());
+            }
+        }
+        return true;
+    };
+}
+
+function markItemOverwrite(markType: MarkType, options: Partial<MenuItemSpec>) {
+    let passedOptions: Partial<MenuItemSpec> = { active(state) { return markActive(state, markType) } }
+    for (let prop in options) {
+        (passedOptions as any)[prop] = (options as any)[prop]
+    }
+
+    return cmdItem(setMark(markType), passedOptions)
+}
+
 function linkItem(markType: MarkType, icon: IconSpec) {
     return new MenuItem({
         title: "Add or remove link",
@@ -123,7 +187,8 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const fontSizeList = FontSizeList
     for (let i = 0; i < fontSizeList.length; i++) {
         if (schema.marks[`fontsize${fontSizeList[i]}`]) {
-            itemsFontSize.push(markItem(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
+            // itemsFontSize.push(markItem(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
+            itemsFontSize.push(markItemOverwrite(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
         }
     }
 

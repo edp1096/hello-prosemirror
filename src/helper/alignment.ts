@@ -11,12 +11,10 @@ function setAlignSchemaNode(nodes: OrderedMap<NodeSpec>, direction: string): Ord
         group: 'block',
         content: "inline+",
         attrs: { style: { default: `text-align: ${direction}` } },
-        defining: true,
         parseDOM: [
-            { tag: "p" },
-            { style: `text-align: left` },
-            { style: `text-align: center` },
-            { style: `text-align: right` },
+            { tag: "p", style: `text-align: left` },
+            { tag: "p", style: `text-align: center` },
+            { tag: "p", style: `text-align: right` },
         ],
         toDOM(node) { return ["p", { style: node.attrs.style }, 0] },
     }
