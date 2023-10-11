@@ -3,6 +3,8 @@ import { Schema, NodeSpec, Node, MarkSpec, DOMOutputSpec } from "prosemirror-mod
 
 
 // https://discuss.prosemirror.net/t/implementing-alignment/731
+// https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/TextColorCommand.js#L78
+// https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/FontTypeCommand.js#L82
 function setAlignSchemaNode(nodes: OrderedMap<NodeSpec>, direction: string): OrderedMap<NodeSpec> {
     const alignNodeSpecs: NodeSpec = {
         group: 'block',

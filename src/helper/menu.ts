@@ -3,8 +3,8 @@ import {
     selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
 } from "prosemirror-menu"
 import { undo, redo } from "prosemirror-history"
-import { NodeSelection, EditorState, Command } from "prosemirror-state"
-import { Schema, NodeType, MarkType, MarkSpec } from "prosemirror-model"
+import { NodeSelection, EditorState, TextSelection, SelectionRange, Command } from "prosemirror-state"
+import { Schema, Attrs, Node, NodeType, MarkType, MarkSpec } from "prosemirror-model"
 import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
 

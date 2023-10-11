@@ -29,7 +29,7 @@ function setTableNodes(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
                 getFromDOM(dom: Element): string | null {
                     return ((dom as HTMLElement).style && (dom as HTMLElement).style.backgroundColor) || null
                 },
-                setDOMAttr(value: string, attrs: any): void {
+                setDOMAttr(value: unknown, attrs: any): void {
                     if (value) { attrs.style = (attrs.style || "") + `background-color: ${value};` }
                 }
             }

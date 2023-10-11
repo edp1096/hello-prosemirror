@@ -63,6 +63,7 @@ class MyEditor {
         const fontSizeList = FontSizeList
         for (let i=0; i < fontSizeList.length; i++) {
             schema.spec.marks = setFontSizeSchemaMark(schema.spec.marks, fontSizeList[i])
+            // schema.spec.nodes = setFontSizeSchemaMark(schema.spec.nodes, fontSizeList[i])
         }
 
         schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "left")
