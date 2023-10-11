@@ -9,9 +9,9 @@ function setFontSizeSchemaMark(marks: OrderedMap<MarkSpec>, fontSize: number): O
     const fontSizeMarkSpec: MarkSpec = {
         // group: 'block',
         // content: "inline+",
+        inclusive: true,
         // parseDOM: [{ tag: "span" }],
         toDOM() { return ["span", { style: `font-size: ${fontSize}pt;` }, 0] }
-        // toDOM(mark) { return ["span", { style: `font-size: ${mark.attrs.fontSize}pt` }, 0] }
     }
 
     marks = marks.addToEnd(`fontsize${fontSize}`, fontSizeMarkSpec)

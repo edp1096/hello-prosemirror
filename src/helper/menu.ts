@@ -187,8 +187,8 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const fontSizeList = FontSizeList
     for (let i = 0; i < fontSizeList.length; i++) {
         if (schema.marks[`fontsize${fontSizeList[i]}`]) {
-            // itemsFontSize.push(markItem(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
-            itemsFontSize.push(markItemOverwrite(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
+            itemsFontSize.push(markItem(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
+            // itemsFontSize.push(markItemOverwrite(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
         }
     }
 
