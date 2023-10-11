@@ -9,7 +9,7 @@ import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
 
 import { TextField, openPrompt } from "./prompt"
-import { getFontSizeList } from "./textstyle"
+import { FontSizeList } from "./textstyle"
 import { getImageUploadMenus } from "./upload"
 import { getYoutubeMenus } from "./youtube"
 import { getTableMenus } from "./table"
@@ -120,7 +120,7 @@ function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
 
 function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemsFontSize: MenuItem[] = new Array<MenuItem>;
-    const fontSizeList = getFontSizeList()
+    const fontSizeList = FontSizeList
     for (let i = 0; i < fontSizeList.length; i++) {
         if (schema.marks[`fontsize${fontSizeList[i]}`]) {
             itemsFontSize.push(markItem(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
