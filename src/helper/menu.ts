@@ -172,7 +172,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
     const menuInline: MenuElement[][] = [cut([
-        new Dropdown(cut(itemsFontSize), { label: "Font" }),
+        new Dropdown(cut(itemsFontSize), { label: "Aa" }),
         itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink,
         itemAlignLeft, itemAlignCenter, itemAlignRight,
     ])]
