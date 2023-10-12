@@ -1,8 +1,10 @@
 import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
-import { Schema, Node, NodeSpec, NodeType, Mark, MarkSpec, MarkType, Attrs, DOMOutputSpec, Fragment, ParseRule } from "prosemirror-model"
+import { Schema, Node, NodeSpec, NodeType, Mark, MarkSpec, MarkType, Attrs, DOMOutputSpec, Fragment, ParseRule, NodeRange } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
-import { toggleMark, lift, joinUp, wrapIn, setBlockType } from "prosemirror-commands"
+// import { toggleMark, lift, joinUp, wrapIn, setBlockType } from "prosemirror-commands"
+import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
+import { findWrapping } from "prosemirror-transform"
 
 import { TextField, openPrompt } from "./prompt"
 
@@ -177,37 +179,85 @@ function setMark(markType: MarkType, attrs?: | { [key: string]: any } | undefine
     }
 }
 
+/// Wrap the selection in a node of the given type with the given attributes.
+function wrapIn(nodeType: NodeType, attrs: Attrs | null = null): Command {
+    return function (state, dispatch) {
+        const { $from, $to } = state.selection
+        const range = $from.blockRange($to), wrapping = range && findWrapping(range, nodeType, attrs)
+        if (!wrapping) { return false }
+        if (dispatch) {
+            dispatch(state.tr.wrap(range!, wrapping).scrollIntoView())
+        }
+
+        return true
+    }
+}
+
 function wrapItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
     const passedOptions: MenuItemSpec = {
         run(state, dispatch) { return wrapIn(nodeType, options.attrs)(state, dispatch) },
         select(state) { return wrapIn(nodeType, options.attrs)(state) }
     }
 
-    for (let prop in options) {
+    for (const prop in options) {
         (passedOptions as any)[prop] = (options as any)[prop]
     }
 
     return new MenuItem(passedOptions)
 }
 
-function blockTypeItem(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
+/// Returns a command that tries to set the selected textblocks to the given node type with the given attributes.
+function setBlockType(nodeType: NodeType, attrs: Attrs | null = null): Command {
+    return function (state, dispatch) {
+        let applicable = false
+
+        for (let i = 0; i < state.selection.ranges.length && !applicable; i++) {
+            const { $from: { pos: from }, $to: { pos: to } } = state.selection.ranges[i]
+            state.doc.nodesBetween(from, to, (node, pos) => {
+                if (applicable) { return false }
+                if (!node.isTextblock || node.hasMarkup(nodeType, attrs)) { return }
+                if (node.type == nodeType) {
+                    applicable = true
+                } else {
+                    const $pos = state.doc.resolve(pos), index = $pos.index()
+                    applicable = $pos.parent.canReplaceWith(index, index + 1, nodeType)
+                }
+            })
+        }
+
+        if (!applicable) { return false }
+
+        if (dispatch) {
+            const tr = state.tr
+
+            for (let i = 0; i < state.selection.ranges.length; i++) {
+                const { $from: { pos: from }, $to: { pos: to } } = state.selection.ranges[i]
+                tr.setBlockType(from, to, nodeType, attrs)
+            }
+
+            dispatch(tr.scrollIntoView())
+        }
+
+        return true
+    }
+}
+
+function blockTypeItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
     let command = setBlockType(nodeType, options.attrs)
     let passedOptions: MenuItemSpec = {
         run: command,
         enable(state) { return command(state) },
         active(state) {
-            let { $from, to, node } = state.selection as NodeSelection
-            if (node) {
-                console.log($from.parent)
-                return node.hasMarkup(nodeType, options.attrs)
-            }
-
+            const { $from, to, node } = state.selection as NodeSelection
+            if (node) { return node.hasMarkup(nodeType, options.attrs) }
 
             return to <= $from.end() && $from.parent.hasMarkup(nodeType, options.attrs)
         }
     }
 
-    for (let prop in options) { (passedOptions as any)[prop] = (options as any)[prop] }
+    for (const prop in options) {
+        (passedOptions as any)[prop] = (options as any)[prop]
+    }
 
     return new MenuItem(passedOptions)
 }
@@ -219,5 +269,5 @@ export {
     markItem, linkItem, wrapListItem,
     markItemWithAttrsAndNoneActive,
     setMark,
-    wrapItemMy
+    wrapItemMy, blockTypeItemMy
 }

@@ -1,7 +1,7 @@
 ## TODO
 
 * [ ] Correct Youtube `from` time
-* [x] Alignment
+* [ ] Alignment
 * [ ] Text color
 * [ ] Text under-line, cancel line
 * [ ] Table

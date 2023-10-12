@@ -20,7 +20,7 @@ import {
     markItem, linkItem, wrapListItem,
     markItemWithAttrsAndNoneActive,
     setMark,
-    wrapItemMy
+    wrapItemMy, blockTypeItemMy
 } from "./utils"
 
 
@@ -45,7 +45,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     if (schema.nodes.alignment) {
         for (let align of AlignmentDefinitions) {
             itemsAlign.push(wrapItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
-            // itemsAlign.push(blockTypeItem(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
+            // itemsAlign.push(blockTypeItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
         }
     }
 
