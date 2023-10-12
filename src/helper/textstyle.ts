@@ -1,22 +1,21 @@
 import OrderedMap from 'orderedmap'
-import { Schema, NodeSpec, Node, MarkSpec, Mark, DOMOutputSpec, Fragment } from "prosemirror-model"
+import { Schema, NodeSpec, Node, MarkSpec, Mark, DOMOutputSpec, Fragment, ParseRule } from "prosemirror-model"
 
 
 const FontSizeList = [8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72]
+const DropDownOptions = { title: "Set font size", label: "Aa" }
 
-// function setFontSizeSchemaMark(marks: OrderedMap<MarkSpec>, fontSize: number): OrderedMap<MarkSpec> {
-function setFontSizeSchemaMark(marks: OrderedMap<MarkSpec>, fontSize: number): OrderedMap<MarkSpec> {
+function setFontSizeSchemaMark(marks: OrderedMap<MarkSpec>): OrderedMap<MarkSpec> {
     const fontSizeMarkSpec: MarkSpec = {
-        // group: 'block',
-        // content: "inline+",
+        attrs: { fontSize: { default: null } },
         inclusive: true,
-        // parseDOM: [{ tag: "span" }],
-        toDOM() { return ["span", { style: `font-size: ${fontSize}pt;` }, 0] }
+        parseDOM: [{ tag: "span" }],
+        toDOM(m) { return ["span", { style: `font-size: ${m.attrs.fontSize}pt;` }, 0] }
     }
 
-    marks = marks.addToEnd(`fontsize${fontSize}`, fontSizeMarkSpec)
+    marks = marks.addToEnd(`fontsize`, fontSizeMarkSpec)
 
     return marks
 }
 
-export { FontSizeList, setFontSizeSchemaMark }
+export { FontSizeList, DropDownOptions, setFontSizeSchemaMark }

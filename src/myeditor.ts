@@ -60,11 +60,11 @@ class MyEditor {
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
 
-        const fontSizeList = FontSizeList
-        for (let i=0; i < fontSizeList.length; i++) {
-            schema.spec.marks = setFontSizeSchemaMark(schema.spec.marks, fontSizeList[i])
-            // schema.spec.nodes = setFontSizeSchemaMark(schema.spec.nodes, fontSizeList[i])
-        }
+        // const fontSizeList = FontSizeList
+        // for (let i=0; i < fontSizeList.length; i++) {
+        //     schema.spec.marks = setFontSizeSchemaMark(schema.spec.marks, fontSizeList[i])
+        // }
+        schema.spec.marks = setFontSizeSchemaMark(schema.spec.marks)
 
         schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "left")
         schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "center")

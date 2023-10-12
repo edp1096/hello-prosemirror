@@ -9,7 +9,7 @@ import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
 
 import { TextField, openPrompt } from "./prompt"
-import { FontSizeList } from "./textstyle"
+import { FontSizeList, DropDownOptions } from "./textstyle"
 import { getImageUploadMenus } from "./upload"
 import { getYoutubeMenus } from "./youtube"
 import { getTableMenus } from "./table"
@@ -76,7 +76,7 @@ function markActive(state: EditorState, type: MarkType) {
     }
 }
 
-function markItem(markType: MarkType, options: Partial<MenuItemSpec>) {
+function markItem(markType: MarkType, options: Object) {
     let passedOptions: Partial<MenuItemSpec> = { active(state) { return markActive(state, markType) } }
     for (let prop in options) {
         (passedOptions as any)[prop] = (options as any)[prop]
@@ -85,68 +85,13 @@ function markItem(markType: MarkType, options: Partial<MenuItemSpec>) {
     return cmdItem(toggleMark(markType), passedOptions)
 }
 
-function markApplies(doc: Node, ranges: SelectionRange[], type: MarkType) {
-    for (let i = 0; i < ranges.length; i++) {
-        let { $from, $to } = ranges[i];
-        let can = $from.depth === 0 ? doc.type.allowsMarkType(type) : false;
-        doc.nodesBetween($from.pos, $to.pos, (node) => {
-            if (can) return false;
-            can = node.inlineContent && node.type.allowsMarkType(type);
-        });
-        if (can) return true;
-    }
-    return false;
-}
-
-function setMark(markType: MarkType, attrs?: | { [key: string]: any; } | undefined): Command {
-    return (state: EditorState, dispatch: ((tr: Transaction) => void) | undefined) => {
-        let { empty, $cursor, ranges } = state.selection as TextSelection
-        if ((empty && !$cursor) || !markApplies(state.doc, ranges as SelectionRange[], markType)) {
-            return false
-        }
-        if (dispatch) {
-            if ($cursor) {
-                dispatch(state.tr.addStoredMark(markType.create(attrs)))
-            } else {
-                let tr = state.tr;
-                for (let i = 0; i < ranges.length; i++) {
-                    let { $from, $to } = ranges[i];
-
-                    let from = $from.pos,
-                        to = $to.pos,
-                        start = $from.nodeAfter,
-                        end = $to.nodeBefore;
-                    let spaceStart =
-                        start &&
-                            start.isText &&
-                            start.text !== null &&
-                            start.text !== undefined
-                            ? /^\s*/.exec(start.text)?.[0].length ?? 0
-                            : 0;
-                    let spaceEnd =
-                        end && end.isText && end.text !== null && end.text !== undefined
-                            ? /\s*$/.exec(end.text)?.[0].length ?? 0
-                            : 0;
-                    if (from + spaceStart < to) {
-                        from += spaceStart;
-                        to -= spaceEnd;
-                    }
-                    tr.addMark(from, to, markType.create(attrs));
-                }
-                dispatch(tr.scrollIntoView());
-            }
-        }
-        return true;
-    };
-}
-
-function markItemOverwrite(markType: MarkType, options: Partial<MenuItemSpec>) {
-    let passedOptions: Partial<MenuItemSpec> = { active(state) { return markActive(state, markType) } }
-    for (let prop in options) {
+function markItemWithAttrsAndNoneActive(markType: MarkType, options: Object) {
+    const passedOptions: Partial<MenuItemSpec> = { active(state) { return false } }
+    for (const prop in options) {
         (passedOptions as any)[prop] = (options as any)[prop]
     }
 
-    return cmdItem(setMark(markType), passedOptions)
+    return cmdItem(toggleMark(markType, (passedOptions as any).attrs), passedOptions)
 }
 
 function linkItem(markType: MarkType, icon: IconSpec) {
@@ -185,10 +130,10 @@ function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
 function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemsFontSize: MenuItem[] = new Array<MenuItem>;
     const fontSizeList = FontSizeList
-    for (let i = 0; i < fontSizeList.length; i++) {
-        if (schema.marks[`fontsize${fontSizeList[i]}`]) {
-            itemsFontSize.push(markItem(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
-            // itemsFontSize.push(markItemOverwrite(schema.marks[`fontsize${fontSizeList[i]}`], { title: `Change font ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt` }))
+
+    if (schema.marks.fontsize) {
+        for (let i = 0; i < fontSizeList.length; i++) {
+            itemsFontSize.push(markItemWithAttrsAndNoneActive(schema.marks.fontsize, { title: `Set font size to ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt`, attrs: { fontSize: `${fontSizeList[i]}` } }))
         }
     }
 
@@ -237,7 +182,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
     const menuInline: MenuElement[][] = [cut([
-        new Dropdown(cut(itemsFontSize), { label: "Aa" }),
+        new Dropdown(cut(itemsFontSize), { title: "Set font size", label: "Aa" }),
         itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink,
         itemAlignLeft, itemAlignCenter, itemAlignRight,
     ])]
