@@ -62,12 +62,7 @@ class MyEditor {
 
         schema.spec.marks = setFontSizeSchemaMark(schema.spec.marks)
 
-        // schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "left")
-        // schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "center")
-        // schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "right")
         schema.spec.nodes = SetAlignSchemaNode(schema.spec.nodes)
-        
-
         schema.spec.nodes = setTableNodes(schema.spec.nodes)
         schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)
         schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")

@@ -8,7 +8,7 @@ export const nodes = {
     doc: { content: "block+" } as NodeSpec,
     paragraph: {
         group: "block",
-        content: "inline+",
+        content: "inline*", // If set `inline+`, Enter key not work so, must be set `inline*`
         parseDOM: [{ tag: "p" }],
         toDOM() { return pDOM }
     } as NodeSpec,

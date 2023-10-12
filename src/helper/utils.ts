@@ -182,7 +182,11 @@ function wrapItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs
         run(state, dispatch) { return wrapIn(nodeType, options.attrs)(state, dispatch) },
         select(state) { return wrapIn(nodeType, options.attrs)(state) }
     }
-    for (let prop in options) (passedOptions as any)[prop] = (options as any)[prop]
+
+    for (let prop in options) {
+        (passedOptions as any)[prop] = (options as any)[prop]
+    }
+
     return new MenuItem(passedOptions)
 }
 

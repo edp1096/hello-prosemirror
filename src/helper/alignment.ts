@@ -13,14 +13,12 @@ let AlignmentDefinitions = [
 // https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/TextColorCommand.js#L78
 // https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/FontTypeCommand.js#L82
 // https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/TextAlignCommand.js
-// function setAlignSchemaNode(nodes: OrderedMap<NodeSpec>, direction: string): OrderedMap<NodeSpec> {
 function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
     const alignNodeSpecs: NodeSpec = {
         group: 'block',
         content: "block+", // wrapItem
         // content: "inline+", // blockTypeItem
         attrs: { alignment: { default: null } },
-        // defining: true,
         parseDOM: [{ tag: "p" }],
         toDOM(node) { return ["p", { style: `text-align: ${node.attrs.alignment};` }, 0] }
     }
