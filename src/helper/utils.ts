@@ -1,7 +1,7 @@
 import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
-import { Schema, Node, NodeSpec, NodeType, Mark, MarkSpec, MarkType, DOMOutputSpec, Fragment, ParseRule } from "prosemirror-model"
+import { Schema, Node, NodeSpec, NodeType, Mark, MarkSpec, MarkType, Attrs, DOMOutputSpec, Fragment, ParseRule } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
-import { toggleMark, lift, joinUp } from "prosemirror-commands"
+import { toggleMark, lift, joinUp, wrapIn, setBlockType } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
 
 import { TextField, openPrompt } from "./prompt"
@@ -177,10 +177,43 @@ function setMark(markType: MarkType, attrs?: | { [key: string]: any } | undefine
     }
 }
 
+function wrapItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
+    const passedOptions: MenuItemSpec = {
+        run(state, dispatch) { return wrapIn(nodeType, options.attrs)(state, dispatch) },
+        select(state) { return wrapIn(nodeType, options.attrs)(state) }
+    }
+    for (let prop in options) (passedOptions as any)[prop] = (options as any)[prop]
+    return new MenuItem(passedOptions)
+}
+
+function blockTypeItem(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
+    let command = setBlockType(nodeType, options.attrs)
+    let passedOptions: MenuItemSpec = {
+        run: command,
+        enable(state) { return command(state) },
+        active(state) {
+            let { $from, to, node } = state.selection as NodeSelection
+            if (node) {
+                console.log($from.parent)
+                return node.hasMarkup(nodeType, options.attrs)
+            }
+
+
+            return to <= $from.end() && $from.parent.hasMarkup(nodeType, options.attrs)
+        }
+    }
+
+    for (let prop in options) { (passedOptions as any)[prop] = (options as any)[prop] }
+
+    return new MenuItem(passedOptions)
+}
+
+
 export {
     setIconElement,
     canInsert, insertImageItem,
     markItem, linkItem, wrapListItem,
     markItemWithAttrsAndNoneActive,
-    setMark
+    setMark,
+    wrapItemMy
 }

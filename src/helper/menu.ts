@@ -19,7 +19,8 @@ import {
     canInsert, insertImageItem,
     markItem, linkItem, wrapListItem,
     markItemWithAttrsAndNoneActive,
-    setMark
+    setMark,
+    wrapItemMy
 } from "./utils"
 
 
@@ -43,10 +44,10 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemsAlign: MenuItem[] = []
     if (schema.nodes.alignment) {
         for (let align of AlignmentDefinitions) {
-            itemsAlign.push(wrapItem(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
+            itemsAlign.push(wrapItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
+            // itemsAlign.push(blockTypeItem(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
         }
     }
-    // const itemAlignRight = (schema.nodes.alignright) ? wrapItem(schema.nodes.alignright, { title: "Align right", icon: setIconElement("bi-text-right") }) : undefined
 
     const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Plain", icon: setIconElement("bi-type") }) : undefined
     const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("bi-code-slash") }) : undefined
