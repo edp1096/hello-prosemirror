@@ -26,7 +26,7 @@ import { schema } from "./helper/schema"
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
-import { setAlignSchemaNode } from "./helper/alignment"
+import { SetAlignSchemaNode } from "./helper/alignment"
 import { FontSizeList, setFontSizeSchemaMark } from "./helper/textstyle"
 import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/upload"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
@@ -60,15 +60,13 @@ class MyEditor {
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
 
-        // const fontSizeList = FontSizeList
-        // for (let i=0; i < fontSizeList.length; i++) {
-        //     schema.spec.marks = setFontSizeSchemaMark(schema.spec.marks, fontSizeList[i])
-        // }
         schema.spec.marks = setFontSizeSchemaMark(schema.spec.marks)
 
-        schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "left")
-        schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "center")
-        schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "right")
+        // schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "left")
+        // schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "center")
+        // schema.spec.nodes = setAlignSchemaNode(schema.spec.nodes, "right")
+        schema.spec.nodes = SetAlignSchemaNode(schema.spec.nodes)
+        
 
         schema.spec.nodes = setTableNodes(schema.spec.nodes)
         schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)

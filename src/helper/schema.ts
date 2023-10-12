@@ -7,14 +7,14 @@ const pDOM: DOMOutputSpec = ["p", 0], blockquoteDOM: DOMOutputSpec = ["blockquot
 export const nodes = {
     doc: { content: "block+" } as NodeSpec,
     paragraph: {
-        content: "inline*",
         group: "block",
+        content: "inline+",
         parseDOM: [{ tag: "p" }],
         toDOM() { return pDOM }
     } as NodeSpec,
     blockquote: {
-        content: "block+",
         group: "block",
+        content: "block+",
         defining: true,
         parseDOM: [{ tag: "blockquote" }],
         toDOM() { return blockquoteDOM }

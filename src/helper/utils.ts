@@ -1,6 +1,10 @@
-import { IconSpec } from "prosemirror-menu"
+import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
 import { Schema, Node, NodeSpec, NodeType, Mark, MarkSpec, MarkType, DOMOutputSpec, Fragment, ParseRule } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
+import { toggleMark, lift, joinUp } from "prosemirror-commands"
+import { wrapInList } from "prosemirror-schema-list"
+
+import { TextField, openPrompt } from "./prompt"
 
 
 function setIconElement(iconName: string): IconSpec {
@@ -11,6 +15,118 @@ function setIconElement(iconName: string): IconSpec {
     const result = { dom: iconEL }
 
     return result
+}
+
+
+function canInsert(state: EditorState, nodeType: NodeType) {
+    let $from = state.selection.$from
+    for (let d = $from.depth; d >= 0; d--) {
+        let index = $from.index(d)
+        if ($from.node(d).canReplaceWith(index, index, nodeType)) return true
+    }
+
+    return false
+}
+
+function insertImageItem(nodeType: NodeType) {
+    return new MenuItem({
+        title: "Insert image",
+        label: "Image",
+        icon: setIconElement("bi-image"),
+        enable(state) { return canInsert(state, nodeType) },
+        run(state, _, view) {
+            let { from, to } = state.selection, attrs = null
+            if (state.selection instanceof NodeSelection && state.selection.node.type == nodeType)
+                attrs = state.selection.node.attrs
+            openPrompt({
+                title: "Insert image",
+                fields: {
+                    src: new TextField({ label: "Location", required: true, value: attrs && attrs.src }),
+                    title: new TextField({ label: "Title", value: attrs && attrs.title }),
+                    alt: new TextField({
+                        label: "Description",
+                        value: attrs ? attrs.alt : state.doc.textBetween(from, to, " ")
+                    })
+                },
+                callback(attrs) {
+                    view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill(attrs)!))
+                    view.focus()
+                }
+            })
+        }
+    })
+}
+
+function cmdItem(cmd: Command, options: Partial<MenuItemSpec>) {
+    let passedOptions: MenuItemSpec = { label: options.title as string | undefined, run: cmd }
+    for (let prop in options) {
+        (passedOptions as any)[prop] = (options as any)[prop]
+    }
+    if (!options.enable && !options.select) {
+        passedOptions[options.enable ? "enable" : "select"] = state => cmd(state)
+    }
+
+    return new MenuItem(passedOptions)
+}
+
+function markActive(state: EditorState, type: MarkType) {
+    let { from, $from, to, empty } = state.selection
+    if (empty) {
+        return !!type.isInSet(state.storedMarks || $from.marks())
+    } else {
+        return state.doc.rangeHasMark(from, to, type)
+    }
+}
+
+function markItem(markType: MarkType, options: Object) {
+    let passedOptions: Partial<MenuItemSpec> = { active(state) { return markActive(state, markType) } }
+    for (let prop in options) {
+        (passedOptions as any)[prop] = (options as any)[prop]
+    }
+
+    return cmdItem(toggleMark(markType), passedOptions)
+}
+
+function markItemWithAttrsAndNoneActive(markType: MarkType, options: Object) {
+    const passedOptions: Partial<MenuItemSpec> = { active(state) { return false } }
+    for (const prop in options) {
+        (passedOptions as any)[prop] = (options as any)[prop]
+    }
+
+    return cmdItem(setMark(markType, (passedOptions as any).attrs), passedOptions)
+}
+
+function linkItem(markType: MarkType, icon: IconSpec) {
+    return new MenuItem({
+        title: "Add or remove link",
+        icon: icon,
+        active(state) { return markActive(state, markType) },
+        enable(state) { return !state.selection.empty },
+        run(state, dispatch, view) {
+            if (markActive(state, markType)) {
+                toggleMark(markType)(state, dispatch)
+                return true
+            }
+            openPrompt({
+                title: "Create a link",
+                fields: {
+                    href: new TextField({
+                        label: "Link target",
+                        required: true
+                    }),
+                    title: new TextField({ label: "Title" })
+                },
+                callback(attrs) {
+                    toggleMark(markType, attrs)(view.state, view.dispatch)
+                    view.focus()
+                }
+            })
+        }
+    })
+}
+
+function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
+    return cmdItem(wrapInList(nodeType, (options as any).attrs), options)
 }
 
 // https://codesandbox.io/s/h5e2e?file=/src/commands-extra.ts
@@ -61,5 +177,10 @@ function setMark(markType: MarkType, attrs?: | { [key: string]: any } | undefine
     }
 }
 
-
-export { setIconElement, setMark }
+export {
+    setIconElement,
+    canInsert, insertImageItem,
+    markItem, linkItem, wrapListItem,
+    markItemWithAttrsAndNoneActive,
+    setMark
+}

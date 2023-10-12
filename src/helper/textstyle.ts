@@ -4,7 +4,7 @@ import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Tra
 
 
 const FontSizeList = [8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72]
-const DropDownOptions = { title: "Set font size", label: "Aa" }
+// const DropDownMenuName = { title: "Set font size", label: "Aa" }
 
 function setFontSizeSchemaMark(marks: OrderedMap<MarkSpec>): OrderedMap<MarkSpec> {
     const fontSizeMarkSpec: MarkSpec = {
@@ -19,4 +19,4 @@ function setFontSizeSchemaMark(marks: OrderedMap<MarkSpec>): OrderedMap<MarkSpec
     return marks
 }
 
-export { FontSizeList, DropDownOptions, setFontSizeSchemaMark }
+export { FontSizeList, setFontSizeSchemaMark }

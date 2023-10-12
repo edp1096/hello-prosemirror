@@ -9,123 +9,19 @@ import { undo, redo } from "prosemirror-history"
 import { wrapInList } from "prosemirror-schema-list"
 
 import { TextField, openPrompt } from "./prompt"
-import { FontSizeList, DropDownOptions } from "./textstyle"
+import { AlignmentDefinitions, SetAlignSchemaNode } from "./alignment"
+import { FontSizeList } from "./textstyle"
 import { getImageUploadMenus } from "./upload"
 import { getYoutubeMenus } from "./youtube"
 import { getTableMenus } from "./table"
-import { setIconElement, setMark } from "./utils"
+import {
+    setIconElement,
+    canInsert, insertImageItem,
+    markItem, linkItem, wrapListItem,
+    markItemWithAttrsAndNoneActive,
+    setMark
+} from "./utils"
 
-
-function canInsert(state: EditorState, nodeType: NodeType) {
-    let $from = state.selection.$from
-    for (let d = $from.depth; d >= 0; d--) {
-        let index = $from.index(d)
-        if ($from.node(d).canReplaceWith(index, index, nodeType)) return true
-    }
-
-    return false
-}
-
-function insertImageItem(nodeType: NodeType) {
-    return new MenuItem({
-        title: "Insert image",
-        label: "Image",
-        icon: setIconElement("bi-image"),
-        enable(state) { return canInsert(state, nodeType) },
-        run(state, _, view) {
-            let { from, to } = state.selection, attrs = null
-            if (state.selection instanceof NodeSelection && state.selection.node.type == nodeType)
-                attrs = state.selection.node.attrs
-            openPrompt({
-                title: "Insert image",
-                fields: {
-                    src: new TextField({ label: "Location", required: true, value: attrs && attrs.src }),
-                    title: new TextField({ label: "Title", value: attrs && attrs.title }),
-                    alt: new TextField({
-                        label: "Description",
-                        value: attrs ? attrs.alt : state.doc.textBetween(from, to, " ")
-                    })
-                },
-                callback(attrs) {
-                    view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill(attrs)!))
-                    view.focus()
-                }
-            })
-        }
-    })
-}
-
-function cmdItem(cmd: Command, options: Partial<MenuItemSpec>) {
-    let passedOptions: MenuItemSpec = { label: options.title as string | undefined, run: cmd }
-    for (let prop in options) {
-        (passedOptions as any)[prop] = (options as any)[prop]
-    }
-    if (!options.enable && !options.select) {
-        passedOptions[options.enable ? "enable" : "select"] = state => cmd(state)
-    }
-
-    return new MenuItem(passedOptions)
-}
-
-function markActive(state: EditorState, type: MarkType) {
-    let { from, $from, to, empty } = state.selection
-    if (empty) {
-        return !!type.isInSet(state.storedMarks || $from.marks())
-    } else {
-        return state.doc.rangeHasMark(from, to, type)
-    }
-}
-
-function markItem(markType: MarkType, options: Object) {
-    let passedOptions: Partial<MenuItemSpec> = { active(state) { return markActive(state, markType) } }
-    for (let prop in options) {
-        (passedOptions as any)[prop] = (options as any)[prop]
-    }
-
-    return cmdItem(toggleMark(markType), passedOptions)
-}
-
-function markItemWithAttrsAndNoneActive(markType: MarkType, options: Object) {
-    const passedOptions: Partial<MenuItemSpec> = { active(state) { return false } }
-    for (const prop in options) {
-        (passedOptions as any)[prop] = (options as any)[prop]
-    }
-
-    return cmdItem(setMark(markType, (passedOptions as any).attrs), passedOptions)
-}
-
-function linkItem(markType: MarkType, icon: IconSpec) {
-    return new MenuItem({
-        title: "Add or remove link",
-        icon: icon,
-        active(state) { return markActive(state, markType) },
-        enable(state) { return !state.selection.empty },
-        run(state, dispatch, view) {
-            if (markActive(state, markType)) {
-                toggleMark(markType)(state, dispatch)
-                return true
-            }
-            openPrompt({
-                title: "Create a link",
-                fields: {
-                    href: new TextField({
-                        label: "Link target",
-                        required: true
-                    }),
-                    title: new TextField({ label: "Title" })
-                },
-                callback(attrs) {
-                    toggleMark(markType, attrs)(view.state, view.dispatch)
-                    view.focus()
-                }
-            })
-        }
-    })
-}
-
-function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
-    return cmdItem(wrapInList(nodeType, (options as any).attrs), options)
-}
 
 function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemsFontSize: MenuItem[] = new Array<MenuItem>;
@@ -144,9 +40,13 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemToggleCode = (schema.marks.code) ? markItem(schema.marks.code, { title: "Toggle code font", icon: setIconElement("bi-code") }) : undefined
     const itemToggleLink = (schema.marks.link) ? linkItem(schema.marks.link, setIconElement("bi-link-45deg")) : undefined
 
-    const itemAlignLeft = (schema.nodes.alignleft) ? blockTypeItem(schema.nodes.alignleft, { title: "Align left", icon: setIconElement("bi-text-left") }) : undefined
-    const itemAlignCenter = (schema.nodes.aligncenter) ? blockTypeItem(schema.nodes.aligncenter, { title: "Align center", icon: setIconElement("bi-text-center") }) : undefined
-    const itemAlignRight = (schema.nodes.alignright) ? blockTypeItem(schema.nodes.alignright, { title: "Align right", icon: setIconElement("bi-text-right") }) : undefined
+    const itemsAlign: MenuItem[] = []
+    if (schema.nodes.alignment) {
+        for (let align of AlignmentDefinitions) {
+            itemsAlign.push(wrapItem(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
+        }
+    }
+    // const itemAlignRight = (schema.nodes.alignright) ? wrapItem(schema.nodes.alignright, { title: "Align right", icon: setIconElement("bi-text-right") }) : undefined
 
     const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Plain", icon: setIconElement("bi-type") }) : undefined
     const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("bi-code-slash") }) : undefined
@@ -184,7 +84,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const menuInline: MenuElement[][] = [cut([
         new Dropdown(cut(itemsFontSize), { title: "Set font size", label: "Aa" }),
         itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink,
-        itemAlignLeft, itemAlignCenter, itemAlignRight,
+        ...itemsAlign
     ])]
     const menuLineType = cut([itemLineSetPlain, itemLineSetCode, new Dropdown(cut(itemsHeading), { label: "H1" })])
     const menuHistory = [itemUndo, itemRedo]
