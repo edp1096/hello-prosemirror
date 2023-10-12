@@ -21,10 +21,7 @@ function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
         attrs: { alignment: { default: null } },
         defining: true,
         parseDOM: [{ tag: "p" }],
-        toDOM(node) {
-            console.log(node.attrs)
-            return ["p", { style: `text-align: ${node.attrs.alignment};` }, 0]
-        }
+        toDOM(node) { return ["p", { style: `text-align: ${node.attrs.alignment};` }, 0] }
     }
 
     nodes = nodes.addToEnd(`alignment`, alignNodeSpecs)
