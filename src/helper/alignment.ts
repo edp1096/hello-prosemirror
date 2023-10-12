@@ -16,8 +16,8 @@ let AlignmentDefinitions = [
 function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
     const alignNodeSpecs: NodeSpec = {
         group: 'block',
-        content: "block+", // wrapItem
-        // content: "inline+", // blockTypeItem
+        // content: "block+", // wrapItem
+        content: "inline+", // blockTypeItem
         attrs: { alignment: { default: null } },
         parseDOM: [{ tag: "p" }],
         toDOM(node) { return ["p", { style: `text-align: ${node.attrs.alignment};` }, 0] }

@@ -1,10 +1,10 @@
 import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
-import { Schema, Node, NodeSpec, NodeType, Mark, MarkSpec, MarkType, Attrs, DOMOutputSpec, Fragment, ParseRule, NodeRange } from "prosemirror-model"
+import { Node, NodeType, MarkType, Attrs, Fragment, Slice } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
 // import { toggleMark, lift, joinUp, wrapIn, setBlockType } from "prosemirror-commands"
 import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
-import { findWrapping } from "prosemirror-transform"
+import { Transform, findWrapping, ReplaceStep, ReplaceAroundStep } from "prosemirror-transform"
 
 import { TextField, openPrompt } from "./prompt"
 
@@ -18,7 +18,6 @@ function setIconElement(iconName: string): IconSpec {
 
     return result
 }
-
 
 function canInsert(state: EditorState, nodeType: NodeType) {
     let $from = state.selection.$from
@@ -183,9 +182,12 @@ function setMark(markType: MarkType, attrs?: | { [key: string]: any } | undefine
 function wrapIn(nodeType: NodeType, attrs: Attrs | null = null): Command {
     return function (state, dispatch) {
         const { $from, $to } = state.selection
-        const range = $from.blockRange($to), wrapping = range && findWrapping(range, nodeType, attrs)
+        const range = $from.blockRange($to)
+        const wrapping = range && findWrapping(range, nodeType, attrs)
         if (!wrapping) { return false }
+
         if (dispatch) {
+            console.log(state.tr)
             dispatch(state.tr.wrap(range!, wrapping).scrollIntoView())
         }
 
@@ -204,6 +206,30 @@ function wrapItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs
     }
 
     return new MenuItem(passedOptions)
+}
+
+function canChangeType(doc: Node, pos: number, type: NodeType) {
+    const $pos = doc.resolve(pos), index = $pos.index()
+    return $pos.parent.canReplaceWith(index, index + 1, type)
+}
+
+function trSetBlockType(tr: Transform, from: number, to: number, type: NodeType, attrs: Attrs | null) {
+    if (!type.isTextblock) throw new RangeError("Type given to setBlockType should be a textblock")
+    const mapFrom = tr.steps.length
+    tr.doc.nodesBetween(from, to, (node, pos) => {
+        if (node.isTextblock && !node.hasMarkup(type, attrs) && canChangeType(tr.doc, tr.mapping.slice(mapFrom).map(pos), type)) {
+            // Ensure all markup that isn't allowed in the new node type is cleared
+            tr.clearIncompatible(tr.mapping.slice(mapFrom).map(pos, 1), type)
+
+            const mapping = tr.mapping.slice(mapFrom)
+            const startM = mapping.map(pos, 1), endM = mapping.map(pos + node.nodeSize, 1)
+            const fragmentSlice = new Slice(Fragment.from(type.create(attrs, null, node.marks)), 0, 0)
+
+            tr.step(new ReplaceAroundStep(startM, endM, startM + 1, endM - 1, fragmentSlice, 1, true))
+
+            return false
+        }
+    })
 }
 
 /// Returns a command that tries to set the selected textblocks to the given node type with the given attributes.
@@ -232,7 +258,8 @@ function setBlockType(nodeType: NodeType, attrs: Attrs | null = null): Command {
 
             for (let i = 0; i < state.selection.ranges.length; i++) {
                 const { $from: { pos: from }, $to: { pos: to } } = state.selection.ranges[i]
-                tr.setBlockType(from, to, nodeType, attrs)
+                // tr.setBlockType(from, to, nodeType, attrs)
+                trSetBlockType(tr, from, to, nodeType, attrs)
             }
 
             dispatch(tr.scrollIntoView())

@@ -44,8 +44,8 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemsAlign: MenuItem[] = []
     if (schema.nodes.alignment) {
         for (let align of AlignmentDefinitions) {
-            itemsAlign.push(wrapItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
-            // itemsAlign.push(blockTypeItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
+            // itemsAlign.push(wrapItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
+            itemsAlign.push(blockTypeItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
         }
     }
 
@@ -96,7 +96,8 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     ])
     const menuBlock = cut([
         itemBulletList, itemOrderedList, itemBlockQuote,
-        itemJoinUp, itemOutdent, selectParentNodeItem
+        // itemJoinUp, itemOutdent, selectParentNodeItem
+        itemJoinUp, itemOutdent
     ])
 
     const result = menuInline.concat([menuLineType], [menuHistory], [menuInsertUpload], [menuBlock])
