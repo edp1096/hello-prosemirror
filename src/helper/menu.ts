@@ -2,10 +2,10 @@ import {
     wrapItem, blockTypeItem, Dropdown, DropdownSubmenu,
     selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
 } from "prosemirror-menu"
-import { undo, redo } from "prosemirror-history"
+import { Schema, Attrs, Node, NodeType, MarkSpec, MarkType } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
-import { Schema, Attrs, Node, NodeType, MarkType, MarkSpec } from "prosemirror-model"
 import { toggleMark, lift, joinUp } from "prosemirror-commands"
+import { undo, redo } from "prosemirror-history"
 import { wrapInList } from "prosemirror-schema-list"
 
 import { TextField, openPrompt } from "./prompt"
@@ -13,7 +13,7 @@ import { FontSizeList, DropDownOptions } from "./textstyle"
 import { getImageUploadMenus } from "./upload"
 import { getYoutubeMenus } from "./youtube"
 import { getTableMenus } from "./table"
-import { setIconElement } from "./utils"
+import { setIconElement, setMark } from "./utils"
 
 
 function canInsert(state: EditorState, nodeType: NodeType) {
@@ -91,7 +91,7 @@ function markItemWithAttrsAndNoneActive(markType: MarkType, options: Object) {
         (passedOptions as any)[prop] = (options as any)[prop]
     }
 
-    return cmdItem(toggleMark(markType, (passedOptions as any).attrs), passedOptions)
+    return cmdItem(setMark(markType, (passedOptions as any).attrs), passedOptions)
 }
 
 function linkItem(markType: MarkType, icon: IconSpec) {
