@@ -28,4 +28,20 @@ function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
     return nodes
 }
 
-export { AlignmentDefinitions, SetAlignSchemaNode }
+function SetAlignSchemaMark(nodes: OrderedMap<MarkSpec>): OrderedMap<MarkSpec> {
+    const alignMarkSpecs: MarkSpec = {
+        group: 'block',
+        // content: "block+", // wrapItem
+        content: "inline+", // blockTypeItem
+        attrs: { alignment: { default: null } },
+        inclusive: true,
+        parseDOM: [{ tag: "span" }],
+        toDOM(node) { return ["span", { style: `text-align: ${node.attrs.alignment};` }, 0] }
+    }
+
+    nodes = nodes.addToEnd(`alignment`, alignMarkSpecs)
+
+    return nodes
+}
+
+export { AlignmentDefinitions, SetAlignSchemaNode, SetAlignSchemaMark }

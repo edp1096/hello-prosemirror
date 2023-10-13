@@ -42,10 +42,16 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemToggleLink = (schema.marks.link) ? linkItem(schema.marks.link, setIconElement("bi-link-45deg")) : undefined
 
     const itemsAlign: MenuItem[] = []
-    if (schema.nodes.alignment) {
+    // if (schema.nodes.alignment) {
+    //     for (let align of AlignmentDefinitions) {
+    //         // itemsAlign.push(wrapItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
+    //         itemsAlign.push(blockTypeItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
+    //     }
+    // }
+    if (schema.marks.alignment) {
         for (let align of AlignmentDefinitions) {
             // itemsAlign.push(wrapItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
-            itemsAlign.push(blockTypeItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
+            itemsAlign.push(markItemWithAttrsAndNoneActive(schema.marks.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
         }
     }
 

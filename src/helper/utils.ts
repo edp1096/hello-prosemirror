@@ -270,8 +270,8 @@ function setBlockType(nodeType: NodeType, attrs: Attrs | null = null): Command {
 }
 
 function blockTypeItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
-    let command = setBlockType(nodeType, options.attrs)
-    let passedOptions: MenuItemSpec = {
+    const command = setBlockType(nodeType, options.attrs)
+    const passedOptions: MenuItemSpec = {
         run: command,
         enable(state) { return command(state) },
         active(state) {
@@ -284,6 +284,17 @@ function blockTypeItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { 
 
     for (const prop in options) {
         (passedOptions as any)[prop] = (options as any)[prop]
+    }
+
+    return new MenuItem(passedOptions)
+}
+
+function whatItem(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
+    const passedOptions: MenuItemSpec = {
+        run(state, dispatch) {
+            return wrapIn(nodeType, options.attrs)(state, dispatch)
+        },
+        select(state) { return wrapIn(nodeType, options.attrs)(state) }
     }
 
     return new MenuItem(passedOptions)
