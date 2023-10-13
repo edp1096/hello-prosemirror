@@ -60,13 +60,13 @@ class MyEditor {
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
 
-        schema.spec.marks = SetFontSizeSchemaMark(schema.spec.marks)
-        // schema.spec.marks = SetAlignSchemaMark(schema.spec.marks)
+        // schema.spec.marks = SetFontSizeSchemaMark(schema.spec.marks)
+        // // schema.spec.marks = SetAlignSchemaMark(schema.spec.marks)
 
-        schema.spec.nodes = SetAlignSchemaNode(schema.spec.nodes)
-        schema.spec.nodes = setTableNodes(schema.spec.nodes)
-        schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)
-        schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")
+        // schema.spec.nodes = SetAlignSchemaNode(schema.spec.nodes)
+        // schema.spec.nodes = setTableNodes(schema.spec.nodes)
+        // schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)
+        // schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")
 
         this.schema = new Schema({ nodes: schema.spec.nodes, marks: schema.spec.marks })
 
