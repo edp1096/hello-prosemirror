@@ -4,7 +4,7 @@ import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Tra
 // import { toggleMark, lift, joinUp, wrapIn, setBlockType } from "prosemirror-commands"
 import { toggleMark, lift, joinUp } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
-import { Transform, findWrapping, ReplaceStep, ReplaceAroundStep } from "prosemirror-transform"
+import { Transform, findWrapping, AddNodeMarkStep, ReplaceStep, ReplaceAroundStep } from "prosemirror-transform"
 
 import { TextField, openPrompt } from "./prompt"
 
@@ -272,7 +272,7 @@ function setBlockType(nodeType: NodeType, attrs: Attrs | null = null): Command {
 function blockTypeItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
     const command = setBlockType(nodeType, options.attrs)
     const passedOptions: MenuItemSpec = {
-        run: command,
+        run(state, dispatch) { command(state, dispatch) },
         enable(state) { return command(state) },
         active(state) {
             const { $from, to, node } = state.selection as NodeSelection
@@ -289,12 +289,50 @@ function blockTypeItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { 
     return new MenuItem(passedOptions)
 }
 
-function whatItem(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
+
+function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
+    return function (state, dispatch) {
+        if (dispatch) {
+            const tr = state.tr
+            for (let i = 0; i < state.selection.ranges.length; i++) {
+                const { $from: { pos: from }, $to: { pos: to } } = state.selection.ranges[i]
+
+                tr.doc.nodesBetween(from, to, (node, pos) => {
+                    if (!node.isTextblock) { return }
+                    const blockFrom = pos
+                    const blockTo = pos + node.nodeSize
+                    console.log("node name, from, to, blockFrom, blockTo:", node.type.name, from, to, blockFrom, blockTo)
+                })
+            }
+        }
+
+        return true
+    }
+}
+
+function AlignItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
+    // const passedOptions: MenuItemSpec = {
+    //     run(state, dispatch) { return Aligner(nodeType, options.attrs)(state, dispatch) },
+    //     select(state) { return wrapIn(nodeType, options.attrs)(state) }
+    // }
+
     const passedOptions: MenuItemSpec = {
-        run(state, dispatch) {
-            return wrapIn(nodeType, options.attrs)(state, dispatch)
+        run(state, dispatch) { aligner(nodeType, options.attrs)(state, dispatch) },
+        // run(state, dispatch) { setBlockType(nodeType, options.attrs)(state, dispatch) },
+        enable(state) {
+            // return true
+            return aligner(nodeType, options.attrs)(state)
+            // return setBlockType(nodeType, options.attrs)(state)
         },
-        select(state) { return wrapIn(nodeType, options.attrs)(state) }
+        active(state) {
+            const { $from, to, node } = state.selection as NodeSelection
+            if (node) { return node.hasMarkup(nodeType, options.attrs) }
+
+            return to <= $from.end() && $from.parent.hasMarkup(nodeType, options.attrs)
+        }
+    }
+    for (const prop in options) {
+        (passedOptions as any)[prop] = (options as any)[prop]
     }
 
     return new MenuItem(passedOptions)
@@ -307,5 +345,6 @@ export {
     markItem, linkItem, wrapListItem,
     markItemWithAttrsAndNoneActive,
     setMark,
-    wrapItemMy, blockTypeItemMy
+    wrapItemMy, blockTypeItemMy,
+    AlignItemMy
 }
