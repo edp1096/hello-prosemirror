@@ -1,5 +1,6 @@
 import { Schema, NodeSpec, MarkSpec, DOMOutputSpec } from "prosemirror-model"
 
+
 const pDOM: DOMOutputSpec = ["p", 0],
     blockquoteDOM: DOMOutputSpec = ["blockquote", 0],
     hrDOM: DOMOutputSpec = ["hr"],
@@ -29,7 +30,10 @@ export const nodes = {
     heading: {
         group: "block",
         content: "inline*",
-        attrs: { level: { default: 1 } },
+        attrs: {
+            tagName: { default: "h1" },
+            level: { default: 1 }
+        },
         defining: true,
         parseDOM: [
             { tag: "h1", attrs: { level: 1 } },

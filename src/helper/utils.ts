@@ -1,5 +1,5 @@
 import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
-import { Node, NodeType, MarkType, Attrs, Fragment, Slice } from "prosemirror-model"
+import { Node, NodeType, MarkType, Attrs, Fragment, Slice, ResolvedPos, Mark } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
 // import { toggleMark, lift, joinUp, wrapIn, setBlockType } from "prosemirror-commands"
 import { toggleMark, lift, joinUp } from "prosemirror-commands"
@@ -187,7 +187,6 @@ function wrapIn(nodeType: NodeType, attrs: Attrs | null = null): Command {
         if (!wrapping) { return false }
 
         if (dispatch) {
-            console.log(state.tr)
             dispatch(state.tr.wrap(range!, wrapping).scrollIntoView())
         }
 
@@ -258,8 +257,7 @@ function setBlockType(nodeType: NodeType, attrs: Attrs | null = null): Command {
 
             for (let i = 0; i < state.selection.ranges.length; i++) {
                 const { $from: { pos: from }, $to: { pos: to } } = state.selection.ranges[i]
-                // tr.setBlockType(from, to, nodeType, attrs)
-                trSetBlockType(tr, from, to, nodeType, attrs)
+                tr.setBlockType(from, to, nodeType, attrs)
             }
 
             dispatch(tr.scrollIntoView())
@@ -293,15 +291,26 @@ function blockTypeItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { 
 function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
     return function (state, dispatch) {
         if (dispatch) {
-            const tr = state.tr
+            let tr = state.tr
             for (let i = 0; i < state.selection.ranges.length; i++) {
                 const { $from: { pos: from }, $to: { pos: to } } = state.selection.ranges[i]
 
                 tr.doc.nodesBetween(from, to, (node, pos) => {
                     if (!node.isTextblock) { return }
-                    const blockFrom = pos
-                    const blockTo = pos + node.nodeSize
-                    console.log("node name, from, to, blockFrom, blockTo:", node.type.name, from, to, blockFrom, blockTo)
+                    // if (!node.isBlock) { return }
+                    // const blockFrom = pos
+                    // const blockTo = pos + node.nodeSize
+
+                    // console.log("node name, type:", node.type.name, node.type, nodeType)
+                    // console.log("from, to, blockFrom, blockTo:", from, to, blockFrom, blockTo)
+                    console.log("tag, attrs:", node.attrs, attrs)
+
+                    const myAttrs: Attrs = { tagName: node.attrs.tagName, alignment: attrs?.alignment }
+
+                    // tr.setNodeMarkup(pos, node.type, myAttrs, node.marks)
+                    tr.setBlockType(from, to, node.type, myAttrs)
+                    // tr.setBlockType(from, to, nodeType, attrs)
+                    dispatch(tr.scrollIntoView())
                 })
             }
         }
@@ -312,7 +321,7 @@ function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
 
 function AlignItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
     // const passedOptions: MenuItemSpec = {
-    //     run(state, dispatch) { return Aligner(nodeType, options.attrs)(state, dispatch) },
+    //     run(state, dispatch) { return aligner(nodeType, options.attrs)(state, dispatch) },
     //     select(state) { return wrapIn(nodeType, options.attrs)(state) }
     // }
 
@@ -337,7 +346,6 @@ function AlignItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attr
 
     return new MenuItem(passedOptions)
 }
-
 
 export {
     setIconElement,

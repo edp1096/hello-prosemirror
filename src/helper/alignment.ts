@@ -10,7 +10,16 @@ let AlignmentDefinitions = [
 ]
 
 function getAlignmentAttr(dom: HTMLElement): false | Attrs | null {
-    return { alignment: dom.style.textAlign }
+    const tagFilter = ["p", "h1", "h2", "h3", "h4", "h5", "h6",]
+    if (!tagFilter.includes(dom.tagName.toLowerCase())) { return false }
+    if (dom.style.textAlign == "") { return false }
+
+    const attrs: Attrs = {
+        tagName: dom.tagName.toLowerCase(),
+        alignment: dom.style.textAlign
+    }
+
+    return attrs
 }
 
 // https://discuss.prosemirror.net/t/implementing-alignment/731
@@ -18,18 +27,22 @@ function getAlignmentAttr(dom: HTMLElement): false | Attrs | null {
 // https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/FontTypeCommand.js#L82
 // https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/TextAlignCommand.js
 function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
-    const alignNodeSpecs: NodeSpec = {
+    const alignNodeSpecsParagraph: NodeSpec = {
         group: 'block',
         // content: "block+", // wrapItem
         content: "inline*", // blockTypeItem
-        attrs: { alignment: { default: null } },
-        parseDOM: [{ tag: "p", style: "text-align", getAttrs(dom) { return getAlignmentAttr(dom as HTMLElement) } }],
-        toDOM(node) { return ["p", { style: `text-align: ${node.attrs.alignment};` }, 0] }
+        attrs: {
+            tagName: { default: "p" },
+            alignment: { default: null }
+        },
+        defining: true,
+        parseDOM: [{ tag: "*", style: "text-align", getAttrs(dom) { return getAlignmentAttr(dom as HTMLElement) } }],
+        toDOM(node) { return [node.attrs.tagName, { style: `text-align: ${node.attrs.alignment};` }, 0] }
     }
 
     // nodes = nodes.addToEnd(`alignment`, alignNodeSpecs)
     // nodes = nodes.addToStart(`alignment`, alignNodeSpecs)
-    nodes = nodes.addBefore("paragraph", "alignment", alignNodeSpecs)
+    nodes = nodes.addBefore("paragraph", "alignment", alignNodeSpecsParagraph)
 
     return nodes
 }
