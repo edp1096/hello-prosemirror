@@ -1,14 +1,16 @@
 import { Schema, NodeSpec, MarkSpec, DOMOutputSpec } from "prosemirror-model"
 
-const pDOM: DOMOutputSpec = ["p", 0], blockquoteDOM: DOMOutputSpec = ["blockquote", 0],
-    hrDOM: DOMOutputSpec = ["hr"], preDOM: DOMOutputSpec = ["pre", ["code", 0]],
+const pDOM: DOMOutputSpec = ["p", 0],
+    blockquoteDOM: DOMOutputSpec = ["blockquote", 0],
+    hrDOM: DOMOutputSpec = ["hr"],
+    preDOM: DOMOutputSpec = ["pre", ["code", 0]],
     brDOM: DOMOutputSpec = ["br"]
 
 export const nodes = {
     doc: { content: "block+" } as NodeSpec,
     paragraph: {
         group: "block",
-        content: "inline*", // If set `inline+`, Enter key not work so, must be set `inline*`
+        content: "inline*",
         parseDOM: [{ tag: "p" }],
         toDOM() { return pDOM }
     } as NodeSpec,
@@ -121,8 +123,8 @@ export const marks = {
         toDOM() { return ["s", 0] }
     } as MarkSpec,
     underline: {
-        parseDOM: [{ tag: "span" }, { style: { default: "text-decration: underline" } }],
-        toDOM() { return ["span", { style: "text-decoration: underline" }, 0] }
+        parseDOM: [{ tag: "u" }],
+        toDOM() { return ["u", { style: "text-decoration: underline" }, 0] }
     } as MarkSpec
 }
 

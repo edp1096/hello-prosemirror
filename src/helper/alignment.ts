@@ -1,5 +1,5 @@
 import OrderedMap from 'orderedmap'
-import { Schema, NodeSpec, Node, MarkSpec, DOMOutputSpec, Fragment } from "prosemirror-model"
+import { Schema, NodeSpec, Node, MarkSpec, DOMOutputSpec, Fragment, Attrs } from "prosemirror-model"
 
 
 let AlignmentDefinitions = [
@@ -8,6 +8,10 @@ let AlignmentDefinitions = [
     { direction: "right", icon_name: "bi-text-right" },
     // { direction: "justify", icon_name: "bi-justify" }
 ]
+
+function getAlignmentAttr(dom: HTMLElement): false | Attrs | null {
+    return { alignment: dom.style.textAlign }
+}
 
 // https://discuss.prosemirror.net/t/implementing-alignment/731
 // https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/TextColorCommand.js#L78
@@ -19,11 +23,13 @@ function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
         // content: "block+", // wrapItem
         content: "inline*", // blockTypeItem
         attrs: { alignment: { default: null } },
-        parseDOM: [{ tag: "p" }],
+        parseDOM: [{ tag: "p", style: "text-align", getAttrs(dom) { return getAlignmentAttr(dom as HTMLElement) } }],
         toDOM(node) { return ["p", { style: `text-align: ${node.attrs.alignment};` }, 0] }
     }
 
-    nodes = nodes.addToEnd(`alignment`, alignNodeSpecs)
+    // nodes = nodes.addToEnd(`alignment`, alignNodeSpecs)
+    // nodes = nodes.addToStart(`alignment`, alignNodeSpecs)
+    nodes = nodes.addBefore("paragraph", "alignment", alignNodeSpecs)
 
     return nodes
 }
