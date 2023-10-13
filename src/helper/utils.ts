@@ -291,28 +291,22 @@ function blockTypeItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { 
 function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
     return function (state, dispatch) {
         if (dispatch) {
-            let tr = state.tr
+            const tr = state.tr
             for (let i = 0; i < state.selection.ranges.length; i++) {
                 const { $from: { pos: from }, $to: { pos: to } } = state.selection.ranges[i]
 
                 tr.doc.nodesBetween(from, to, (node, pos) => {
-                    if (!node.isTextblock) { return }
-                    // if (!node.isBlock) { return }
-                    // const blockFrom = pos
-                    // const blockTo = pos + node.nodeSize
+                    if (!node.isBlock) { return }
 
-                    // console.log("node name, type:", node.type.name, node.type, nodeType)
-                    // console.log("from, to, blockFrom, blockTo:", from, to, blockFrom, blockTo)
-                    console.log("tag, attrs:", node.attrs, attrs)
+                    let tagName = node.attrs.tagName
+                    if (node.attrs.level) { tagName = `h${node.attrs.level}` }
+                    const myAttrs: Attrs = { tagName: tagName, alignment: attrs?.alignment }
 
-                    const myAttrs: Attrs = { tagName: node.attrs.tagName, alignment: attrs?.alignment }
-
-                    tr.setNodeMarkup(pos, node.type, myAttrs, node.marks)
-                    // tr.setBlockType(from, to, node.type, myAttrs)
-                    // tr.setBlockType(from, to, nodeType, attrs)
-                    dispatch(tr.scrollIntoView())
+                    tr.setNodeMarkup(pos, nodeType, myAttrs, node.marks)
                 })
             }
+
+            if (tr.docChanged) { dispatch(tr.scrollIntoView()) }
         }
 
         return true
@@ -329,9 +323,8 @@ function AlignItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attr
         run(state, dispatch) { aligner(nodeType, options.attrs)(state, dispatch) },
         // run(state, dispatch) { setBlockType(nodeType, options.attrs)(state, dispatch) },
         enable(state) {
-            // return true
-            return aligner(nodeType, options.attrs)(state)
-            // return setBlockType(nodeType, options.attrs)(state)
+            // return aligner(nodeType, options.attrs)(state)
+            return setBlockType(nodeType, options.attrs)(state)
         },
         active(state) {
             const { $from, to, node } = state.selection as NodeSelection
