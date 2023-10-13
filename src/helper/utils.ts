@@ -307,8 +307,8 @@ function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
 
                     const myAttrs: Attrs = { tagName: node.attrs.tagName, alignment: attrs?.alignment }
 
-                    // tr.setNodeMarkup(pos, node.type, myAttrs, node.marks)
-                    tr.setBlockType(from, to, node.type, myAttrs)
+                    tr.setNodeMarkup(pos, node.type, myAttrs, node.marks)
+                    // tr.setBlockType(from, to, node.type, myAttrs)
                     // tr.setBlockType(from, to, nodeType, attrs)
                     dispatch(tr.scrollIntoView())
                 })
