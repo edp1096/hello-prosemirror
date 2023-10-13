@@ -26,7 +26,7 @@ export const nodes = {
     } as NodeSpec,
     heading: {
         group: "block",
-        content: "inline+",
+        content: "inline*",
         attrs: { level: { default: 1 } },
         defining: true,
         parseDOM: [
