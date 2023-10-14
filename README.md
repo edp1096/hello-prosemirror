@@ -11,26 +11,19 @@
 ## Build
 
 ```powershell
-# All
-yarn all
-# Browser JS
-yarn js
-# Module
-yarn mjs
-# CSS
-yarn css
+yarn all # All
+yarn js  # Browser JS
+yarn mjs # Module
+yarn css # CSS
 ```
 
 ## Watch
 
 * Browser JS
 ```powershell
-# Browser JS
-yarn watch js
-# Module
-yarn watch
-# or
-yarn watch mjs
+yarn watch     # MJS as default
+yarn watch mjs # MJS
+yarn watch js  # JS
 ```
 
 ## Run Uploader
