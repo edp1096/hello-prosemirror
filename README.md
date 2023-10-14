@@ -26,10 +26,10 @@ yarn watch mjs # MJS
 yarn watch js  # JS
 ```
 
-## Run Uploader
+## Run Uploader server
 ```powershell
 cd watchplace/uploader
-./run.cmd
+go run .
 ```
 
 ## Source
