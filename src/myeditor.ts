@@ -26,7 +26,7 @@ import { schema } from "./helper/schema"
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
-import { SetAlignSchemaNode, SetAlignSchemaMark } from "./helper/alignment"
+import { SetAlignSchemaNode } from "./helper/alignment"
 import { FontSizeList, SetFontSizeSchemaMark } from "./helper/textstyle"
 import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/upload"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
@@ -60,13 +60,12 @@ class MyEditor {
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
 
-        schema.spec.marks = SetFontSizeSchemaMark(schema.spec.marks)
-        // schema.spec.marks = SetAlignSchemaMark(schema.spec.marks)
-
         schema.spec.nodes = SetAlignSchemaNode(schema.spec.nodes)
         schema.spec.nodes = setTableNodes(schema.spec.nodes)
         schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)
         schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")
+
+        schema.spec.marks = SetFontSizeSchemaMark(schema.spec.marks)
 
         this.schema = new Schema({ nodes: schema.spec.nodes, marks: schema.spec.marks })
 

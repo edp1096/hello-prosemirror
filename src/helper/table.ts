@@ -1,8 +1,8 @@
 import OrderedMap from 'orderedmap'
 
-import { EditorState, Plugin, Transaction } from "prosemirror-state"
-import { Schema, DOMParser, DOMSerializer, Fragment, NodeType, NodeSpec } from "prosemirror-model"
-import { menuBar, MenuItemSpec, MenuItem, MenuElement, Dropdown } from "prosemirror-menu"
+import { EditorState, Plugin } from "prosemirror-state"
+import { Fragment, NodeSpec } from "prosemirror-model"
+import { MenuItem, MenuElement } from "prosemirror-menu"
 import { EditorView } from "prosemirror-view"
 
 import { setIconElement } from "./utils"
@@ -58,10 +58,6 @@ function getTableMenus(): MenuElement {
 
     return tableMenu
 }
-
-// Context menu
-// https://discuss.prosemirror.net/t/make-right-click-on-a-cellselection-area-work-as-expect/2675/3
-// https://prosemirror.net/examples/tooltip
 
 const contextMenuContainer = document.createElement("div")
 
@@ -150,7 +146,6 @@ function tableContextMenuHandler(): Plugin<any> {
                     switch (event.button) {
                         case 0: // Left mouse button
                             contextMenuContainer.style.display = "none"
-                            // view.dom.parentNode?.removeChild(menuContainer) // Error when not appeneded so, keep appended
                             break
                         case 1: // Wheel button
                             break

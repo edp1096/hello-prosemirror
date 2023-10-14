@@ -22,15 +22,10 @@ function getAlignmentAttr(dom: HTMLElement): false | Attrs | null {
     return attrs
 }
 
-// https://discuss.prosemirror.net/t/implementing-alignment/731
-// https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/TextColorCommand.js#L78
-// https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/FontTypeCommand.js#L82
-// https://github.com/chanzuckerberg/czi-prosemirror/blob/master/src/TextAlignCommand.js
 function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
     const alignNodeSpecsParagraph: NodeSpec = {
         group: 'block',
-        // content: "block+", // wrapItem
-        content: "inline*", // blockTypeItem
+        content: "inline*",
         attrs: {
             tagName: { default: "p" },
             alignment: { default: null }
@@ -40,27 +35,9 @@ function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
         toDOM(node) { return [node.attrs.tagName, { style: `text-align: ${node.attrs.alignment};` }, 0] }
     }
 
-    // nodes = nodes.addToEnd(`alignment`, alignNodeSpecs)
-    // nodes = nodes.addToStart(`alignment`, alignNodeSpecs)
     nodes = nodes.addBefore("paragraph", "alignment", alignNodeSpecsParagraph)
 
     return nodes
 }
 
-function SetAlignSchemaMark(nodes: OrderedMap<MarkSpec>): OrderedMap<MarkSpec> {
-    const alignMarkSpecs: MarkSpec = {
-        group: 'block',
-        // content: "block+", // wrapItem
-        content: "inline+", // blockTypeItem
-        attrs: { alignment: { default: null } },
-        inclusive: true,
-        parseDOM: [{ tag: "span" }],
-        toDOM(node) { return ["span", { style: `text-align: ${node.attrs.alignment};` }, 0] }
-    }
-
-    nodes = nodes.addToEnd(`alignment`, alignMarkSpecs)
-
-    return nodes
-}
-
-export { AlignmentDefinitions, SetAlignSchemaNode, SetAlignSchemaMark }
+export { AlignmentDefinitions, SetAlignSchemaNode }

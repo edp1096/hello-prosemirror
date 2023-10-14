@@ -1,10 +1,8 @@
 import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
-import { Node, NodeType, MarkType, Attrs, Fragment, Slice, ResolvedPos, Mark } from "prosemirror-model"
+import { Node, NodeType, MarkType, Attrs } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
-// import { toggleMark, lift, joinUp, wrapIn, setBlockType } from "prosemirror-commands"
-import { toggleMark, lift, joinUp } from "prosemirror-commands"
+import { toggleMark } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
-import { Transform, findWrapping, AddNodeMarkStep, ReplaceStep, ReplaceAroundStep } from "prosemirror-transform"
 
 import { TextField, openPrompt } from "./prompt"
 
@@ -88,7 +86,7 @@ function markItem(markType: MarkType, options: Object) {
     return cmdItem(toggleMark(markType), passedOptions)
 }
 
-function markItemWithAttrsAndNoneActive(markType: MarkType, options: Object) {
+function markItemOverwrite(markType: MarkType, options: Object) {
     const passedOptions: Partial<MenuItemSpec> = { active(state) { return false } }
     for (const prop in options) {
         (passedOptions as any)[prop] = (options as any)[prop]
@@ -178,61 +176,7 @@ function setMark(markType: MarkType, attrs?: | { [key: string]: any } | undefine
     }
 }
 
-/// Wrap the selection in a node of the given type with the given attributes.
-function wrapIn(nodeType: NodeType, attrs: Attrs | null = null): Command {
-    return function (state, dispatch) {
-        const { $from, $to } = state.selection
-        const range = $from.blockRange($to)
-        const wrapping = range && findWrapping(range, nodeType, attrs)
-        if (!wrapping) { return false }
-
-        if (dispatch) {
-            dispatch(state.tr.wrap(range!, wrapping).scrollIntoView())
-        }
-
-        return true
-    }
-}
-
-function wrapItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
-    const passedOptions: MenuItemSpec = {
-        run(state, dispatch) { return wrapIn(nodeType, options.attrs)(state, dispatch) },
-        select(state) { return wrapIn(nodeType, options.attrs)(state) }
-    }
-
-    for (const prop in options) {
-        (passedOptions as any)[prop] = (options as any)[prop]
-    }
-
-    return new MenuItem(passedOptions)
-}
-
-function canChangeType(doc: Node, pos: number, type: NodeType) {
-    const $pos = doc.resolve(pos), index = $pos.index()
-    return $pos.parent.canReplaceWith(index, index + 1, type)
-}
-
-function trSetBlockType(tr: Transform, from: number, to: number, type: NodeType, attrs: Attrs | null) {
-    if (!type.isTextblock) throw new RangeError("Type given to setBlockType should be a textblock")
-    const mapFrom = tr.steps.length
-    tr.doc.nodesBetween(from, to, (node, pos) => {
-        if (node.isTextblock && !node.hasMarkup(type, attrs) && canChangeType(tr.doc, tr.mapping.slice(mapFrom).map(pos), type)) {
-            // Ensure all markup that isn't allowed in the new node type is cleared
-            tr.clearIncompatible(tr.mapping.slice(mapFrom).map(pos, 1), type)
-
-            const mapping = tr.mapping.slice(mapFrom)
-            const startM = mapping.map(pos, 1), endM = mapping.map(pos + node.nodeSize, 1)
-            const fragmentSlice = new Slice(Fragment.from(type.create(attrs, null, node.marks)), 0, 0)
-
-            tr.step(new ReplaceAroundStep(startM, endM, startM + 1, endM - 1, fragmentSlice, 1, true))
-
-            return false
-        }
-    })
-}
-
-/// Returns a command that tries to set the selected textblocks to the given node type with the given attributes.
-function setBlockType(nodeType: NodeType, attrs: Attrs | null = null): Command {
+function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
     return function (state, dispatch) {
         let applicable = false
 
@@ -252,44 +196,6 @@ function setBlockType(nodeType: NodeType, attrs: Attrs | null = null): Command {
 
         if (!applicable) { return false }
 
-        if (dispatch) {
-            const tr = state.tr
-
-            for (let i = 0; i < state.selection.ranges.length; i++) {
-                const { $from: { pos: from }, $to: { pos: to } } = state.selection.ranges[i]
-                tr.setBlockType(from, to, nodeType, attrs)
-            }
-
-            dispatch(tr.scrollIntoView())
-        }
-
-        return true
-    }
-}
-
-function blockTypeItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
-    const command = setBlockType(nodeType, options.attrs)
-    const passedOptions: MenuItemSpec = {
-        run(state, dispatch) { command(state, dispatch) },
-        enable(state) { return command(state) },
-        active(state) {
-            const { $from, to, node } = state.selection as NodeSelection
-            if (node) { return node.hasMarkup(nodeType, options.attrs) }
-
-            return to <= $from.end() && $from.parent.hasMarkup(nodeType, options.attrs)
-        }
-    }
-
-    for (const prop in options) {
-        (passedOptions as any)[prop] = (options as any)[prop]
-    }
-
-    return new MenuItem(passedOptions)
-}
-
-
-function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
-    return function (state, dispatch) {
         if (dispatch) {
             const tr = state.tr
             for (let i = 0; i < state.selection.ranges.length; i++) {
@@ -314,18 +220,9 @@ function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
 }
 
 function AlignItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
-    // const passedOptions: MenuItemSpec = {
-    //     run(state, dispatch) { return aligner(nodeType, options.attrs)(state, dispatch) },
-    //     select(state) { return wrapIn(nodeType, options.attrs)(state) }
-    // }
-
     const passedOptions: MenuItemSpec = {
         run(state, dispatch) { aligner(nodeType, options.attrs)(state, dispatch) },
-        // run(state, dispatch) { setBlockType(nodeType, options.attrs)(state, dispatch) },
-        enable(state) {
-            // return aligner(nodeType, options.attrs)(state)
-            return setBlockType(nodeType, options.attrs)(state)
-        },
+        enable(state) { return aligner(nodeType, options.attrs)(state) },
         active(state) {
             const { $from, to, node } = state.selection as NodeSelection
             if (node) { return node.hasMarkup(nodeType, options.attrs) }
@@ -333,9 +230,7 @@ function AlignItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attr
             return to <= $from.end() && $from.parent.hasMarkup(nodeType, options.attrs)
         }
     }
-    for (const prop in options) {
-        (passedOptions as any)[prop] = (options as any)[prop]
-    }
+    for (const prop in options) { (passedOptions as any)[prop] = (options as any)[prop] }
 
     return new MenuItem(passedOptions)
 }
@@ -344,8 +239,6 @@ export {
     setIconElement,
     canInsert, insertImageItem,
     markItem, linkItem, wrapListItem,
-    markItemWithAttrsAndNoneActive,
-    setMark,
-    wrapItemMy, blockTypeItemMy,
+    markItemOverwrite,
     AlignItemMy
 }

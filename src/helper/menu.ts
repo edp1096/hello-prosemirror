@@ -2,14 +2,11 @@ import {
     wrapItem, blockTypeItem, Dropdown, DropdownSubmenu,
     selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
 } from "prosemirror-menu"
-import { Schema, Attrs, Node, NodeType, MarkSpec, MarkType } from "prosemirror-model"
-import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
-import { toggleMark, lift, joinUp } from "prosemirror-commands"
+import { Schema } from "prosemirror-model"
+import { lift, joinUp } from "prosemirror-commands"
 import { undo, redo } from "prosemirror-history"
-import { wrapInList } from "prosemirror-schema-list"
 
-import { TextField, openPrompt } from "./prompt"
-import { AlignmentDefinitions, SetAlignSchemaNode } from "./alignment"
+import { AlignmentDefinitions } from "./alignment"
 import { FontSizeList } from "./textstyle"
 import { getImageUploadMenus } from "./upload"
 import { getYoutubeMenus } from "./youtube"
@@ -18,9 +15,7 @@ import {
     setIconElement,
     canInsert, insertImageItem,
     markItem, linkItem, wrapListItem,
-    markItemWithAttrsAndNoneActive,
-    setMark,
-    wrapItemMy, blockTypeItemMy,
+    markItemOverwrite,
     AlignItemMy
 } from "./utils"
 
@@ -31,7 +26,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
 
     if (schema.marks.fontsize) {
         for (let i = 0; i < fontSizeList.length; i++) {
-            itemsFontSize.push(markItemWithAttrsAndNoneActive(schema.marks.fontsize, { title: `Set font size to ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt`, attrs: { fontSize: `${fontSizeList[i]}` } }))
+            itemsFontSize.push(markItemOverwrite(schema.marks.fontsize, { title: `Set font size to ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt`, attrs: { fontSize: `${fontSizeList[i]}` } }))
         }
     }
 
@@ -45,17 +40,9 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemsAlign: MenuItem[] = []
     if (schema.nodes.alignment) {
         for (let align of AlignmentDefinitions) {
-            // itemsAlign.push(wrapItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
-            // itemsAlign.push(blockTypeItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
             itemsAlign.push(AlignItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
         }
     }
-    // if (schema.marks.alignment) {
-    //     for (let align of AlignmentDefinitions) {
-    //         // itemsAlign.push(wrapItemMy(schema.nodes.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
-    //         itemsAlign.push(markItemWithAttrsAndNoneActive(schema.marks.alignment, { title: `Align ${align.direction}`, icon: setIconElement(align.icon_name), attrs: { alignment: align.direction } }))
-    //     }
-    // }
 
     const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Plain", icon: setIconElement("bi-type") }) : undefined
     const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("bi-code-slash") }) : undefined
@@ -104,7 +91,6 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     ])
     const menuBlock = cut([
         itemBulletList, itemOrderedList, itemBlockQuote,
-        // itemJoinUp, itemOutdent, selectParentNodeItem
         itemJoinUp, itemOutdent
     ])
 

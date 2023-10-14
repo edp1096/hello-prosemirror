@@ -1,7 +1,7 @@
 import { EditorState, Plugin } from "prosemirror-state"
 import { EditorView } from "prosemirror-view"
 import { Schema } from "prosemirror-model"
-import { menuBar, MenuItemSpec, MenuItem, MenuElement, Dropdown } from "prosemirror-menu"
+import { MenuItem, MenuElement } from "prosemirror-menu"
 import { setIconElement } from "./utils"
 
 
@@ -9,10 +9,8 @@ const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/svg+xml"]
 
 let editorView: EditorView
 
-// let UploadURI = "http://localhost:8864/upload"
-// let AccessURI = "http://localhost:8864/files"
-let UploadURI = ""
-let AccessURI = ""
+let UploadURI = "" // let UploadURI = "http://localhost:8864/upload"
+let AccessURI = "" // let AccessURI = "http://localhost:8864/files"
 
 const uploadFileForm = document.createElement("input")
 uploadFileForm.setAttribute("type", "file")
