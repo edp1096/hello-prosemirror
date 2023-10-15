@@ -35,7 +35,7 @@ async function uploadImage(view: EditorView, schema: Schema, event: Event, files
         if (!imageTypes.includes(file.type)) { return }  // Not an image
 
         const formData = new FormData()
-        formData.append('file', file)
+        formData.append('upload-files', file)
 
         const r = await fetch(uploadURI, { method: 'POST', body: formData })
         if (r.ok) {
@@ -91,7 +91,7 @@ async function uploadHandler() {
         if (file == undefined) { return [] } // Selected nothing
 
         const formData = new FormData()
-        formData.append('file', file)
+        formData.append('upload-files', file)
 
         const r = await fetch(UploadURI, { method: 'POST', body: formData })
         if (r.ok) {
