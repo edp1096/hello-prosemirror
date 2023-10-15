@@ -40,10 +40,14 @@ func uploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 	tempFile.Write(fileBytes)
 
-	resultMAP := map[string]string{
-		"message":   "success",
-		"filename":  handler.Filename,
-		"storename": filepath.Base(tempFile.Name()),
+	resultMAP := map[string]interface{}{
+		"files": []map[string]string{
+			{
+				"message":   "success",
+				"filename":  handler.Filename,
+				"storename": filepath.Base(tempFile.Name()),
+			},
+		},
 	}
 
 	result, _ := json.Marshal(resultMAP)

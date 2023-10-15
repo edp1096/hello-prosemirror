@@ -40,8 +40,13 @@ async function uploadImage(view: EditorView, schema: Schema, event: Event, files
         const r = await fetch(uploadURI, { method: 'POST', body: formData })
         if (r.ok) {
             const result = await r.json()
+            const files = result.files
+
             const pos = view.posAtCoords({ left: (event as MouseEvent).clientX, top: (event as MouseEvent).clientY })
-            dispatchImage(view, pos!.pos, schema, `${accessURI}/${result.storename}`)
+
+            for (const f of files) {
+                dispatchImage(view, pos!.pos, schema, `${accessURI}/${f.storename}`)
+            }
         }
     }
 }
@@ -93,7 +98,11 @@ async function uploadHandler() {
         const r = await fetch(UploadURI, { method: 'POST', body: formData })
         if (r.ok) {
             const result = await r.json()
-            insertImage(`${AccessURI}/${result.storename}`)
+            const files = result.files
+
+            for (const f of files) {
+                insertImage(`${AccessURI}/${f.storename}`)
+            }
         }
     }
 }
