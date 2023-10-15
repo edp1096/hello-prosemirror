@@ -21,7 +21,9 @@
         * https://github.com/simonwep/pickr
         * https://github.com/nhn/tui.color-picker
         * https://github.com/mdbassit/Coloris
-    * Icon fonts - https://fontello.com
+    * Icon fonts creator
+        * https://fontello.com
+        * https://icomoon.io
 * Alignment
     * https://discuss.prosemirror.net/t/ms-word-style-text-alignment-a-walkthrough/1555
     * https://discuss.prosemirror.net/t/text-alignment/197/2
