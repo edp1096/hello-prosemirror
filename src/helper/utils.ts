@@ -10,7 +10,8 @@ import { TextField, openPrompt } from "./prompt"
 function setIconElement(iconName: string): IconSpec {
     const iconEL = document.createElement("i")
     iconEL.setAttribute("class", iconName)
-    iconEL.setAttribute("style", "font-size: 1.3em; margin: -0.3em;")
+    iconEL.setAttribute("style", `font-size: 1.3em; margin: -0.1em;`)
+    // iconEL.setAttribute("style", "font-size: 1.3em; margin: -0.3em;")
 
     const result = { dom: iconEL }
 
@@ -31,7 +32,7 @@ function insertImageItem(nodeType: NodeType) {
     return new MenuItem({
         title: "Insert image",
         label: "Image",
-        icon: setIconElement("bi-image"),
+        icon: setIconElement("fi-photo"),
         enable(state) { return canInsert(state, nodeType) },
         run(state, _, view) {
             let { from, to } = state.selection, attrs = null

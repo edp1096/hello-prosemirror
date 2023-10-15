@@ -49,7 +49,7 @@ function insertYoutube() {
         if (state.selection instanceof NodeSelection) { attrs = state.selection.node.attrs }
 
         openPrompt({
-            title: "Insert youtube video",
+            title: "Paste link from Youtube, Vimeo, DailyMotion",
             fields: { src: new TextField({ label: "URL", required: true, value: attrs && attrs.src }) },
             callback: (attrs: Attrs) => {
                 if (!attrs.src) { return false }
@@ -71,8 +71,8 @@ function insertYoutube() {
 
 function getYoutubeMenus(): MenuElement {
     const menuItem = {
-        title: "Add youtube",
-        icon: setIconElement("bi-youtube"),
+        title: "Add video",
+        icon: setIconElement("fi-play-video"),
         run: insertYoutube()
     }
 

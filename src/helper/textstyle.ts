@@ -47,7 +47,7 @@ function getColorPickerMenu() {
 
     const menuItem = {
         title: "Set font color",
-        icon: setIconElement("bi-file-font"),
+        icon: setIconElement("fi-text-color"),
         run: callColorPicker
     }
 

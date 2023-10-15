@@ -105,7 +105,7 @@ async function uploadHandler() {
 }
 
 function getImageUploadMenus(): MenuElement {
-    const menuItemUploadImage = { title: "Upload image", icon: setIconElement("bi-cloud-upload"), run: callBrowseFile }
+    const menuItemUploadImage = { title: "Upload image", icon: setIconElement("fi-upload"), run: callBrowseFile }
     const uploadMenu = new MenuItem(menuItemUploadImage)
 
     return uploadMenu

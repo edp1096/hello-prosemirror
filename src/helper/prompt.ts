@@ -116,7 +116,6 @@ export abstract class Field {
         }
     ) { }
 
-
     abstract render(): HTMLElement /// Render the field to the DOM. Should be implemented by all subclasses.
     read(dom: HTMLElement) { return (dom as any).value } /// Read the field's value from its DOM node.
     validateType(value: any): string | null { return null } /// A field-type-specific validation function.
@@ -140,6 +139,8 @@ export class TextField extends Field {
         input.placeholder = this.options.label
         input.value = this.options.value || ""
         input.autocomplete = "off"
+        input.style.width = "calc(100% - 1em)"
+        input.style.marginRight = "1em"
 
         return input
     }

@@ -30,12 +30,12 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     }
     const itemFontColor = getColorPickerMenu()
 
-    const itemToggleStrong = (schema.marks.strong) ? markItem(schema.marks.strong, { title: "Toggle strong style", icon: setIconElement("bi-type-bold") }) : undefined
+    const itemToggleStrong = (schema.marks.strong) ? markItem(schema.marks.strong, { title: "Toggle strong style", icon: setIconElement("fi-bold") }) : undefined
     const itemToggleEM = (schema.marks.em) ? markItem(schema.marks.em, { title: "Toggle emphasis", icon: setIconElement("bi-type-italic") }) : undefined
-    const itemToggleStrike = (schema.marks.strike) ? markItem(schema.marks.strike, { title: "Toggle strike", icon: setIconElement("bi-type-strikethrough") }) : undefined
-    const itemToggleUnderline = (schema.marks.underline) ? markItem(schema.marks.underline, { title: "Toggle underline", icon: setIconElement("bi-type-underline") }) : undefined
+    const itemToggleStrike = (schema.marks.strike) ? markItem(schema.marks.strike, { title: "Toggle strike", icon: setIconElement("fi-strikethrough") }) : undefined
+    const itemToggleUnderline = (schema.marks.underline) ? markItem(schema.marks.underline, { title: "Toggle underline", icon: setIconElement("fi-underline") }) : undefined
     const itemToggleCode = (schema.marks.code) ? markItem(schema.marks.code, { title: "Toggle code font", icon: setIconElement("bi-code") }) : undefined
-    const itemToggleLink = (schema.marks.link) ? linkItem(schema.marks.link, setIconElement("bi-link-45deg")) : undefined
+    const itemToggleLink = (schema.marks.link) ? linkItem(schema.marks.link, setIconElement("fi-link")) : undefined
 
     const itemsAlign: MenuItem[] = []
     if (schema.nodes.alignment) {
@@ -68,12 +68,12 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemUploadImage = getImageUploadMenus()
     const itemInsertYoutube = getYoutubeMenus()
 
-    const itemBulletList = (schema.nodes.bullet_list) ? wrapListItem(schema.nodes.bullet_list, { title: "Wrap in bullet list", icon: setIconElement("bi-list-ul") }) : undefined
-    const itemOrderedList = (schema.nodes.ordered_list) ? wrapListItem(schema.nodes.ordered_list, { title: "Wrap in ordered list", icon: setIconElement("bi-list-ol") }) : undefined
-    const itemBlockQuote = (schema.nodes.blockquote) ? wrapItem(schema.nodes.blockquote, { title: "Wrap in block quote", icon: setIconElement("bi-quote") }) : undefined
+    const itemBulletList = (schema.nodes.bullet_list) ? wrapListItem(schema.nodes.bullet_list, { title: "Wrap in bullet list", icon: setIconElement("fi-list-bullet") }) : undefined
+    const itemOrderedList = (schema.nodes.ordered_list) ? wrapListItem(schema.nodes.ordered_list, { title: "Wrap in ordered list", icon: setIconElement("fi-list-number") }) : undefined
+    const itemBlockQuote = (schema.nodes.blockquote) ? wrapItem(schema.nodes.blockquote, { title: "Wrap in block quote", icon: setIconElement("fi-quote") }) : undefined
     // TODO: join up -> Key event "shift + enter" support
     const itemJoinUp = new MenuItem({ title: "Join with above block", run: joinUp, select: state => joinUp(state), icon: setIconElement("bi-text-paragraph") })
-    const itemOutdent = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: setIconElement("bi-text-indent-right") })
+    const itemOutdent = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: setIconElement("fi-indent-less") })
 
     const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 

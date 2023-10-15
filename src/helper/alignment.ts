@@ -3,10 +3,10 @@ import { Schema, NodeSpec, Node, MarkSpec, DOMOutputSpec, Fragment, Attrs } from
 
 
 let AlignmentDefinitions = [
-    { direction: "left", icon_name: "bi-text-left" },
-    { direction: "center", icon_name: "bi-text-center" },
-    { direction: "right", icon_name: "bi-text-right" },
-    // { direction: "justify", icon_name: "bi-justify" }
+    { direction: "left", icon_name: "fi-align-left" },
+    { direction: "center", icon_name: "fi-align-center" },
+    { direction: "right", icon_name: "fi-align-right" },
+    // { direction: "justify", icon_name: "fi-align-justify" }
 ]
 
 function getAlignmentAttr(dom: HTMLElement): false | Attrs | null {
