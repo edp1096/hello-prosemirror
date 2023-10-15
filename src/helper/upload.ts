@@ -45,7 +45,7 @@ async function uploadImage(view: EditorView, schema: Schema, event: Event, files
             const pos = view.posAtCoords({ left: (event as MouseEvent).clientX, top: (event as MouseEvent).clientY })
 
             for (const f of files) {
-                dispatchImage(view, pos!.pos, schema, `${accessURI}/${f.storename}`)
+                dispatchImage(view, pos!.pos, schema, `${accessURI}/${f.storagename}`)
             }
         }
     }
@@ -101,7 +101,7 @@ async function uploadHandler() {
             const files = result.files
 
             for (const f of files) {
-                insertImage(`${AccessURI}/${f.storename}`)
+                insertImage(`${AccessURI}/${f.storagename}`)
             }
         }
     }
