@@ -38,7 +38,8 @@
         <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
         <button type="button" onclick="clearContent()">Clear content</button>|
 
-        <input type="color" onfocusout="getColorAndClose(this, event)" onchange="getColorAndClose(this, event)" list="myeditor-color-set" style="display: none;" placeholder="Set color" />
+        <input type="color" onfocusout="getColorAndClose(this, event)" onchange="getColorAndClose(this, event)"
+            list="myeditor-color-set" style="display: none;" placeholder="Set color" />
         <datalist id="myeditor-color-set">
             <option value="#000000">
             <option value="#333333">
@@ -62,22 +63,26 @@
 
 <script>
     function showColorPicker(event) {
-        const colorPicker = document.querySelector('input[type=color]')
+        // const colorPicker = document.querySelector('input[type=color]')
+
+        const previousColorPickers = document.querySelectorAll('input[type=color]')
+        previousColorPickers.forEach(function (el) { el.remove() })
+
+        const colorPicker = document.createElement("input")
+        colorPicker.setAttribute("type", "color")
+        colorPicker.setAttribute("list", "")
+        document.body.appendChild(colorPicker)
 
         colorPicker.style.display = "none"
-
         colorPicker.style.color = "transparent"
         colorPicker.style.backgroundColor = "transparent"
         colorPicker.style.border = "0px solid transparent"
-
         colorPicker.style.position = "absolute"
         colorPicker.style.left = `${event.pageX}px`
         colorPicker.style.top = `${event.pageY}px`
-
         colorPicker.style.width = "1px"
         colorPicker.style.height = "1px"
         colorPicker.style.display = "block"
-
         colorPicker.style.zIndex = "-1"
 
         colorPicker.focus()
@@ -88,6 +93,10 @@
         self.style.display = "none"
         if (event.type == "change") {
             console.log(self.value)
+        }
+
+        if (self) {
+            self.remove()
         }
     }
 </script>
@@ -142,7 +151,11 @@
             <td>3</td>
         </tr>
     </table>
-    <p style="text-align: center;">Hello <span style="font-size: 24pt;">world</span></p>
+    <p style="text-align: center;">
+        <span style="background-color: brown;">
+            Hello <span style="font-size: 24pt;">wor<span style="color: red;">ld</span></span>
+        </span>
+    </p>
     <h1>Hello world</h1>
     <h2 style="text-align: center;">Hello world</h2>
     <h3>Hello world</h3>
