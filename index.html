@@ -45,7 +45,7 @@
     <div id="buttons">
         <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
         <button type="button" onclick="clearContent()">Clear content</button>|
-
+<!-- 
         <input type="color" onfocusout="getColorAndClose(this, event)" onchange="getColorAndClose(this, event)" list="myeditor-color-set" style="display: none;" placeholder="Set color" />
         <datalist id="color-set">
             <option value="#000000"></option>
@@ -61,8 +61,8 @@
             <option value="#0000ff">Blue</option>
             <option value="#4b0082">Indigo</option>
             <option value="#ee82ee">Violet</option>
-        </datalist>
-        <button onclick="showColorPicker(event)">Text Color</button>
+        </datalist> -->
+        <!-- <button onclick="showColorPicker(event)">Text Color</button> -->
     </div>
     <div id="editor"></div>
 
@@ -101,35 +101,35 @@
 <script>"use strict";</script>
 
 <script>
-    function showColorPicker(event) {
-        const colorPicker = document.querySelector('input[type=color]')
+    // function showColorPicker(event) {
+    //     const colorPicker = document.querySelector('input[type=color]')
 
-        colorPicker.style.display = "none"
+    //     colorPicker.style.display = "none"
 
-        colorPicker.style.color = "transparent"
-        colorPicker.style.backgroundColor = "transparent"
-        colorPicker.style.border = "0px solid transparent"
+    //     colorPicker.style.color = "transparent"
+    //     colorPicker.style.backgroundColor = "transparent"
+    //     colorPicker.style.border = "0px solid transparent"
 
-        colorPicker.style.position = "absolute"
-        colorPicker.style.left = `${event.pageX}px`
-        colorPicker.style.top = `${event.pageY}px`
+    //     colorPicker.style.position = "absolute"
+    //     colorPicker.style.left = `${event.pageX}px`
+    //     colorPicker.style.top = `${event.pageY}px`
 
-        colorPicker.style.width = "1px"
-        colorPicker.style.height = "1px"
-        colorPicker.style.display = "block"
+    //     colorPicker.style.width = "1px"
+    //     colorPicker.style.height = "1px"
+    //     colorPicker.style.display = "block"
 
-        colorPicker.style.zIndex = "-1"
+    //     colorPicker.style.zIndex = "-1"
 
-        colorPicker.focus()
-        setTimeout(() => { colorPicker.click() }, 100)
-    }
+    //     colorPicker.focus()
+    //     setTimeout(() => { colorPicker.click() }, 100)
+    // }
 
-    function getColorAndClose(self, event) {
-        self.style.display = "none"
-        if (event.type == "change") {
-            console.log(self.value)
-        }
-    }
+    // function getColorAndClose(self, event) {
+    //     self.style.display = "none"
+    //     if (event.type == "change") {
+    //         console.log(self.value)
+    //     }
+    // }
 </script>
 
 <script src="dist/myeditor.js"></script>
