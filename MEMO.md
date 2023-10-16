@@ -5,6 +5,8 @@
     * Size parameterize
     * Correct Youtube `from` time
 * [ ] Table - cell colors
+* [ ] Menu icons
+* [ ] List item menu
 
 
 ## For ref.
