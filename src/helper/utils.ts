@@ -1,5 +1,5 @@
 import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
-import { Node, NodeType, MarkType, Attrs } from "prosemirror-model"
+import { Node, NodeType, Mark, MarkType, Attrs, ResolvedPos } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
 import { toggleMark } from "prosemirror-commands"
 import { wrapInList } from "prosemirror-schema-list"
@@ -87,13 +87,14 @@ function markItem(markType: MarkType, options: Object) {
     return cmdItem(toggleMark(markType), passedOptions)
 }
 
-function markItemOverwrite(markType: MarkType, options: Object) {
+function markItemFontSize(markType: MarkType, options: Object) {
     const passedOptions: Partial<MenuItemSpec> = { active(state) { return false } }
     for (const prop in options) {
         (passedOptions as any)[prop] = (options as any)[prop]
     }
 
-    return cmdItem(setMark(markType, (passedOptions as any).attrs), passedOptions)
+    // return cmdItem(setMark(markType, (passedOptions as any).attrs), passedOptions)
+    return cmdItem(setMarkFontStyle(markType, (passedOptions as any).attrs), passedOptions)
 }
 
 function linkItem(markType: MarkType, icon: IconSpec) {
@@ -157,6 +158,7 @@ function setMark(markType: MarkType, attrs?: | { [key: string]: any } | undefine
                 dispatch(state.tr.addStoredMark(markType.create(attrs)))
             } else {
                 const tr = state.tr
+
                 for (let i = 0; i < ranges.length; i++) {
                     const { $from, $to } = ranges[i]
 
@@ -167,6 +169,7 @@ function setMark(markType: MarkType, attrs?: | { [key: string]: any } | undefine
                         from += spaceStart
                         to -= spaceEnd
                     }
+
                     tr.addMark(from, to, markType.create(attrs))
                 }
                 dispatch(tr.scrollIntoView())
@@ -176,6 +179,100 @@ function setMark(markType: MarkType, attrs?: | { [key: string]: any } | undefine
         return true
     }
 }
+
+// https://discuss.prosemirror.net/t/how-to-get-the-determined-attributes-from-a-mark/853/3
+function setMarkFontStyle(markType: MarkType, attrs?: | { [key: string]: any } | undefined): Command {
+    return function (state, dispatch) {
+        const { empty, $cursor, ranges } = state.selection as TextSelection
+        if ((empty && !$cursor) || !markApplies(state.doc, (ranges as SelectionRange[]), markType)) { return false }
+        if (dispatch) {
+            if ($cursor) {
+                dispatch(state.tr.addStoredMark(markType.create(attrs)))
+            } else {
+                const tr = state.tr, doc = state.tr.doc
+
+                for (let i = 0; i < ranges.length; i++) {
+                    let pos = 0
+                    const { $from, $to } = ranges[i]
+                    const selectionContentsData = state.selection.content().content
+
+                    for (let j = 0; j < selectionContentsData.childCount; j++) {
+                        const selectedContents = selectionContentsData.child(j).content
+
+                        for (let k = 0; k < selectedContents.childCount; k++) {
+                            const content = selectedContents.child(k)
+
+                            const $begin = doc.resolve($from.pos + pos)
+                            const $end = doc.resolve($from.pos + pos + content.nodeSize)
+                            const nodeOBJ = $begin.parent.childAfter($begin.parentOffset)
+
+                            if (nodeOBJ.node) {
+                                const attrsCOPY: any = {}
+                                for (let k in attrs) { attrsCOPY[k] = attrs[k] }
+
+                                const mark = nodeOBJ.node.marks.find((mark) => mark.type == markType)
+                                if (mark) {
+                                    for (let k in mark.attrs) {
+                                        if (mark.attrs[k] && !attrsCOPY[k]) {
+                                            attrsCOPY![k] = mark.attrs[k]
+                                        }
+                                    }
+                                }
+
+                                const from = $begin.pos, to = ($end.pos > $to.pos) ? $to.pos : $end.pos
+                                tr.addMark(from, to, markType.create(attrsCOPY))
+                            }
+
+                            pos += content.nodeSize
+                        }
+
+                        pos += 2 // p tag. How to get the value from variable???
+                    }
+                }
+
+                dispatch(tr.scrollIntoView())
+            }
+        }
+
+        return true
+    }
+}
+
+function ToggleMarkForReference(markType: MarkType, attrs?: | { [key: string]: any } | undefined): Command {
+    return function (state, dispatch) {
+        const { empty, $cursor, ranges } = state.selection as TextSelection
+        if ((empty && !$cursor) || !markApplies(state.doc, (ranges as SelectionRange[]), markType)) return false
+        if (dispatch) {
+            if ($cursor) {
+                if (markType.isInSet(state.storedMarks || $cursor.marks()))
+                    dispatch(state.tr.removeStoredMark(markType))
+                else
+                    dispatch(state.tr.addStoredMark(markType.create(attrs)))
+            } else {
+                let has = false, tr = state.tr
+                for (let i = 0; !has && i < ranges.length; i++) {
+                    let { $from, $to } = ranges[i]
+                    has = state.doc.rangeHasMark($from.pos, $to.pos, markType)
+                }
+                for (let i = 0; i < ranges.length; i++) {
+                    let { $from, $to } = ranges[i]
+                    if (has) {
+                        tr.removeMark($from.pos, $to.pos, markType)
+                    } else {
+                        let from = $from.pos, to = $to.pos, start = $from.nodeAfter, end = $to.nodeBefore
+                        let spaceStart = start && start.isText ? /^\s*/.exec(start.text!)![0].length : 0
+                        let spaceEnd = end && end.isText ? /\s*$/.exec(end.text!)![0].length : 0
+                        if (from + spaceStart < to) { from += spaceStart; to -= spaceEnd }
+                        tr.addMark(from, to, markType.create(attrs))
+                    }
+                }
+                dispatch(tr.scrollIntoView())
+            }
+        }
+        return true
+    }
+}
+
 
 function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
     return function (state, dispatch) {
@@ -240,6 +337,8 @@ export {
     setIconElement,
     canInsert, insertImageItem,
     markItem, linkItem, wrapListItem,
-    markItemOverwrite,
+    markItemFontSize,
+    setMark, setMarkFontStyle,
+    cmdItem,
     AlignItemMy
 }

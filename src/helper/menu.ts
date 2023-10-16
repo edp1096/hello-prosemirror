@@ -7,7 +7,7 @@ import { lift, joinUp } from "prosemirror-commands"
 import { undo, redo } from "prosemirror-history"
 
 import { AlignmentDefinitions } from "./alignment"
-import { getColorPickerMenu, FontSizeList } from "./textstyle"
+import { getColorPickerMenuItem, FontSizeList } from "./textstyle"
 import { getImageUploadMenus } from "./upload"
 import { getYoutubeMenus } from "./youtube"
 import { getTableMenus } from "./table"
@@ -15,7 +15,7 @@ import {
     setIconElement,
     canInsert, insertImageItem,
     markItem, linkItem, wrapListItem,
-    markItemOverwrite,
+    markItemFontSize,
     AlignItemMy
 } from "./utils"
 
@@ -25,10 +25,10 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemsFontSize: MenuItem[] = new Array<MenuItem>;
     if (schema.marks.fontstyle) {
         for (let i = 0; i < fontSizeList.length; i++) {
-            itemsFontSize.push(markItemOverwrite(schema.marks.fontstyle, { title: `Set font size to ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt`, attrs: { fontSize: `${fontSizeList[i]}` } }))
+            itemsFontSize.push(markItemFontSize(schema.marks.fontstyle, { title: `Set font size to ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt`, attrs: { fontSize: `${fontSizeList[i]}` } }))
         }
     }
-    const itemFontColor = getColorPickerMenu()
+    const itemFontColor = (schema.marks.fontstyle) ? getColorPickerMenuItem(schema.marks.fontstyle) : undefined
 
     const itemToggleStrong = (schema.marks.strong) ? markItem(schema.marks.strong, { title: "Toggle strong style", icon: setIconElement("fi-bold") }) : undefined
     const itemToggleEM = (schema.marks.em) ? markItem(schema.marks.em, { title: "Toggle emphasis", icon: setIconElement("bi-type-italic") }) : undefined

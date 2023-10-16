@@ -1,12 +1,13 @@
 import OrderedMap from 'orderedmap'
-import { MarkSpec, Attrs } from "prosemirror-model"
+import { MarkSpec, MarkType, Attrs } from "prosemirror-model"
 import { EditorState, Plugin } from "prosemirror-state"
-import { MenuItem, MenuElement } from "prosemirror-menu"
+import { MenuItem, MenuElement, MenuItemSpec } from "prosemirror-menu"
 import { EditorView } from "prosemirror-view"
 
-import { setIconElement } from "./utils"
+import { setIconElement, setMark, setMarkFontStyle } from "./utils"
 
 const FontSizeList = [8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72]
+let fontStyleMarkType: MarkType
 
 const colorPicker = document.createElement("input")
 colorPicker.setAttribute("type", "color")
@@ -39,10 +40,15 @@ function callColorPicker(state: EditorState, dispatch: any, view: EditorView, ev
 }
 
 function fontColorHandler(state: EditorState, dispatch: any, view: EditorView) {
-    console.log("color:", colorPicker.value, "selection:", state.selection.from, state.selection.to)
+    const attrs = { fontColor: colorPicker.value }
+
+    setMarkFontStyle(fontStyleMarkType, attrs)(state, dispatch)
+    // setMark(fontStyleMarkType, attrs)(state, dispatch)
 }
 
-function getColorPickerMenu() {
+function getColorPickerMenuItem(markType: MarkType) {
+    fontStyleMarkType = markType
+
     setColorPickerStyleAndAction()
 
     const menuItem = {
@@ -55,6 +61,10 @@ function getColorPickerMenu() {
 }
 
 function getFontStyleAttr(dom: HTMLElement): false | Attrs | null {
+    // if (!(dom as HTMLElement).style.fontSize) {
+    //     (dom as HTMLElement).style.fontSize = "12pt"
+    // }
+
     return {
         fontSize: parseInt((dom as HTMLElement).style.fontSize.replace("pt", "")),
         fontColor: (dom as HTMLElement).style.color,
@@ -74,8 +84,8 @@ function SetFontStyleSchemaMark(marks: OrderedMap<MarkSpec>): OrderedMap<MarkSpe
             return ["span", {
                 style: `
                 font-size: ${m.attrs.fontSize}pt;
-                color: ${m.attrs.fontColor};
-                background-color: ${m.attrs.backgroundColor};
+                color: ${(m.attrs.fontColor) ? m.attrs.fontColor : null};
+                background-color: ${(m.attrs.backgroundColor) ? m.attrs.backgroundColor : null};
                 `
             }, 0]
         }
@@ -86,4 +96,4 @@ function SetFontStyleSchemaMark(marks: OrderedMap<MarkSpec>): OrderedMap<MarkSpe
     return marks
 }
 
-export { getColorPickerMenu, FontSizeList, SetFontStyleSchemaMark }
+export { getColorPickerMenuItem, FontSizeList, SetFontStyleSchemaMark }
