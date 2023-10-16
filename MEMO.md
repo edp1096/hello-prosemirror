@@ -1,12 +1,11 @@
 ## TODO
 
-* [ ] Correct Youtube `from` time
-* [ ] Table
-    * cell colors
-    * table size
-* [x] Text color
-* [x] Alignment
-* [x] Text under-line, cancel line
+* [ ] Clean up codes
+* [ ] Video
+    * Size parameterize
+    * Correct Youtube `from` time
+* [ ] Table - cell colors
+
 
 ## For ref.
 

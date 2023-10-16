@@ -7,7 +7,7 @@ import { lift, joinUp } from "prosemirror-commands"
 import { undo, redo } from "prosemirror-history"
 
 import { AlignmentDefinitions } from "./alignment"
-import { getColorPickerMenuItem, FontSizeList } from "./textstyle"
+import { getColorPickerMenuItem, getBackgroundColorPickerMenuItem, FontSizeList } from "./textstyle"
 import { getImageUploadMenus } from "./upload"
 import { getYoutubeMenus } from "./youtube"
 import { getTableMenus } from "./table"
@@ -29,6 +29,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
         }
     }
     const itemFontColor = (schema.marks.fontstyle) ? getColorPickerMenuItem(schema.marks.fontstyle) : undefined
+    const itemFontBackgroundColor = (schema.marks.fontstyle) ? getBackgroundColorPickerMenuItem(schema.marks.fontstyle) : undefined
 
     const itemToggleStrong = (schema.marks.strong) ? markItem(schema.marks.strong, { title: "Toggle strong style", icon: setIconElement("fi-bold") }) : undefined
     const itemToggleEM = (schema.marks.em) ? markItem(schema.marks.em, { title: "Toggle emphasis", icon: setIconElement("bi-type-italic") }) : undefined
@@ -78,7 +79,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 
     const menuInline: MenuElement[][] = [cut([
-        new Dropdown(cut(itemsFontSize), { title: "Set font size", label: "Aa" }), itemFontColor,
+        new Dropdown(cut(itemsFontSize), { title: "Set font size", label: "Aa" }), itemFontColor, itemFontBackgroundColor,
         itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink,
         ...itemsAlign
     ])]

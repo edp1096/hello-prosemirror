@@ -39,11 +39,28 @@ function callColorPicker(state: EditorState, dispatch: any, view: EditorView, ev
     return true
 }
 
+function callBackgroundColorPicker(state: EditorState, dispatch: any, view: EditorView, event: Event): boolean {
+    colorPicker.style.left = `${(event as MouseEvent).clientX}px`
+    colorPicker.style.top = `${(event as MouseEvent).clientY}px`
+    colorPicker.onchange = () => { backgroundColorHandler(state, dispatch, view) }
+
+    colorPicker.focus()
+    colorPicker.click()
+
+    return true
+}
+
 function fontColorHandler(state: EditorState, dispatch: any, view: EditorView) {
     const attrs = { fontColor: colorPicker.value }
 
     setMarkFontStyle(fontStyleMarkType, attrs)(state, dispatch)
     // setMark(fontStyleMarkType, attrs)(state, dispatch)
+}
+
+function backgroundColorHandler(state: EditorState, dispatch: any, view: EditorView) {
+    const attrs = { backgroundColor: colorPicker.value }
+
+    setMarkFontStyle(fontStyleMarkType, attrs)(state, dispatch)
 }
 
 function getColorPickerMenuItem(markType: MarkType) {
@@ -60,11 +77,21 @@ function getColorPickerMenuItem(markType: MarkType) {
     return new MenuItem(menuItem)
 }
 
-function getFontStyleAttr(dom: HTMLElement): false | Attrs | null {
-    // if (!(dom as HTMLElement).style.fontSize) {
-    //     (dom as HTMLElement).style.fontSize = "12pt"
-    // }
+function getBackgroundColorPickerMenuItem(markType: MarkType) {
+    fontStyleMarkType = markType
 
+    setColorPickerStyleAndAction()
+
+    const menuItem = {
+        title: "Set font color",
+        icon: setIconElement("fi-background-color"),
+        run: callBackgroundColorPicker
+    }
+
+    return new MenuItem(menuItem)
+}
+
+function getFontStyleAttr(dom: HTMLElement): false | Attrs | null {
     return {
         fontSize: parseInt((dom as HTMLElement).style.fontSize.replace("pt", "")),
         fontColor: (dom as HTMLElement).style.color,
@@ -76,7 +103,8 @@ function SetFontStyleSchemaMark(marks: OrderedMap<MarkSpec>): OrderedMap<MarkSpe
     const fontSizeMarkSpec: MarkSpec = {
         attrs: {
             fontSize: { default: null },
-            fontColor: { default: null }
+            fontColor: { default: null },
+            backgroundColor: { default: null }
         },
         inclusive: true,
         parseDOM: [{ tag: "span", style: "font-size;color;background-color;", getAttrs(dom) { return getFontStyleAttr(dom as HTMLElement) } }],
@@ -96,4 +124,4 @@ function SetFontStyleSchemaMark(marks: OrderedMap<MarkSpec>): OrderedMap<MarkSpe
     return marks
 }
 
-export { getColorPickerMenuItem, FontSizeList, SetFontStyleSchemaMark }
+export { getColorPickerMenuItem, getBackgroundColorPickerMenuItem, FontSizeList, SetFontStyleSchemaMark }
