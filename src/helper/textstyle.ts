@@ -70,7 +70,7 @@ function getColorPickerMenuItem(markType: MarkType) {
 
     const menuItem = {
         title: "Set font color",
-        icon: setIconElement("fi-text-color"),
+        icon: setIconElement("icon-text-color"),
         run: callColorPicker
     }
 
@@ -84,7 +84,7 @@ function getBackgroundColorPickerMenuItem(markType: MarkType) {
 
     const menuItem = {
         title: "Set font color",
-        icon: setIconElement("fi-background-color"),
+        icon: setIconElement("icon-text-bg"),
         run: callBackgroundColorPicker
     }
 

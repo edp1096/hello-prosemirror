@@ -1,12 +1,13 @@
 ## TODO
 
 * [ ] Clean up codes
+* [ ] Menu icons
+* [ ] Modify wrapInList - List item menu. ul, ol
+* [ ] Font Size - Show current size
+* [ ] Table - cell colors
 * [ ] Video
     * Size parameterize
     * Correct Youtube `from` time
-* [ ] Table - cell colors
-* [ ] Menu icons
-* [ ] List item menu
 
 
 ## For ref.

@@ -1,9 +1,13 @@
 .ProseMirror-icon {
     display: inline-block;
-    line-height: 0.8;
+    /* line-height: 0.9; */
     vertical-align: -2px;
+
+    font-size: small;
+
     /* Compensate for padding */
-    padding: 2px 8px;
+    /* padding: 2px 8px; */
+    padding: 2px 4px;
     cursor: pointer;
 }
 

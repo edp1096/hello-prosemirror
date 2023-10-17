@@ -72,7 +72,7 @@ function insertYoutube() {
 function getYoutubeMenus(): MenuElement {
     const menuItem = {
         title: "Add video",
-        icon: setIconElement("fi-play-video"),
+        icon: setIconElement("icon-youtube-play"),
         run: insertYoutube()
     }
 

@@ -5,6 +5,7 @@
 
 @import "bootstrap-icons.css";
 @import "foundation-icons.css";
+@import "icons.css";
 
 /* Add space around the hr to make clicking it easier */
 .Editor-base-setup-style hr {

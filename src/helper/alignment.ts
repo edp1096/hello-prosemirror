@@ -3,10 +3,10 @@ import { Schema, NodeSpec, Node, MarkSpec, DOMOutputSpec, Fragment, Attrs } from
 
 
 let AlignmentDefinitions = [
-    { direction: "left", icon_name: "fi-align-left" },
-    { direction: "center", icon_name: "fi-align-center" },
-    { direction: "right", icon_name: "fi-align-right" },
-    // { direction: "justify", icon_name: "fi-align-justify" }
+    { direction: "left", icon_name: "icon-align-left" },
+    { direction: "center", icon_name: "icon-align-center" },
+    { direction: "right", icon_name: "icon-align-right" },
+    // { direction: "justify", icon_name: "icon-align-justify" }
 ]
 
 function getAlignmentAttr(dom: HTMLElement): false | Attrs | null {
@@ -32,7 +32,12 @@ function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
         },
         defining: true,
         parseDOM: [{ tag: "*", style: "text-align", getAttrs(dom) { return getAlignmentAttr(dom as HTMLElement) } }],
-        toDOM(node) { return [node.attrs.tagName, { style: `text-align: ${node.attrs.alignment};` }, 0] }
+        toDOM(node) {
+            if (node.attrs.alignment) {
+                return [node.attrs.tagName, { style: `text-align: ${node.attrs.alignment};` }, 0]
+            }
+            return [node.attrs.tagName, 0]
+        }
     }
 
     nodes = nodes.addBefore("paragraph", "alignment", alignNodeSpecsParagraph)

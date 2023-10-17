@@ -53,7 +53,7 @@ function dispatchTable(state: EditorState, dispatch: any, view: EditorView): boo
 }
 
 function getTableMenus(): MenuElement {
-    const menuItemAddTable = { title: "Add table", icon: setIconElement("bi-table"), run: dispatchTable }
+    const menuItemAddTable = { title: "Add table", icon: setIconElement("icon-table"), run: dispatchTable }
     const tableMenu = new MenuItem(menuItemAddTable)
 
     return tableMenu

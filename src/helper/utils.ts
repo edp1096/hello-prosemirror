@@ -32,7 +32,7 @@ function insertImageItem(nodeType: NodeType) {
     return new MenuItem({
         title: "Insert image",
         label: "Image",
-        icon: setIconElement("fi-photo"),
+        icon: setIconElement("icon-picture"),
         enable(state) { return canInsert(state, nodeType) },
         run(state, _, view) {
             let { from, to } = state.selection, attrs = null

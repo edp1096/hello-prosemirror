@@ -115,12 +115,6 @@
       "src": "fontawesome"
     },
     {
-      "uid": "fd45bb961d08f9f2092f0df3fba29fe9",
-      "css": "qrcode",
-      "code": 59403,
-      "src": "fontawesome"
-    },
-    {
       "uid": "eeec3208c90b7b48e804919d0d2d4a41",
       "css": "upload",
       "code": 59404,
@@ -200,6 +194,56 @@
       },
       "search": [
         "text_color"
+      ]
+    },
+    {
+      "uid": "c5845105a87df2ee1999826d90622f6a",
+      "css": "paragraph",
+      "code": 61917,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "1fb8776fe6f1d3bbf970996fdfcf0f94",
+      "css": "link",
+      "code": 61563,
+      "src": "mfglabs"
+    },
+    {
+      "uid": "7034e4d22866af82bef811f52fb1ba46",
+      "css": "code",
+      "code": 61729,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "b6f32db98a3de777f5ae3005191b1831",
+      "css": "code-1",
+      "code": 59409,
+      "src": "entypo"
+    },
+    {
+      "uid": "04f7e0bbd0bba658464ca2b49097f37f",
+      "css": "qrcode",
+      "code": 59403,
+      "src": "elusive"
+    },
+    {
+      "uid": "b622423405bcc984de6553e2f23c9fb6",
+      "css": "barcode",
+      "code": 59410,
+      "src": "elusive"
+    },
+    {
+      "uid": "6973af31f5282e2cb3bad7d797a6cf3b",
+      "css": "call-merge",
+      "code": 59411,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M312.5 334L500 146.5 687.5 334H541V599.6L291 849.6 232.4 791 459 566.4V334H312.5ZM709 849.6L566.4 709 625 650.4 767.6 791Z",
+        "width": 1000
+      },
+      "search": [
+        "call-merge"
       ]
     }
   ]
