@@ -1,8 +1,9 @@
 ## TODO
 
+* [ ] Font Size - Show current size
+* [ ] Enter to plain text - Make Aa disabled
 * [ ] Clean up codes
 * [ ] Modify wrapInList - List item menu. ul, ol
-* [ ] Font Size - Show current size
 * [ ] Table - cell colors menus
 * [ ] Video
     * Size parameterize

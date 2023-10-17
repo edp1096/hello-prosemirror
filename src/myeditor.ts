@@ -27,7 +27,7 @@ import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
 import { SetAlignSchemaNode } from "./helper/alignment"
-import { FontSizeList, SetFontStyleSchemaMark } from "./helper/textstyle"
+import { SetFontStyleSchemaMark, fontStyleContextMenuHandler } from "./helper/textstyle"
 import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/upload"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
 import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
@@ -78,6 +78,7 @@ class MyEditor {
         })
         const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
         const tablePlugins = [
+            fontStyleContextMenuHandler(),
             columnResizing({}), tableEditing(),
             keymap({ Tab: goToNextCell(1), "Shift-Tab": goToNextCell(-1) }),
             tableContextMenuHandler()

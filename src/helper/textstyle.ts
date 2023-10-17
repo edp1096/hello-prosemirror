@@ -54,7 +54,6 @@ function fontColorHandler(state: EditorState, dispatch: any, view: EditorView) {
     const attrs = { fontColor: colorPicker.value }
 
     setMarkFontStyle(fontStyleMarkType, attrs)(state, dispatch)
-    // setMark(fontStyleMarkType, attrs)(state, dispatch)
 }
 
 function backgroundColorHandler(state: EditorState, dispatch: any, view: EditorView) {
@@ -124,4 +123,45 @@ function SetFontStyleSchemaMark(marks: OrderedMap<MarkSpec>): OrderedMap<MarkSpe
     return marks
 }
 
-export { getColorPickerMenuItem, getBackgroundColorPickerMenuItem, FontSizeList, SetFontStyleSchemaMark }
+// https://prosemirror.net/examples/tooltip
+function fontStyleContextMenuHandler() {
+    const plugin = new Plugin({
+        props: {
+            handleDOMEvents: {
+                mouseup: function (view: EditorView, event: MouseEvent,): void {
+                    switch (event.button) {
+                        case 0: // Left mouse button
+                            break
+                        case 1: // Wheel button
+                            break
+                        case 2: // Right mouse button
+                            break
+                    }
+                },
+                mousedown: function (view: EditorView, event: MouseEvent,): void {
+                    if (event.button > 1) { return }
+
+                    const editorContainer = view.dom.parentElement?.parentElement as HTMLElement
+                    const root = view.dom
+                    let node = (event.target as HTMLElement)
+
+                    let fontSize = node.style.fontSize
+                    if (!fontSize) {
+                        const px = parseInt(globalThis.getComputedStyle(node).fontSize.replace("px", ""))
+                        fontSize = `${px * 3 / 4}pt`
+                    }
+
+                    console.log("font size / node:", fontSize, node)
+                }
+            }
+        }
+    })
+
+    return plugin
+}
+
+export {
+    getColorPickerMenuItem, getBackgroundColorPickerMenuItem,
+    FontSizeList, SetFontStyleSchemaMark,
+    fontStyleContextMenuHandler
+}

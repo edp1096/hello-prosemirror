@@ -20,14 +20,21 @@ import {
 } from "./utils"
 
 
+const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
+let itemTextSizeDropdown
+
 function buildMenuItems(schema: Schema): MenuElement[][] {
     const fontSizeList = FontSizeList
     const itemsFontSize: MenuItem[] = new Array<MenuItem>;
+
     if (schema.marks.fontstyle) {
         for (let i = 0; i < fontSizeList.length; i++) {
             itemsFontSize.push(markItemFontSize(schema.marks.fontstyle, { title: `Set font size to ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt`, attrs: { fontSize: `${fontSizeList[i]}` } }))
         }
     }
+
+    itemTextSizeDropdown = (schema.marks.fontstyle) ? new Dropdown(cut(itemsFontSize), { title: "Set font size", label: "Aa" }) : undefined
+
     const itemFontColor = (schema.marks.fontstyle) ? getColorPickerMenuItem(schema.marks.fontstyle) : undefined
     const itemFontBackgroundColor = (schema.marks.fontstyle) ? getBackgroundColorPickerMenuItem(schema.marks.fontstyle) : undefined
 
@@ -76,10 +83,8 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemJoinUp = new MenuItem({ title: "Join with above block", run: joinUp, select: state => joinUp(state), icon: setIconElement("icon-call-merge") })
     const itemOutdent = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: setIconElement("icon-indent-left") })
 
-    const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
-
     const menuInline: MenuElement[][] = [cut([
-        new Dropdown(cut(itemsFontSize), { title: "Set font size", label: "Aa" }), itemFontColor, itemFontBackgroundColor,
+        itemTextSizeDropdown, itemFontColor, itemFontBackgroundColor,
         itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink,
         ...itemsAlign
     ])]
