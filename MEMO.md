@@ -7,7 +7,7 @@
 * [ ] Video
     * Size parameterize
     * Correct Youtube `from` time
-* [ ] horizontal resize bar?
+* [ ] full size resize bar?
 * [x] Menu icons
 
 
