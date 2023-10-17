@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'fontello';
-    src: url('./fonts/icons.woff2?12218522') format('woff2');
+  src: url('./fonts/icons.woff2?79954076') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
@@ -10,7 +10,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?12218522#fontello') format('svg');
+    src: url('../font/fontello.svg?79954076#fontello') format('svg');
   }
 }
 */
@@ -18,7 +18,7 @@
   font-family: "fontello";
   font-style: normal;
   font-weight: normal;
-  speak: never;
+  /* speak: never; */
 
   display: inline-block;
   text-decoration: inherit;
@@ -70,6 +70,12 @@
 .icon-barcode:before { content: '\e812'; } /* '' */
 .icon-call-merge:before { content: '\e813'; } /* '' */
 .icon-fontsize:before { content: '\e814'; } /* '' */
+.icon-trash-empty:before { content: '\e815'; } /* '' */
+.icon-list-add:before { content: '\e816'; } /* '' */
+.icon-doc-text:before { content: '\e817'; } /* '' */
+.icon-progress-3:before { content: '\e818'; } /* '' */
+.icon-calendar-alt:before { content: '\e819'; } /* '' */
+.icon-doc-landscape:before { content: '\e81a'; } /* '' */
 .icon-link:before { content: '\f07b'; } /* '' */
 .icon-list-bullet:before { content: '\f0ca'; } /* '' */
 .icon-list-numbered:before { content: '\f0cb'; } /* '' */
@@ -77,12 +83,16 @@
 .icon-underline:before { content: '\f0cd'; } /* '' */
 .icon-table:before { content: '\f0ce'; } /* '' */
 .icon-upload-cloud:before { content: '\f0ee'; } /* '' */
+.icon-h-sigh:before { content: '\f0fd'; } /* '' */
 .icon-quote-left:before { content: '\f10d'; } /* '' */
 .icon-quote-right:before { content: '\f10e'; } /* '' */
 .icon-undo:before { content: '\f112'; } /* '' */
 .icon-code:before { content: '\f121'; } /* '' */
-.icon-hr:before { content: '\f147'; } /* '' */
+.icon-sq-minus:before { content: '\f147'; } /* '' */
 .icon-youtube-play:before { content: '\f16a'; } /* '' */
 .icon-vimeo-squared:before { content: '\f194'; } /* '' */
 .icon-header:before { content: '\f1dc'; } /* '' */
 .icon-paragraph:before { content: '\f1dd'; } /* '' */
+.icon-object-ungroup:before { content: '\f248'; } /* '' */
+.icon-window-close:before { content: '\f2d3'; } /* '' */
+.icon-window-close-o:before { content: '\f2d4'; } /* '' */

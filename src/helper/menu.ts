@@ -45,7 +45,6 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
         }
     }
 
-    // const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Plain", icon: setIconElement("bi-type") }) : undefined
     const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Aa", icon: setIconElement("icon-fontsize") }) : undefined
     const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("icon-code") }) : undefined
     const itemsHeading: MenuItem[] = new Array<MenuItem>;
@@ -61,7 +60,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemInsertHR = (schema.nodes.horizontal_rule) ? new MenuItem({
         title: "Insert horizontal rule",
         label: "Horizontal rule",
-        icon: setIconElement("icon-hr"),
+        icon: setIconElement("icon-minus"),
         enable(state) { return canInsert(state, schema.nodes.horizontal_rule) },
         run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(schema.nodes.horizontal_rule.create())) }
     }) : undefined

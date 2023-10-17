@@ -68,7 +68,7 @@ function getContextMenuItem(fn: VoidFunction | null, menuName: string, iconName:
     const menuIcon = document.createElement("i") as HTMLElement
     const menuText = document.createElement("span") as HTMLElement
 
-    menuIcon.setAttribute("class", `bi ${iconName}`)
+    menuIcon.setAttribute("class", `${iconName}`)
     if (iconName) { menuIcon.setAttribute("style", `transform: rotate(${iconRotate}deg); display: inline-block;`) }
     menuText.innerText = ` ${menuName}`
 
@@ -86,20 +86,20 @@ function getContextMenuItem(fn: VoidFunction | null, menuName: string, iconName:
 }
 
 function prepareContextMenuItems(view: EditorView) {
-    const menuItemAddColumnBefore = getContextMenuItem(() => addColumnBefore(view.state, view.dispatch), "Insert column before", "bi-node-plus", 180)
-    const menuItemAddColumnAfter = getContextMenuItem(() => addColumnAfter(view.state, view.dispatch), "Insert column after", "bi-node-plus")
-    const menuItemDeleteColumn = getContextMenuItem(() => deleteColumn(view.state, view.dispatch), "Delete column", "bi-file-minus")
-    const menuItemAddRowBefore = getContextMenuItem(() => addRowBefore(view.state, view.dispatch), "Insert row before", "bi-node-plus", 270)
-    const menuItemAddRowAfter = getContextMenuItem(() => addRowAfter(view.state, view.dispatch), "Insert row after", "bi-node-plus", 90)
-    const menuItemDeleteRow = getContextMenuItem(() => deleteRow(view.state, view.dispatch), "Delete row", "bi-x-square")
-    const menuItemDeleteTable = getContextMenuItem(() => deleteTable(view.state, view.dispatch), "Delete table", "bi-trash")
+    const menuItemAddColumnBefore = getContextMenuItem(() => addColumnBefore(view.state, view.dispatch), "Insert column before", "icon-list-add", 180)
+    const menuItemAddColumnAfter = getContextMenuItem(() => addColumnAfter(view.state, view.dispatch), "Insert column after", "icon-list-add")
+    const menuItemDeleteColumn = getContextMenuItem(() => deleteColumn(view.state, view.dispatch), "Delete column", "icon-sq-minus")
+    const menuItemAddRowBefore = getContextMenuItem(() => addRowBefore(view.state, view.dispatch), "Insert row before", "icon-list-add", 270)
+    const menuItemAddRowAfter = getContextMenuItem(() => addRowAfter(view.state, view.dispatch), "Insert row after", "icon-list-add", 90)
+    const menuItemDeleteRow = getContextMenuItem(() => deleteRow(view.state, view.dispatch), "Delete row", "icon-window-close-o")
+    const menuItemDeleteTable = getContextMenuItem(() => deleteTable(view.state, view.dispatch), "Delete table", "icon-trash-empty")
 
-    const menuItemMergeCells = getContextMenuItem(() => mergeCells(view.state, view.dispatch), "Merge cells", "bi-union")
-    const menuItemRestoreMergedCell = getContextMenuItem(() => splitCell(view.state, view.dispatch), "Restore merged cell", "bi-arrow-counterclockwise")
+    const menuItemMergeCells = getContextMenuItem(() => mergeCells(view.state, view.dispatch), "Merge cells", "icon-object-ungroup")
+    const menuItemRestoreMergedCell = getContextMenuItem(() => splitCell(view.state, view.dispatch), "Restore merged cell", "icon-undo")
 
-    const menuItemToggleHeaderColumn = getContextMenuItem(() => toggleHeaderColumn(view.state, view.dispatch), "Toggle header column", "bi-type-h1")
-    const menuItemToggleHeaderRow = getContextMenuItem(() => toggleHeaderRow(view.state, view.dispatch), "Toggle header row", "bi-type-h1")
-    const menuItemToggleHeaderCells = getContextMenuItem(() => toggleHeaderCell(view.state, view.dispatch), "Toggle header cells", "bi-type-h1")
+    const menuItemToggleHeaderColumn = getContextMenuItem(() => toggleHeaderColumn(view.state, view.dispatch), "Toggle header column", "icon-header")
+    const menuItemToggleHeaderRow = getContextMenuItem(() => toggleHeaderRow(view.state, view.dispatch), "Toggle header row", "icon-header")
+    const menuItemToggleHeaderCells = getContextMenuItem(() => toggleHeaderCell(view.state, view.dispatch), "Toggle header cells", "icon-header")
 
     const menuItemMakeCellGreen = getContextMenuItem(() => (setCellAttr("background", "#dfd"))(view.state, view.dispatch), "Make cell green")
     const menuItemMakeCellRed = getContextMenuItem(() => (setCellAttr("background", "#faa"))(view.state, view.dispatch), "Make cell red")
