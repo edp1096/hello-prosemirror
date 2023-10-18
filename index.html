@@ -26,8 +26,7 @@
     https://spin.atomicobject.com/2019/11/21/creating-a-resizable-html-element
     */
     #editor {
-        height: 60vh;
-        resize: vertical;
+        height: 40vh;
         overflow: hidden;
         border: 1px solid silver;
     }
@@ -62,20 +61,19 @@
 <template id="editor2-template">
     <link rel="stylesheet" href="dist/myeditor.css">
 
-    <div class="editor2-container">
-        <div id="editor2"></div>
-    </div>
-
     <style>
         #editor2 {
-            height: 10vh;
-            resize: vertical;
-            /* overflow: auto; */
+            height: 20vh;
             overflow: hidden;
 
             border: 1px solid silver;
         }
     </style>
+
+    <div class="editor2-container">
+        <div id="editor2"></div>
+    </div>
+
 </template>
 <!-- Comment modification editor -->
 

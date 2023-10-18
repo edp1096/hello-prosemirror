@@ -3,7 +3,7 @@
 * [ ] Font Size - Show current size
 * [ ] Enter to plain text - Make Aa disabled
 * [ ] Clean up codes
-* [ ] Modify wrapInList - List item menu. ul, ol
+* [ ] Modify wrapInList toolbars - List item menu. ul, ol
 * [ ] Table - cell colors menus
 * [ ] Video
     * Size parameterize
