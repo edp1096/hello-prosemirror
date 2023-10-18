@@ -41,8 +41,14 @@
     <div id="editor"></div>
 </body>
 <script>"use strict";</script>
-<script src="myeditor.js"></script>
 
+<script>
+    const imageUploadCallback = function (response) {
+        console.log(response)
+    }
+</script>
+
+<script src="myeditor.js"></script>
 <script>
     const data = `
     <h2>Hello ProseMirror</h2>
@@ -80,6 +86,7 @@
     const options = {
         uploadActionURI: "http://localhost:8864/upload",
         uploadAccessURI: "http://localhost:8864/files",
+        uploadCallback: imageUploadCallback,
     }
     const editorEL = document.querySelector("#editor")
     const editor = new MyEditor(data, editorEL, options)

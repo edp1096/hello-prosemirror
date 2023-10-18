@@ -36,6 +36,7 @@ import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
 interface EditorOptionType {
     uploadActionURI: string
     uploadAccessURI: string
+    uploadCallback: Function
 }
 
 class MyEditor {
@@ -45,17 +46,20 @@ class MyEditor {
     view: EditorView
     uploadActionURI: string
     uploadAccessURI: string
+    uploadCallback: Function | null
 
     constructor(data: string, editorContainer: HTMLElement, options: EditorOptionType) {
         this.uploadActionURI = "http://localhost:8864/upload"
         this.uploadAccessURI = "http://localhost:8864/files"
+        this.uploadCallback = null
 
         if (options != undefined) {
-            if (options.uploadActionURI != undefined) { this.uploadActionURI = options.uploadActionURI }
-            if (options.uploadAccessURI != undefined) { this.uploadAccessURI = options.uploadAccessURI }
+            if (options.uploadActionURI) { this.uploadActionURI = options.uploadActionURI }
+            if (options.uploadAccessURI) { this.uploadAccessURI = options.uploadAccessURI }
+            if (options.uploadCallback) { this.uploadCallback = options.uploadCallback }
         }
 
-        setUploadURIs(this.uploadActionURI, this.uploadAccessURI)
+        setUploadURIs(this.uploadActionURI, this.uploadAccessURI, this.uploadCallback)
 
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data

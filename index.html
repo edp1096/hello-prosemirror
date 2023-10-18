@@ -22,9 +22,9 @@
     }
 
     /*
-         Need js for custom resize handle??? :
-         https://spin.atomicobject.com/2019/11/21/creating-a-resizable-html-element
-         */
+    Need js for custom resize handle??? :
+    https://spin.atomicobject.com/2019/11/21/creating-a-resizable-html-element
+    */
     #editor {
         height: 60vh;
         resize: vertical;
@@ -81,30 +81,22 @@
 
 <script>"use strict";</script>
 
-<script src="dist/myeditor.js"></script>
+<script>
+    const imageUploadCallback = function (response) {
+        console.log(response)
+    }
+</script>
 
+<script src="dist/myeditor.js"></script>
 <script>
     const data = `
     <h2>Hello ProseMirror</h2>
-    <p>
-        My ProseMirror editor
-    </p>
+    <p>My ProseMirror editor</p>
 
-    <p>
-        <iframe video-type="youtube" src="https://youtube.com/embed/BkTI_b6cRNc" width="420" height="315" title="Youtube video" class="video"></iframe>
-    </p>
-
-    <p>
-        <iframe video-type="youtube" src="https://youtube.com/embed/bsNM00eq7us" width="420" height="315" title="Youtube video" class="video"></iframe>
-    </p>
-
-    <p>
-        <iframe video-type="youtube" src="https://player.vimeo.com/video/302637099" width="420" height="315" title="Youtube video" class="video"></iframe>
-    </p>
-
-    <p>
-        <iframe video-type="youtube" src="https://www.dailymotion.com/embed/video/x8klbaq" width="420" height="315" title="Youtube video" class="video"></iframe>
-    </p>
+    <p><iframe video-type="youtube" src="https://youtube.com/embed/BkTI_b6cRNc" width="420" height="315" title="Youtube video" class="video"></iframe></p>
+    <p><iframe video-type="youtube" src="https://youtube.com/embed/bsNM00eq7us" width="420" height="315" title="Youtube video" class="video"></iframe></p>
+    <p><iframe video-type="youtube" src="https://player.vimeo.com/video/302637099" width="420" height="315" title="Youtube video" class="video"></iframe></p>
+    <p><iframe video-type="youtube" src="https://www.dailymotion.com/embed/video/x8klbaq" width="420" height="315" title="Youtube video" class="video"></iframe></p>
 
     <p>This paragraph has<br>a hard break inside of it.</p>
 
@@ -120,10 +112,10 @@
     const options = {
         uploadActionURI: "http://localhost:8864/upload",
         uploadAccessURI: "http://localhost:8864/files",
+        uploadCallback: imageUploadCallback,
     }
     const editorEL = document.querySelector("#editor")
     const editor = new MyEditor(data, editorEL, options)
-
 
     class modifierElement extends HTMLElement {
         constructor() {
@@ -140,8 +132,9 @@
 
     const editor2EL = editor2ROOT.querySelector("#editor2")
     const editor2Options = {
-        uploadActionURI: "/api/uploader",
-        uploadAccessURI: "/upload",
+        uploadActionURI: "http://localhost:8864/upload",
+        uploadAccessURI: "http://localhost:8864/files",
+        uploadCallback: imageUploadCallback,
     }
     commentModifier = new MyEditor(editContent, editor2EL, editor2Options)
 

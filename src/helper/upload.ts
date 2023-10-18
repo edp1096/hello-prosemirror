@@ -11,6 +11,7 @@ let editorView: EditorView
 
 let UploadURI = "" // let UploadURI = "http://localhost:8864/upload"
 let AccessURI = "" // let AccessURI = "http://localhost:8864/files"
+let CallbackFunction: Function | null = null
 
 const uploadFileForm = document.createElement("input")
 uploadFileForm.setAttribute("type", "file")
@@ -18,9 +19,10 @@ uploadFileForm.setAttribute("multiple", "")
 uploadFileForm.setAttribute("accept", ".jpg,.png,.bmp")
 uploadFileForm.onchange = uploadHandler
 
-function setUploadURIs(uploadURI:string, accessURI:string) {
+function setUploadURIs(uploadURI: string, accessURI: string, callbackFunction: Function | null) {
     UploadURI = uploadURI
     AccessURI = accessURI
+    CallbackFunction = callbackFunction
 }
 
 function dispatchImage(view: EditorView, pos: number, schema: Schema, imageURI: string): void {
@@ -42,6 +44,7 @@ async function uploadImage(view: EditorView, schema: Schema, event: Event, files
             const response = await r.json()
             const pos = view.posAtCoords({ left: (event as MouseEvent).clientX, top: (event as MouseEvent).clientY })
 
+            if (CallbackFunction) { CallbackFunction(response) }
             for (const f of response.files) {
                 dispatchImage(view, pos!.pos, schema, `${accessURI}/${f.storagename}`)
             }
@@ -97,6 +100,7 @@ async function uploadHandler() {
         if (r.ok) {
             const response = await r.json()
 
+            if (CallbackFunction) { CallbackFunction(response) }
             for (const f of response.files) {
                 insertImage(`${AccessURI}/${f.storagename}`)
             }
