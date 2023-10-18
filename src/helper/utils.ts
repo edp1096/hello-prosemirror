@@ -2,9 +2,10 @@ import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
 import { Node, NodeType, Mark, MarkType, Attrs, ResolvedPos } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
 import { toggleMark } from "prosemirror-commands"
-import { wrapInList } from "prosemirror-schema-list"
+// import { wrapInList } from "prosemirror-schema-list"
 
 import { TextField, openPrompt } from "./prompt"
+import { wrapInList } from "./schema-list"
 
 
 function setIconElement(iconName: string): IconSpec {
@@ -58,7 +59,7 @@ function insertImageItem(nodeType: NodeType) {
 }
 
 function cmdItem(cmd: Command, options: Partial<MenuItemSpec>) {
-    let passedOptions: MenuItemSpec = { label: options.title as string | undefined, run: cmd }
+    const passedOptions: MenuItemSpec = { label: options.title as string | undefined, run: cmd }
     for (let prop in options) {
         (passedOptions as any)[prop] = (options as any)[prop]
     }
@@ -306,7 +307,9 @@ function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
                     if (node.attrs.level) { tagName = `h${node.attrs.level}` }
                     const myAttrs: Attrs = { tagName: tagName, alignment: attrs?.alignment }
 
-                    tr.setNodeMarkup(pos, nodeType, myAttrs, node.marks)
+                    if (nodeType.validContent(node.content)) {
+                        tr.setNodeMarkup(pos, nodeType, myAttrs, node.marks)
+                    }
                 })
             }
 

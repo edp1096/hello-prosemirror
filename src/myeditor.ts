@@ -2,7 +2,7 @@ import { EditorState, Plugin } from "prosemirror-state"
 import { EditorView, Decoration, DecorationSet } from "prosemirror-view"
 import { Schema, DOMParser, DOMSerializer, Fragment, MarkSpec } from "prosemirror-model"
 // import { schema } from "prosemirror-schema-basic"
-import { addListNodes } from "prosemirror-schema-list"
+// import { addListNodes } from "prosemirror-schema-list"
 
 import { keymap } from "prosemirror-keymap"
 import { history } from "prosemirror-history"
@@ -23,6 +23,7 @@ import {
 } from "prosemirror-tables"
 
 import { schema } from "./helper/schema"
+import { addListNodes } from "./helper/schema-list"
 import { buildMenuItems } from "./helper/menu"
 import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
@@ -67,7 +68,8 @@ class MyEditor {
         schema.spec.nodes = SetAlignSchemaNode(schema.spec.nodes)
         schema.spec.nodes = setTableNodes(schema.spec.nodes)
         schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)
-        schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")
+        // schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")
+        schema.spec.nodes = addListNodes(schema.spec.nodes, "block*", "block")
 
         schema.spec.marks = SetFontStyleSchemaMark(schema.spec.marks)
 

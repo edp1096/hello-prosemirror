@@ -25,8 +25,7 @@ const mac = typeof navigator != "undefined" ? /Mac|iP(hone|[oa]d)/.test(navigato
 /// * **Ctrl-Shift-8** to wrap the selection in an ordered list
 /// * **Ctrl-Shift-9** to wrap the selection in a bullet list
 /// * **Ctrl->** to wrap the selection in a block quote
-/// * **Enter** to split a non-empty textblock in a list item while at
-///   the same time splitting the list item
+/// * **Enter** to split a non-empty textblock in a list item while at the same time splitting the list item
 /// * **Mod-Enter** to insert a hard break
 /// * **Mod-_** to insert a horizontal rule
 /// * **Backspace** to undo an input rule

@@ -52,6 +52,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
         }
     }
 
+    // Give up to make to seek both paragraph and alignment("p") as same status
     const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Aa", icon: setIconElement("icon-fontsize") }) : undefined
     const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("icon-code") }) : undefined
     const itemsHeading: MenuItem[] = new Array<MenuItem>;
@@ -85,10 +86,9 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
 
     const menuInline: MenuElement[][] = [cut([
         itemTextSizeDropdown, itemFontColor, itemFontBackgroundColor,
-        itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink,
-        ...itemsAlign
+        itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink
     ])]
-    const menuLineType = cut([itemLineSetPlain, itemLineSetCode, new Dropdown(cut(itemsHeading), { label: "H1" })])
+    const menuLineType = cut([itemLineSetPlain, ...itemsAlign, itemLineSetCode, new Dropdown(cut(itemsHeading), { label: "H1" })])
     const menuHistory = [itemUndo, itemRedo]
     const menuInsertUpload = cut([
         itemInsertHR, itemInsertTable,

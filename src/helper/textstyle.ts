@@ -128,7 +128,7 @@ function fontStyleContextMenuHandler() {
     const plugin = new Plugin({
         props: {
             handleDOMEvents: {
-                mouseup: function (view: EditorView, event: MouseEvent,): void {
+                mouseup: function (view: EditorView, event: MouseEvent): void {
                     switch (event.button) {
                         case 0: // Left mouse button
                             break
@@ -138,12 +138,12 @@ function fontStyleContextMenuHandler() {
                             break
                     }
                 },
-                mousedown: function (view: EditorView, event: MouseEvent,): void {
+                mousedown: function (view: EditorView, event: MouseEvent): void {
                     if (event.button > 1) { return }
 
                     const editorContainer = view.dom.parentElement?.parentElement as HTMLElement
                     const root = view.dom
-                    let node = (event.target as HTMLElement)
+                    const node = (event.target as HTMLElement)
 
                     let fontSize = node.style.fontSize
                     if (!fontSize) {
@@ -151,6 +151,7 @@ function fontStyleContextMenuHandler() {
                         fontSize = `${px * 3 / 4}pt`
                     }
 
+                    // For current font size showing
                     console.log("font size / node:", fontSize, node)
                 }
             }

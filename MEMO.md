@@ -1,15 +1,15 @@
 ## TODO
 
 * [ ] Font Size - Show current size
-* [ ] Enter to plain text - Make Aa disabled
 * [ ] Clean up codes
-* [ ] Modify wrapInList toolbars - List item menu. ul, ol
 * [ ] Table - cell colors menus
 * [ ] Video
     * Size parameterize
     * Correct Youtube `from` time
 * [ ] full size resize bar?
 * [x] Menu icons
+* [x] ListItem ul, ol not work. ~~Modify wrapInList toolbars - List item menu. ul, ol~~
+* [x] Enter to plain text - Make Aa disabled -> `give up`
 
 
 ## For ref.
