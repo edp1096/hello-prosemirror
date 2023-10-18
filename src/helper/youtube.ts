@@ -20,8 +20,8 @@ const youtubeNodeSpec: NodeSpec = {
         {
             "video-type": "youtube",
             src: node.attrs.uri,
-            width: "720",
-            height: "405",
+            // width: "720",
+            // height: "405",
             title: "Youtube video",
             class: "video"
         }

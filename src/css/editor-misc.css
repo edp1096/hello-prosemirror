@@ -1,0 +1,22 @@
+/* Web Video */
+
+.ProseMirror p:has(iframe) {
+    position: relative;
+    width: 50vw;
+    height: calc(50vw * 0.565);
+}
+
+.ProseMirror p>iframe {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+@media(max-width: 960px) {
+    .ProseMirror p:has(iframe) {
+        width: 82vw;
+        height: calc(82vw * 0.565);
+    }
+}
+
+/* Web Video */
