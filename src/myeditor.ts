@@ -136,10 +136,11 @@ class MyEditor {
         floatingMenu?: boolean
         menuContent?: MenuItem[][]
     }) {
+        delete baseKeymap.Enter
         const plugins = [
             buildInputRules(options.schema),
-            keymap(buildKeymap(options.schema, options.mapKeys)),
             keymap(baseKeymap),
+            keymap(buildKeymap(options.schema, options.mapKeys)),
             dropCursor(),
             gapCursor(),
         ]

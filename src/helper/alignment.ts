@@ -36,6 +36,7 @@ function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
             if (node.attrs.alignment) {
                 return [node.attrs.tagName, { style: `text-align: ${node.attrs.alignment};` }, 0]
             }
+
             return [node.attrs.tagName, 0]
         }
     }
