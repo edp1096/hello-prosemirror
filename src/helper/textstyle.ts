@@ -151,8 +151,8 @@ function fontStyleContextMenuHandler() {
                         fontSize = `${px * 3 / 4}pt`
                     }
 
-                    // For current font size showing
-                    console.log("font size / node:", fontSize, node)
+                    // // For current font size showing
+                    // console.log("font size / node:", fontSize, node)
                 }
             }
         }
