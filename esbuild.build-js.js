@@ -1,4 +1,5 @@
-import { build } from 'esbuild'
+import { build } from "esbuild"
+import { PluginGZ } from "./esbuild.plugins.js"
 
 build({
     entryPoints: ["src/myeditor.ts"],
@@ -7,5 +8,7 @@ build({
     minify: true,
     target: "es6",
     define: { "process.env.NODE_ENV": "production" },
-    // define: { "process.env.NODE_ENV": "developemnt" },    
+    // define: { "process.env.NODE_ENV": "developemnt" },
+    // write: false,
+    // plugins: [PluginGZ()]
 })

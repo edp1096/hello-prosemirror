@@ -4,6 +4,8 @@ import { createServer, request } from "http"
 // import path from "path"
 // import { spawn } from "child_process"
 
+import { dirname, basename, extname } from "path"
+
 const serveDIR = "serve"
 const clients = []
 const port = 8000
@@ -104,6 +106,11 @@ serve({ servedir: `${serveDIR}/` }, {}).then(() => {
         const path = ~url.split('/').pop().indexOf('.') ? url : `/index.html` //for PWA with router
         req.pipe(
             request({ hostname: '0.0.0.0', port: 8000, path, method, headers }, (prxRes) => {
+                const ext = extname(path).substring(1)
+                const fname = basename(path)
+                if (ext == "gz") { prxRes.headers["content-type"] = "application/gzip" }
+                // console.log(fname, prxRes.headers["content-type"])
+
                 res.writeHead(prxRes.statusCode, prxRes.headers)
                 prxRes.pipe(res, { end: true })
             }),
