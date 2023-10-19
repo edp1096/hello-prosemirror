@@ -41,9 +41,7 @@ function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
         }
     }
 
-    nodes = nodes.addBefore("paragraph", "alignment", alignNodeSpecsParagraph)
-
-    return nodes
+    return nodes.addBefore("paragraph", "alignment", alignNodeSpecsParagraph)
 }
 
 export { AlignmentDefinitions, SetAlignSchemaNode }
