@@ -8,7 +8,7 @@ import { dirname, basename, extname } from "path"
 
 const serveDIR = "serve"
 const clients = []
-const port = 8000
+const port = 8100
 
 const outName = "myeditor"
 
