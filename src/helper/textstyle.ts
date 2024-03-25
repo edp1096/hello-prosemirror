@@ -6,12 +6,27 @@ import { EditorView } from "prosemirror-view"
 
 import { setIconElement, setMark, setMarkFontStyle } from "./utils"
 
+const rand = (num: number) => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < num; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}
+
 const FontSizeList = [8, 9, 10, 11, 12, 14, 18, 24, 30, 36, 48, 60, 72]
 let fontStyleMarkType: MarkType
 
 const colorPicker = document.createElement("input")
 colorPicker.setAttribute("type", "color")
 colorPicker.setAttribute("list", "")
+colorPicker.setAttribute("id", rand(10))
+colorPicker.style.display = "none"
+// colorPicker.style.position = "absolute"
+colorPicker.style.position = "fixed"
 document.body.appendChild(colorPicker)
 
 function setColorPickerStyleAndAction() {
@@ -19,7 +34,8 @@ function setColorPickerStyleAndAction() {
     colorPicker.style.color = "transparent"
     colorPicker.style.backgroundColor = "transparent"
     colorPicker.style.border = "0px solid transparent"
-    colorPicker.style.position = "absolute"
+    // colorPicker.style.position = "absolute"
+    colorPicker.style.position = "fixed"
     colorPicker.style.left = `-10px`
     colorPicker.style.top = `-10px`
     colorPicker.style.width = "1px"
