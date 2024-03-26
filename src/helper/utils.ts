@@ -4,7 +4,7 @@ import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Tra
 import { toggleMark } from "prosemirror-commands"
 // import { wrapInList } from "prosemirror-schema-list"
 
-import { TextField, openPrompt } from "./prompt"
+import { SelectField, TextField, openPrompt } from "./prompt"
 import { wrapInList } from "./schema-list"
 
 
@@ -99,6 +99,9 @@ function markItemFontSize(markType: MarkType, options: Object) {
 }
 
 function linkItem(markType: MarkType, icon: IconSpec) {
+    // options error - prosemirror bug. version upgrade is required
+    // const targets = new SelectField({ options: [{ label: "This window", value: "_self" }] })
+
     return new MenuItem({
         title: "Add or remove link",
         icon: icon,
@@ -116,7 +119,8 @@ function linkItem(markType: MarkType, icon: IconSpec) {
                         label: "Link target",
                         required: true
                     }),
-                    title: new TextField({ label: "Title" })
+                    title: new TextField({ label: "Title" }),
+                    // target: targets
                 },
                 callback(attrs) {
                     toggleMark(markType, attrs)(view.state, view.dispatch)

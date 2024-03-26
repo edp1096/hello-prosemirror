@@ -98,7 +98,7 @@ export const marks = {
                 return { href: dom.getAttribute("href"), title: dom.getAttribute("title") }
             }
         }],
-        toDOM(node) { let { href, title } = node.attrs; return ["a", { href, title }, 0] }
+        toDOM(node) { let { href, title } = node.attrs; return ["a", { href, title, target: "_blank" }, 0] }
     } as MarkSpec,
     em: {
         parseDOM: [
