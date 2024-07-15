@@ -7,8 +7,8 @@ build({
     bundle: true,
     minify: true,
     target: "es6",
-    define: { "process.env.NODE_ENV": "production" },
-    // define: { "process.env.NODE_ENV": "developemnt" },
+    define: { "process.env.NODE_ENV": "'production'" },
+    // define: { "process.env.NODE_ENV": "'developemnt'" },
     // write: false,
     // plugins: [PluginGZ()]
 })

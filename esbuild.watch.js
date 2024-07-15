@@ -1,135 +1,64 @@
-import { build, serve } from "esbuild"
+// import esbuild from "esbuild"
+import * as esbuild from "esbuild"
 import fs from "fs"
-import { createServer, request } from "http"
-// import path from "path"
-// import { spawn } from "child_process"
 
-import { dirname, basename, extname } from "path"
 
 const serveDIR = "serve"
-const clients = []
-const port = 8100
+const serveHOST = "127.0.0.1"
+const servePORT = 8000
 
-const outName = "myeditor"
-
-const watchCSS = {
-    entryPoints: ["src/css/editor.css"],
-    outfile: `${serveDIR}/${outName}.css`,
-    bundle: true,
-    minify: true,
-    watch: {
-        onRebuild(error, result) {
-            clients.forEach((res) => res.write('data: update\n\n'))
-            clients.length = 0
-            // console.log(error ? error : '...')
-        },
-    },
-    loader: { ".woff": "dataurl", ".woff2": "dataurl" }
-}
-build(watchCSS)
-
-const watchJS = {
-    entryPoints: ["src/myeditor.ts"],
-    outfile: `${serveDIR}/${outName}.js`,
-    bundle: true,
-    banner: { js: ' (() => new EventSource("/esbuild").onmessage = () => location.reload())();' },
-    minify: true,
-    define: { "process.env.NODE_ENV": "developemnt" },
-    watch: {
-        onRebuild(error, result) {
-            clients.forEach((res) => res.write('data: update\n\n'))
-            clients.length = 0
-            // console.log(error ? error : '...')
-        },
-    },
-    loader: { ".woff": "dataurl", ".woff2": "dataurl" }
-}
-
-const watchMJS = {
-    entryPoints: ["src/myeditor.ts"],
-    outfile: `${serveDIR}/myeditor.mjs`,
-    bundle: true,
-    banner: { js: ' (() => new EventSource("/esbuild").onmessage = () => location.reload())();' },
-    minify: true,
-    sourcemap: true,
-    target: "es2020",
-    format: "esm",
-    define: { "process.env.NODE_ENV": "developemnt" },
-    watch: {
-        onRebuild(error, result) {
-            clients.forEach((res) => res.write('data: update\n\n'))
-            clients.length = 0
-            // console.log(error ? error : '...')
-        },
-    },
-}
-
-let arg = process.argv[2]
-let watcher
 
 if (!fs.existsSync(serveDIR)) { fs.mkdirSync(serveDIR) }
 
-if (arg == "js") {
-    arg = "js"
-    watcher = watchJS
-    fs.copyFile("watchplace/html/js.html", `${serveDIR}/index.html`, (err) => { if (err) throw err })
-} else {
-    arg = "mjs"
-    watcher = watchMJS
-    fs.copyFile("watchplace/html/mjs.html", `${serveDIR}/index.html`, (err) => { if (err) throw err })
+const arg = process.argv[2]
+let sourceHTML = "watchplace/html/js.html"
+if (arg == "mjs") { sourceHTML = "watchplace/html/mjs.html" }
+fs.copyFile(sourceHTML, `${serveDIR}/index.html`, (err) => { if (err) throw err })
+
+
+const watchPlugin = {
+    name: "watch-plugin",
+    setup(build) {
+        build.onStart(() => { console.log(`Build start: ${new Date(Date.now()).toLocaleString()}`) })
+        build.onEnd((result) => {
+            if (result.errors.length > 0) {
+                console.log(`Build Finished with errors: ${new Date(Date.now()).toLocaleString()}`)
+            } else {
+                console.log(`Build Finished successfully: ${new Date(Date.now()).toLocaleString()}`)
+            }
+        })
+    }
 }
 
-build(watcher).catch(() => process.exit(1))
+const ctxConfig = {
+    entryPoints: ["src/css/editor.css", "src/myeditor.ts"],
+    outdir: serveDIR,
+    bundle: true,
+    minify: true,
+    define: { "process.env.NODE_ENV": "'development'" },
+    loader: { ".woff": "dataurl", ".woff2": "dataurl" },
+    plugins: [watchPlugin],
+    footer: { js: "new EventSource('/esbuild').addEventListener('change', () => location.reload())" },
+    sourcemap: "external",
+}
+
+if (arg == "mjs") {
+    ctxConfig.target = "es2020"
+    ctxConfig.format = "esm"
+    ctxConfig.outExtension = { ".js": ".mjs" }
+}
+
+const ctx = await esbuild.context(ctxConfig)
+await ctx.watch()
 
 
-// fs.cpSync("src/css/fonts", "serve/fonts/", { recursive: true })
+const serveOptions = {
+    servedir: serveDIR,
+    host: serveHOST,
+    port: servePORT
+}
 
-// const server = await serve(serverInfo, {})
+const { host, port } = await ctx.serve(serveOptions)
+console.log(`Watching.. ${host} ${port}`)
 
-// if (server) {
-//     console.log(`Running server ${arg} on http://localhost:8000`)
-//     process.on('SIGINT', () => { fs.rmSync("serve", { recursive: true }) })
-// }
-
-// https://github.com/evanw/esbuild/issues/802#issuecomment-819578182
-serve({ servedir: `${serveDIR}/` }, {}).then(() => {
-    createServer((req, res) => {
-        const { url, method, headers } = req
-        if (req.url === '/esbuild')
-            return clients.push(
-                res.writeHead(200, {
-                    'Content-Type': 'text/event-stream',
-                    'Cache-Control': 'no-cache',
-                    Connection: 'keep-alive',
-                })
-            )
-        const path = ~url.split('/').pop().indexOf('.') ? url : `/index.html` //for PWA with router
-        req.pipe(
-            request({ hostname: '0.0.0.0', port: 8000, path, method, headers }, (prxRes) => {
-                const ext = extname(path).substring(1)
-                const fname = basename(path)
-                if (ext == "gz") { prxRes.headers["content-type"] = "application/gzip" }
-                // console.log(fname, prxRes.headers["content-type"])
-
-                res.writeHead(prxRes.statusCode, prxRes.headers)
-                prxRes.pipe(res, { end: true })
-            }),
-            { end: true }
-        )
-    }).listen(port)
-}).then(() => {
-    console.log(`Running server ${arg} on http://localhost:${port}`)
-
-    // // Open browser
-    // setTimeout(() => {
-    //     const op = { darwin: ['open'], linux: ['xdg-open'], win32: ['cmd', '/c', 'start'] }
-    //     const ptf = process.platform
-
-    //     if (clients.length === 0) spawn(op[ptf][0], [...[op[ptf].slice(1)], `http://localhost:${port}`])
-    // }, 1000) //open the default browser only if it is not opened yet
-
-    process.on('SIGINT', () => {
-        fs.rmSync("serve", { recursive: true })
-        process.exit(0)
-    })
-})
+// ctx.dispose()
