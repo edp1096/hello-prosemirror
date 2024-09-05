@@ -5,7 +5,7 @@
 ## CDN
 * https://cdn.jsdelivr.net/gh/edp1096/hello-prosemirror/dist/myeditor.js
 * https://cdn.jsdelivr.net/gh/edp1096/hello-prosemirror/dist/myeditor.mjs
-* https://cdn.jsdelivr.net/gh/edp1096/hello-prosemirror/dist/myeditor.map
+* https://cdn.jsdelivr.net/gh/edp1096/hello-prosemirror/dist/myeditor.mjs.map
 * https://cdn.jsdelivr.net/gh/edp1096/hello-prosemirror/dist/myeditor.css
 
 ## Build
