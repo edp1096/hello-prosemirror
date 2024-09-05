@@ -7,9 +7,11 @@ export function openPrompt(options: {
     title: string,
     fields: { [name: string]: Field },
     callback: (attrs: Attrs) => void
-}) {
-    let wrapper = document.body.appendChild(document.createElement("div"))
+}, editorElement: HTMLElement) {
+    // let wrapper = document.body.appendChild(document.createElement("div"))
+    const wrapper = document.createElement("div")
     wrapper.className = prefix
+    editorElement.appendChild(wrapper)
 
     let mouseOutside = (e: MouseEvent) => { if (!wrapper.contains(e.target as HTMLElement)) close() }
     setTimeout(() => window.addEventListener("mousedown", mouseOutside), 50)
@@ -18,35 +20,38 @@ export function openPrompt(options: {
         if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper)
     }
 
-    let domFields: HTMLElement[] = []
+    const domFields: HTMLElement[] = []
     for (let name in options.fields) { domFields.push(options.fields[name].render()) }
 
-    let submitButton = document.createElement("button")
+    const submitButton = document.createElement("button")
     submitButton.type = "submit"
     submitButton.className = prefix + "-submit"
     submitButton.textContent = "OK"
 
-    let cancelButton = document.createElement("button")
+    const cancelButton = document.createElement("button")
     cancelButton.type = "button"
     cancelButton.className = prefix + "-cancel"
     cancelButton.textContent = "Cancel"
     cancelButton.addEventListener("click", close)
 
-    let form = wrapper.appendChild(document.createElement("form"))
+    const form = wrapper.appendChild(document.createElement("form"))
     if (options.title) form.appendChild(document.createElement("h5")).textContent = options.title
     domFields.forEach(field => { form.appendChild(document.createElement("div")).appendChild(field) })
 
-    let buttons = form.appendChild(document.createElement("div"))
+    const buttons = form.appendChild(document.createElement("div"))
     buttons.className = prefix + "-buttons"
     buttons.appendChild(submitButton)
     buttons.appendChild(document.createTextNode(" "))
     buttons.appendChild(cancelButton)
 
-    let box = wrapper.getBoundingClientRect()
+    form.appendChild(buttons)
+
+    const box = wrapper.getBoundingClientRect()
     wrapper.style.top = ((window.innerHeight - box.height) / 2) + "px"
     wrapper.style.left = ((window.innerWidth - box.width) / 2) + "px"
+    wrapper.style.padding = "10px"
 
-    let submit = () => {
+    const submit = () => {
         let params = getValues(options.fields, domFields)
         if (params) {
             close()
@@ -60,13 +65,13 @@ export function openPrompt(options: {
     })
 
     form.addEventListener("keydown", e => {
-        if (e.keyCode == 27) {
+        if (e.key == "Escape") {
             e.preventDefault()
             close()
-        } else if (e.keyCode == 13 && !(e.ctrlKey || e.metaKey || e.shiftKey)) {
+        } else if (e.key == "Enter" && !(e.ctrlKey || e.metaKey || e.shiftKey)) {
             e.preventDefault()
             submit()
-        } else if (e.keyCode == 9) {
+        } else if (e.key == "Tab") {
             window.setTimeout(() => {
                 if (!wrapper.contains(document.activeElement)) { close() }
             }, 500)

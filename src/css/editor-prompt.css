@@ -43,5 +43,5 @@
 
 .ProseMirror-prompt-buttons {
     margin-top: 5px;
-    display: none;
+    /* display: none; */
 }

@@ -122,7 +122,13 @@ function SetFontStyleSchemaMark(marks: OrderedMap<MarkSpec>): OrderedMap<MarkSpe
             backgroundColor: { default: null }
         },
         inclusive: true,
-        parseDOM: [{ tag: "span", style: "font-size;color;background-color;", getAttrs(dom) { return getFontStyleAttr(dom as HTMLElement) } }],
+        parseDOM: [
+            {
+                tag: "span",
+                // style: "font-size;color;background-color;",
+                getAttrs(dom) { return getFontStyleAttr(dom as HTMLElement) }
+            }
+        ],
         toDOM(m) {
             return ["span", {
                 style: `

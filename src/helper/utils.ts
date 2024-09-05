@@ -39,6 +39,9 @@ function insertImageItem(nodeType: NodeType) {
             let { from, to } = state.selection, attrs = null
             if (state.selection instanceof NodeSelection && state.selection.node.type == nodeType)
                 attrs = state.selection.node.attrs
+            
+            const editorElement = view.dom.parentElement as HTMLElement
+
             openPrompt({
                 title: "Insert image",
                 fields: {
@@ -53,7 +56,7 @@ function insertImageItem(nodeType: NodeType) {
                     view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill(attrs)!))
                     view.focus()
                 }
-            })
+            }, editorElement)
         }
     })
 }
@@ -112,6 +115,9 @@ function linkItem(markType: MarkType, icon: IconSpec) {
                 toggleMark(markType)(state, dispatch)
                 return true
             }
+
+            const editorElement = view.dom.parentElement as HTMLElement
+
             openPrompt({
                 title: "Create a link",
                 fields: {
@@ -126,7 +132,7 @@ function linkItem(markType: MarkType, icon: IconSpec) {
                     toggleMark(markType, attrs)(view.state, view.dispatch)
                     view.focus()
                 }
-            })
+            }, editorElement)
         }
     })
 }

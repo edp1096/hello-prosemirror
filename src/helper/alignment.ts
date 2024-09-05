@@ -31,7 +31,13 @@ function SetAlignSchemaNode(nodes: OrderedMap<NodeSpec>): OrderedMap<NodeSpec> {
             alignment: { default: null }
         },
         defining: true,
-        parseDOM: [{ tag: "*", style: "text-align", getAttrs(dom) { return getAlignmentAttr(dom as HTMLElement) } }],
+        parseDOM: [
+            {
+                tag: "*",
+                // style: "text-align",
+                getAttrs(dom) { return getAlignmentAttr(dom as HTMLElement) }
+            }
+        ],
         toDOM(node) {
             if (node.attrs.alignment) {
                 return [node.attrs.tagName, { style: `text-align: ${node.attrs.alignment};` }, 0]

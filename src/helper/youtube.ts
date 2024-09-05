@@ -48,6 +48,8 @@ function insertYoutube() {
         if (!$from.parent.canReplaceWith(index, index, videoType)) { return false }
         if (state.selection instanceof NodeSelection) { attrs = state.selection.node.attrs }
 
+        const editorElement = view.dom.parentElement as HTMLElement
+
         openPrompt({
             title: "Paste link from Youtube, Vimeo, DailyMotion",
             fields: { src: new TextField({ label: "URL", required: true, value: attrs && attrs.src }) },
@@ -65,7 +67,7 @@ function insertYoutube() {
                 }
                 view.focus()
             }
-        })
+        }, editorElement)
     }
 }
 
