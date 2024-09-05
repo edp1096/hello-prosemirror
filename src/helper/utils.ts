@@ -39,7 +39,7 @@ function insertImageItem(nodeType: NodeType) {
             let { from, to } = state.selection, attrs = null
             if (state.selection instanceof NodeSelection && state.selection.node.type == nodeType)
                 attrs = state.selection.node.attrs
-            
+
             const editorElement = view.dom.parentElement as HTMLElement
 
             openPrompt({
