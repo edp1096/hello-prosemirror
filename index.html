@@ -17,8 +17,28 @@
 
 <style>
     body {
-        margin: 0px;
-        padding: 0px;
+        margin: 0.1em;
+        padding: 0.1em;
+    }
+
+    .demo-container {
+        display: flex;
+        flex-wrap: wrap;
+        height: 99vh;
+    }
+
+    .demo-editor {
+        width: calc(50% - 2em);
+        height: 88vh;
+        margin-left: 20px;
+    }
+
+    @media(max-width: 960px) {
+        .demo-editor {
+            min-width: 100%;
+            margin-left: 0px;
+            padding-bottom: 120px;
+        }
     }
 
     /*
@@ -28,34 +48,41 @@
     #editor {
         resize: vertical;
         overflow: hidden;
-        height: 50vh;
+        height: 100%;
         border: 1px solid silver;
     }
 
     editor-other {
-        height: 40vh;
+        height: 100%;
     }
 </style>
 
 <body>
-    <p>
-    <h2>Editor in DOM</h2>
-    </p>
+    <div class="demo-container">
+        <div class="demo-editor">
+            <p>
+            <h2>Editor in DOM</h2>
+            </p>
 
-    <div id="buttons">
-        <button type="button" onclick="printHTML()">Print HTML to dev console</button>|
-        <button type="button" onclick="clearContent()">Clear content</button>|
+            <div id="buttons">
+                <button type="button" onclick="printHTML2()">Print HTML to dev console</button> |
+                <button type="button" onclick="clearContent2()">Clear content</button>
+            </div>
+            <div id="editor"></div>
+        </div>
+
+        <div class="demo-editor">
+            <p>
+            <h2>Editor in Shadow DOM</h2>
+            </p>
+
+            <div id="buttons">
+                <button type="button" onclick="printHTML2()">Print HTML to dev console</button> |
+                <button type="button" onclick="clearContent2()">Clear content</button>
+            </div>
+            <editor-other id="editor2" data-idx="1"></editor-other>
+        </div>
     </div>
-    <div id="editor"></div>
-
-    <p>
-    <h2>Editor in Shadow DOM</h2>
-    </p>
-
-    <div>
-        <editor-other id="editor2-1" data-idx="1"></editor-other>
-    </div>
-
 </body>
 
 <!-- Comment modification editor -->
@@ -63,16 +90,16 @@
     <link rel="stylesheet" href="dist/myeditor.css">
 
     <style>
-        #editor2 {
+        #editor-shadow-dom {
             resize: vertical;
             overflow: hidden;
-            height: 20vh;
+            height: 88vh;
             border: 1px solid silver;
         }
     </style>
 
-    <div class="editor2-container">
-        <div id="editor2"></div>
+    <div class="editor-shadow-dom-container">
+        <div id="editor-shadow-dom"></div>
     </div>
 </template>
 <!-- Comment modification editor -->
@@ -87,7 +114,7 @@
 
 <script src="dist/myeditor.js"></script>
 <script>
-    const data = `
+    const data1 = `
     <h2>Hello ProseMirror</h2>
     <p>My ProseMirror editor</p>
 
@@ -113,32 +140,39 @@
         uploadCallback: imageUploadCallback,
     }
     const editorEL = document.querySelector("#editor")
-    const editor = new MyEditor(data, editorEL, options)
+    const editor = new MyEditor(data1, editorEL, options)
+</script>
 
+<script>
     class modifierElement extends HTMLElement {
         constructor() {
             super()
-            const templateContent = document.querySelector("#editor2-template").content
+            const templateContent = document.querySelector("#editor-shadow-dom-template").content
             const shadowRoot = this.attachShadow({ mode: "open" })
             shadowRoot.appendChild(templateContent.cloneNode(true))
         }
     }
     customElements.define("editor-other", modifierElement)
 
-    const editor2ROOT = document.querySelector(`editor-other#editor2-1`).shadowRoot
-    const editContent = "Hello ProseMirror"
+    const editor2ROOT = document.querySelector(`editor-other#editor2`).shadowRoot
+    const data2 = `
+    <h2>Hello ProseMirror</h2>
+    <p>My ProseMirror editor</p>
 
-    const editor2EL = editor2ROOT.querySelector("#editor2")
+    <p><iframe video-type="youtube" src="https://youtube.com/embed/upODO6OuOOk" width="420" height="315" title="Youtube video" class="video"></iframe></p>
+    <p><iframe video-type="youtube" src="https://youtube.com/embed/K4xLi8IF1FM" width="420" height="315" title="Youtube video" class="video"></iframe></p>
+    `
+
+    const editor2EL = editor2ROOT.querySelector("#editor2-shadow-dom")
     const editor2Options = {
         uploadActionURI: "http://localhost:8864/upload",
         uploadAccessURI: "http://localhost:8864/files",
         uploadCallback: imageUploadCallback,
     }
-    commentModifier = new MyEditor(editContent, editor2EL, editor2Options)
+    const editor2 = new MyEditor(data2, editor2EL, editor2Options)
 
-
-    function printHTML() { console.log(editor.getHTML()) }
-    function clearContent() { editor.setHTML("") }
+    function printHTML2() { console.log(editor2.getHTML()) }
+    function clearContent2() { editor2.setHTML("") }
 
     document.addEventListener("DOMContentLoaded", async () => { })
 </script>
