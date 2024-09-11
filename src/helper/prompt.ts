@@ -8,12 +8,20 @@ export function openPrompt(options: {
     fields: { [name: string]: Field },
     callback: (attrs: Attrs) => void
 }, editorElement: HTMLElement) {
+    // Remark for shadow dom
     // let wrapper = document.body.appendChild(document.createElement("div"))
     const wrapper = document.createElement("div")
     wrapper.className = prefix
     editorElement.appendChild(wrapper)
 
-    let mouseOutside = (e: MouseEvent) => { if (!wrapper.contains(e.target as HTMLElement)) close() }
+    let mouseOutside = (e: MouseEvent) => {
+        const epath = e.composedPath()
+        // Remark for shadow dom
+        // if (!wrapper.contains(e.target as HTMLElement)) {
+        if (!epath.includes(wrapper)) {
+            close()
+        }
+    }
     setTimeout(() => window.addEventListener("mousedown", mouseOutside), 50)
     let close = () => {
         window.removeEventListener("mousedown", mouseOutside)
