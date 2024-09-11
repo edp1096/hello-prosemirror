@@ -51,7 +51,7 @@ function insertYoutube() {
         const editorElement = view.dom.parentElement as HTMLElement
 
         openPrompt({
-            title: "Paste link from Youtube, Vimeo, DailyMotion, Niconico douga",
+            title: "Paste link from Youtube, Vimeo, DailyMotion, Niconico douga, chzzk(clip), Naver TV",
             fields: { src: new TextField({ label: "URL", required: true, value: attrs && attrs.src }) },
             callback: (attrs: Attrs) => {
                 if (!attrs.src) { return false }
@@ -63,6 +63,9 @@ function insertYoutube() {
                     uri = uri.replace("www.dailymotion.com/video", "www.dailymotion.com/embed/video")
                     uri = uri.replace("vimeo.com/", "player.vimeo.com/video/")
                     uri = uri.replace("www.nicovideo.jp/watch/", "embed.nicovideo.jp/watch/")
+                    uri = uri.replace("chzzk.naver.com/clips", "chzzk.naver.com/embed/clip")
+                    uri = uri.replace("tv.naver.com/v/", "tv.naver.com/embed/")
+                    uri = uri.replace("tv.naver.com/h/", "tv.naver.com/embed/")
 
                     dispatch(state.tr.replaceSelectionWith(videoType.create({ uri })))
                 }

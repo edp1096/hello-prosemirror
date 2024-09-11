@@ -5,6 +5,7 @@
     position: fixed;
     border-radius: 3px;
     box-shadow: -0.5px 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
 }
 
 .ProseMirror-prompt h5 {
