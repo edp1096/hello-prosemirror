@@ -1,6 +1,6 @@
 # Taste ProseMirror
 
-[Page](https://edp1096.github.io/hello-prosemirror) - Require own server for upload testing
+[Demo](https://edp1096.github.io/hello-prosemirror) - Require own server for upload testing
 
 ## CDN
 * https://cdn.jsdelivr.net/gh/edp1096/hello-prosemirror/dist/myeditor.js
