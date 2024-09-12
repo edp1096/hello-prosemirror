@@ -1,5 +1,8 @@
 # Taste ProseMirror
 
+
+<img src="misc/screenshot.png" width="800">
+
 [Demo](https://edp1096.github.io/hello-prosemirror) - Require own server for upload testing
 
 ## CDN
