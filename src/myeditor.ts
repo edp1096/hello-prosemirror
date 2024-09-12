@@ -32,6 +32,7 @@ import { SetFontStyleSchemaMark, fontStyleContextMenuHandler } from "./helper/te
 import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/upload"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
 import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
+import { createResizePlugin } from "./helper/resizer"
 
 
 interface EditorOptionType {
@@ -90,7 +91,7 @@ class MyEditor {
             tableContextMenuHandler()
         ]
 
-        const mergedPlugins = basePlugin.concat(pluginImageDropHandler, ...tablePlugins)
+        const mergedPlugins = basePlugin.concat(pluginImageDropHandler, ...tablePlugins, createResizePlugin())
 
         this.state = EditorState.create({
             doc: DOMParser.fromSchema(this.schema).parse(this.content),
@@ -122,7 +123,7 @@ class MyEditor {
         const domPaddingBOT = parseInt(this.view.dom.ownerDocument.defaultView?.getComputedStyle(this.view.dom, null).getPropertyValue("padding-bottom")?.replaceAll("px", "")!)
         const divScrollHeightCorrection = menubar.clientHeight + menubarPaddingTOP + menubarPaddingBOT + domPaddingTOP + domPaddingBOT
 
-        this.view.dom.style.height = `${editorContainer.clientHeight - divScrollHeightCorrection}px`
+        this.view.dom.style.height = `${editorContainer.clientHeight - divScrollHeightCorrection - 15}px`
         this.view.dom.style.overflowY = "auto"
     }
 

@@ -6,7 +6,7 @@
 * [ ] Video
     * Size parameterize
     * Correct Youtube `from` time
-* [ ] full size resize bar?
+* [x] full size vertical resize bar
 * [x] Menu icons
 * [x] ListItem ul, ol not work. ~~Modify wrapInList toolbars - List item menu. ul, ol~~
 * [x] Enter to plain text - Make Aa disabled -> `give up`

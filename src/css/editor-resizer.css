@@ -1,0 +1,9 @@
+.ProseMirror-resize-bar {
+    width: 100%;
+    height: 15px;
+    background-color: #f0f0f0;
+    /* background-color: brown; */
+    /* background-color: silver; */
+    cursor: ns-resize;
+    /* bottom: -5px; */
+}
