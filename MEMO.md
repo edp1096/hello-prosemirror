@@ -1,6 +1,7 @@
 ## TODO
 
 * [ ] Font Size - Show current size
+* [ ] Input tag name for upload
 * [ ] Clean up codes
 * [ ] Table - cell colors menus
 * [ ] Video
