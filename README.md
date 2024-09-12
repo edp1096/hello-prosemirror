@@ -27,7 +27,7 @@ yarn css # CSS
 
 * Browser JS
 ```powershell
-yarn watch     # MJS as default
+yarn watch     # JS as default
 yarn watch mjs # MJS
 yarn watch js  # JS
 ```
