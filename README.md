@@ -5,6 +5,9 @@
 
 [Demo](https://edp1096.github.io/hello-prosemirror) - Require own server for upload testing
 
+## Usage
+See [index.html](index.html)
+
 ## CDN
 * https://cdn.jsdelivr.net/gh/edp1096/hello-prosemirror/dist/myeditor.js
 * https://cdn.jsdelivr.net/gh/edp1096/hello-prosemirror/dist/myeditor.mjs
