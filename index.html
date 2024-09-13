@@ -121,7 +121,7 @@
     <p><iframe video-type="youtube" src="https://youtube.com/embed/BkTI_b6cRNc" title="Youtube video" class="video"></iframe></p>
     <p><iframe video-type="youtube" src="https://youtube.com/embed/bsNM00eq7us" title="Youtube video" class="video"></iframe></p>
     <p><iframe video-type="youtube" src="https://player.vimeo.com/video/302637099" width="420" height="315" title="Youtube video" class="video"></iframe></p>
-    <p><iframe video-type="youtube" src="https://geo.dailymotion.com/player.html?mute=false&video=x8klbaq" width="420" height="315" title="Youtube video" class="video" loading="lazy"></iframe></p>
+    <p><iframe video-type="youtube" src="https://geo.dailymotion.com/player.html?mute=false&video=x8klbaq" width="420" height="315" title="Youtube video" class="video"></iframe></p>
 
     <p>This paragraph has<br>a hard break inside of it.</p>
 
@@ -140,10 +140,14 @@
         uploadCallback: imageUploadCallback,
     }
     const editorEL = document.querySelector("#editor")
-    const editor = new MyEditor(data1, editorEL, options)
+    const editor = new MyEditor("", editorEL, options)
 
     function printHTML() { console.log(editor.getHTML()) }
     function clearContent() { editor.setHTML("") }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        editor.setHTML(data1)
+    })
 </script>
 
 <script>
@@ -176,10 +180,14 @@
         uploadAccessURI: "http://localhost:8864/files",
         uploadCallback: imageUploadCallback,
     }
-    const editor2 = new MyEditor(data2, editor2EL, editor2Options)
+    const editor2 = new MyEditor("", editor2EL, editor2Options)
 
     function printHTML2() { console.log(editor2.getHTML()) }
     function clearContent2() { editor2.setHTML("") }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        editor2.setHTML(data2)
+    })
 </script>
 
 </html>
