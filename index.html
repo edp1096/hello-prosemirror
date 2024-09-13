@@ -140,14 +140,10 @@
         uploadCallback: imageUploadCallback,
     }
     const editorEL = document.querySelector("#editor")
-    const editor = new MyEditor("", editorEL, options)
+    const editor = new MyEditor(data1, editorEL, options)
 
     function printHTML() { console.log(editor.getHTML()) }
     function clearContent() { editor.setHTML("") }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        editor.setHTML(data1)
-    })
 </script>
 
 <script>
@@ -180,14 +176,10 @@
         uploadAccessURI: "http://localhost:8864/files",
         uploadCallback: imageUploadCallback,
     }
-    const editor2 = new MyEditor("", editor2EL, editor2Options)
+    const editor2 = new MyEditor(data2, editor2EL, editor2Options)
 
     function printHTML2() { console.log(editor2.getHTML()) }
     function clearContent2() { editor2.setHTML("") }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        editor2.setHTML(data2)
-    })
 </script>
 
 </html>

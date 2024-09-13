@@ -110,8 +110,8 @@ class MyEditor {
 
         this.view = new EditorView(editorContainer, { state: this.state })
 
-        const w = globalThis as any
-        w.view = this.view
+        // const w = globalThis as any
+        // w.view = this.view
     }
 
     setupHeight(editorContainer: HTMLElement) {
