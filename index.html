@@ -141,6 +141,9 @@
     }
     const editorEL = document.querySelector("#editor")
     const editor = new MyEditor(data1, editorEL, options)
+
+    function printHTML() { console.log(editor2.getHTML()) }
+    function clearContent() { editor2.setHTML("") }
 </script>
 
 <script>
@@ -177,8 +180,6 @@
 
     function printHTML2() { console.log(editor2.getHTML()) }
     function clearContent2() { editor2.setHTML("") }
-
-    document.addEventListener("DOMContentLoaded", async () => { })
 </script>
 
 </html>
