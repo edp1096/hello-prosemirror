@@ -38,9 +38,32 @@ function createResizePlugin(): Plugin<any> {
 
             resizeBar.addEventListener('mousedown', onMouseDown)
 
+            function onTouchStart(e: TouchEvent) {
+                e.preventDefault()
+                startY = e.touches[0].clientY
+                // startHeight = editorView.dom.offsetHeight
+                startHeight = container.offsetHeight
+                document.addEventListener('touchmove', onTouchMove)
+                document.addEventListener('touchend', onTouchEnd)
+            }
+
+            function onTouchMove(e: TouchEvent) {
+                const diff = e.touches[0].clientY - startY
+                // editorView.dom.style.height = `${startHeight + diff}px`
+                container.style.height = `${startHeight + diff}px`
+            }
+
+            function onTouchEnd() {
+                document.removeEventListener('touchmove', onTouchMove)
+                document.removeEventListener('touchend', onTouchEnd)
+            }
+
+            resizeBar.addEventListener('touchstart', onTouchStart)
+
             return {
                 destroy() {
                     resizeBar.removeEventListener('mousedown', onMouseDown)
+                    resizeBar.removeEventListener('touchstart', onTouchStart)
                     resizeBar.remove()
                 }
             }
