@@ -59,7 +59,8 @@ function insertYoutube() {
                 if (dispatch) {
                     uri = (attrs.src as string).replace("youtu.be", "youtube.com/embed")
                     uri = uri.replace("www.youtube.com/watch?v=", "youtube.com/embed/")
-                    uri = uri.replace("dai.ly", "www.dailymotion.com/embed/video")
+                    // uri = uri.replace("dai.ly", "www.dailymotion.com/embed/video")
+                    uri = uri.replace("dai.ly/", "geo.dailymotion.com/player.html?mute=false&video=")
                     uri = uri.replace("www.dailymotion.com/video/", "geo.dailymotion.com/player.html?mute=false&video=")
                     uri = uri.replace("vimeo.com/", "player.vimeo.com/video/")
                     uri = uri.replace("www.nicovideo.jp/watch/", "embed.nicovideo.jp/watch/")
