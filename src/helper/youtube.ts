@@ -1,6 +1,7 @@
 import { NodeSelection, EditorState } from "prosemirror-state"
 import { NodeSpec, Node, Attrs } from "prosemirror-model"
-import { MenuItem, MenuElement } from "prosemirror-menu"
+// import { MenuItem, MenuElement } from "prosemirror-menu"
+import { MenuItem, MenuElement } from "../pkgs/menu"
 import { EditorView } from 'prosemirror-view'
 
 import { TextField, openPrompt } from "./prompt"

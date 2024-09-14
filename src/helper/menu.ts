@@ -1,7 +1,11 @@
+// import {
+//     wrapItem, blockTypeItem, Dropdown, DropdownSubmenu,
+//     selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
+// } from "prosemirror-menu"
 import {
     wrapItem, blockTypeItem, Dropdown, DropdownSubmenu,
     selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
-} from "prosemirror-menu"
+} from "../pkgs/menu"
 import { Schema } from "prosemirror-model"
 import { lift, joinUp } from "prosemirror-commands"
 import { undo, redo } from "prosemirror-history"

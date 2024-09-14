@@ -36,7 +36,7 @@
 .ProseMirror-menu-dropdown-wrap {
     padding: 1px 0 1px 4px;
     display: inline-block;
-    position: relative;
+    /* position: relative; */
 }
 
 .ProseMirror-menu-dropdown:after {
@@ -111,21 +111,33 @@
 }
 
 .ProseMirror-menubar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
-    position: relative;
     min-height: 1em;
-    color: #666;
-    padding: 1px 6px;
+    color: #555;
+    /* padding: 0px 6px; */
+    padding-left: 6px;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
     top: 0;
     left: 0;
     right: 0;
     border-bottom: 1px solid silver;
-    background: white;
+    /* background: white; */
     z-index: 10;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    overflow: visible;
+    overflow-x: auto;
+}
+
+@media(max-width: 960px) {
+    .ProseMirror-menubar {
+        flex-wrap: nowrap;
+        /* height: 40px; */
+    }
 }
 
 /* .ProseMirror-menubar-wrapper {

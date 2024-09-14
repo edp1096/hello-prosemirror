@@ -1,7 +1,8 @@
 import OrderedMap from 'orderedmap'
 import { MarkSpec, MarkType, Attrs } from "prosemirror-model"
 import { EditorState, Plugin } from "prosemirror-state"
-import { MenuItem, MenuElement, MenuItemSpec } from "prosemirror-menu"
+// import { MenuItem, MenuElement, MenuItemSpec } from "prosemirror-menu"
+import { MenuItem, MenuElement, MenuItemSpec } from "../pkgs/menu"
 import { EditorView } from "prosemirror-view"
 
 import { setIconElement, setMark, setMarkFontStyle } from "./utils"

@@ -8,7 +8,8 @@ import { keymap } from "prosemirror-keymap"
 import { history } from "prosemirror-history"
 import { baseKeymap, setBlockType } from "prosemirror-commands"
 import { dropCursor } from "prosemirror-dropcursor"
-import { menuBar, MenuItemSpec, MenuItem, Dropdown } from "prosemirror-menu"
+// import { menuBar, MenuItemSpec, MenuItem, Dropdown } from "prosemirror-menu"
+import { menuBar, MenuItemSpec, MenuItem, Dropdown } from "./pkgs/menu"
 import { gapCursor } from "prosemirror-gapcursor"
 
 import {

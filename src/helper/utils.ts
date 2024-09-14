@@ -1,4 +1,5 @@
-import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
+// import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
+import { IconSpec, MenuItem, MenuItemSpec } from "../pkgs/menu"
 import { Node, NodeType, Mark, MarkType, Attrs, ResolvedPos } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
 import { toggleMark } from "prosemirror-commands"
@@ -15,7 +16,6 @@ function setIconElement(iconName: string): IconSpec {
     // iconEL.setAttribute("style", "font-size: 1.3em; margin: -0.3em;")
 
     const result = { dom: iconEL }
-
     return result
 }
 

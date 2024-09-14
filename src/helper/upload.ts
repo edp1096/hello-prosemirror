@@ -1,7 +1,8 @@
 import { EditorState, Plugin } from "prosemirror-state"
 import { EditorView } from "prosemirror-view"
 import { Schema } from "prosemirror-model"
-import { MenuItem, MenuElement } from "prosemirror-menu"
+// import { MenuItem, MenuElement } from "prosemirror-menu"
+import { MenuItem, MenuElement } from "../pkgs/menu"
 import { setIconElement } from "./utils"
 
 

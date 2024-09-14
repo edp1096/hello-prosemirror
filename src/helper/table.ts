@@ -2,7 +2,8 @@ import OrderedMap from 'orderedmap'
 
 import { EditorState, Plugin } from "prosemirror-state"
 import { Fragment, NodeSpec } from "prosemirror-model"
-import { MenuItem, MenuElement } from "prosemirror-menu"
+// import { MenuItem, MenuElement } from "prosemirror-menu"
+import { MenuItem, MenuElement } from "../pkgs/menu"
 import { EditorView } from "prosemirror-view"
 
 import { setIconElement } from "./utils"
