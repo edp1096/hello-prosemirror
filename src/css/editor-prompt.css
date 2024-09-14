@@ -1,8 +1,9 @@
 .ProseMirror-prompt {
-    background: white;
-    padding: 5px 10px 5px 15px;
-    border: 1px solid silver;
     position: fixed;
+    max-width: 30em;
+    padding: 5px 10px 5px 15px;
+    background: white;
+    border: 1px solid silver;
     border-radius: 3px;
     box-shadow: -0.5px 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 9999;

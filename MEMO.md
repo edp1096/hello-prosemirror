@@ -1,17 +1,17 @@
 ## TODO
 
+* [ ] Setting for input tag name for upload
 * [ ] Font Size - Show current size
-* [ ] Input tag name for upload
-* [ ] Clean up codes
-* [ ] Table - cell colors menus
-* [ ] Video
-    * Size parameterize
-    * Correct Youtube `from` time
 * [x] full size vertical resize bar
 * [x] Menu icons
 * [x] ListItem ul, ol not work. ~~Modify wrapInList toolbars - List item menu. ul, ol~~
 * [x] Enter to plain text - Make Aa disabled -> `give up`
 
+### Waived
+
+* ~~Table - cell colors menus~~
+* ~~Video - Size parameterize~~
+* ~~Clean up codes~~
 
 ## For ref.
 

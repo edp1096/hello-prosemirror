@@ -13,7 +13,7 @@ import { undo, redo } from "prosemirror-history"
 import { AlignmentDefinitions } from "./alignment"
 import { getColorPickerMenuItem, getBackgroundColorPickerMenuItem, FontSizeList } from "./textstyle"
 import { getImageUploadMenus } from "./upload"
-import { getYoutubeMenus } from "./youtube"
+import { getVideoServiceMenus } from "./video-service"
 import { getTableMenus } from "./table"
 import {
     setIconElement,
@@ -79,7 +79,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemInsertTable = getTableMenus()
     const itemInsertImage = (schema.nodes.image) ? insertImageItem(schema.nodes.image) : undefined
     const itemUploadImage = getImageUploadMenus()
-    const itemInsertYoutube = getYoutubeMenus()
+    const itemInsertVideoService = getVideoServiceMenus()
 
     const itemBulletList = (schema.nodes.bullet_list) ? wrapListItem(schema.nodes.bullet_list, { title: "Wrap in bullet list", icon: setIconElement("icon-list-bullet") }) : undefined
     const itemOrderedList = (schema.nodes.ordered_list) ? wrapListItem(schema.nodes.ordered_list, { title: "Wrap in ordered list", icon: setIconElement("icon-list-numbered") }) : undefined
@@ -108,7 +108,7 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
         itemToggleLink,
         itemInsertTable,
         itemInsertImage, itemUploadImage,
-        itemInsertYoutube
+        itemInsertVideoService
     ])
     const menuBlock = cut([
         itemLineSetCode,

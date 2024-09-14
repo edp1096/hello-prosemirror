@@ -32,7 +32,7 @@ import { SetAlignSchemaNode } from "./helper/alignment"
 import { SetFontStyleSchemaMark, fontStyleContextMenuHandler } from "./helper/textstyle"
 import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/upload"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
-import { youtubeNodeSpec, getYoutubeMenus } from "./helper/youtube"
+import { videoServiceNodeSpec, getVideoServiceMenus } from "./helper/video-service"
 import { createResizePlugin } from "./helper/resizer"
 
 
@@ -69,7 +69,7 @@ class MyEditor {
 
         schema.spec.nodes = SetAlignSchemaNode(schema.spec.nodes)
         schema.spec.nodes = setTableNodes(schema.spec.nodes)
-        schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "youtube", youtubeNodeSpec)
+        schema.spec.nodes = schema.spec.nodes.addBefore("iframe", "video_service", videoServiceNodeSpec)
         // schema.spec.nodes = addListNodes(schema.spec.nodes, "paragraph block*", "block")
         schema.spec.nodes = addListNodes(schema.spec.nodes, "block*", "block")
 

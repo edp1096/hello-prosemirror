@@ -8,10 +8,13 @@ import { TextField, openPrompt } from "./prompt"
 import { setIconElement } from "./utils"
 
 
-const videoFormat = ["youtube", "dailymotion", "vimeo"]
+const videoServiceFormats = ["youtube", "dailymotion", "vimeo", "nicodong", "chzzk", "navertv"]
 
-const youtubeNodeSpec: NodeSpec = {
-    attrs: { uri: { default: "" } },
+const videoServiceNodeSpec: NodeSpec = {
+    attrs: {
+        uri: { default: "" },
+        title: { default: "Video streaming" }
+    },
     inline: true,
     group: "inline",
     draggable: false,
@@ -19,32 +22,33 @@ const youtubeNodeSpec: NodeSpec = {
     toDOM: (node: Node) => [
         "iframe",
         {
-            "video-type": "youtube",
+            "video-type": "video-stream-service",
             src: node.attrs.uri,
             // width: "720",
             // height: "405",
-            title: "Youtube video",
+            title: node.attrs.title,
             class: "video"
         }
     ],
     parseDOM: [{
         tag: "iframe[video-type]",
         getAttrs: dom => {
-            const videoType = (dom as HTMLElement).getAttribute("video-type")
+            // const videoType = (dom as HTMLElement).getAttribute("video-type")
             const uri = (dom as HTMLElement).getAttribute("src")
+            const title = (dom as HTMLElement).getAttribute("title")
 
-            return { uri }
+            return { uri, title }
         }
     }]
 }
 
-function insertYoutube() {
+function insertVideo() {
     let uri: string
 
     return function (state: EditorState, dispatch: any, view: EditorView) {
         let attrs = null
         const { $from } = state.selection, index = $from.index()
-        const videoType = state.schema.nodes.youtube
+        const videoType = state.schema.nodes.video_service
 
         if (!$from.parent.canReplaceWith(index, index, videoType)) { return false }
         if (state.selection instanceof NodeSelection) { attrs = state.selection.node.attrs }
@@ -59,6 +63,7 @@ function insertYoutube() {
 
                 if (dispatch) {
                     uri = (attrs.src as string).replace("youtu.be", "youtube.com/embed")
+                    uri = uri.replace("youtube.com/shorts/", "youtube.com/embed/")
                     uri = uri.replace("www.youtube.com/watch?v=", "youtube.com/embed/")
                     uri = uri.replace("dai.ly", "www.dailymotion.com/embed/video")
                     uri = uri.replace("www.dailymotion.com/video", "www.dailymotion.com/embed/video")
@@ -68,7 +73,16 @@ function insertYoutube() {
                     uri = uri.replace("tv.naver.com/v/", "tv.naver.com/embed/")
                     uri = uri.replace("tv.naver.com/h/", "tv.naver.com/embed/")
 
-                    dispatch(state.tr.replaceSelectionWith(videoType.create({ uri })))
+                    let title = "Video streaming"
+                    for (let i = 0; i < videoServiceFormats.length; i++) {
+                        if (uri.includes(videoServiceFormats[i])) {
+                            title = videoServiceFormats[i]
+                            break
+                        }
+                    }
+
+                    const vnode = videoType.create({ uri, title })
+                    dispatch(state.tr.replaceSelectionWith(vnode))
                 }
                 view.focus()
             }
@@ -76,14 +90,14 @@ function insertYoutube() {
     }
 }
 
-function getYoutubeMenus(): MenuElement {
+function getVideoServiceMenus(): MenuElement {
     const menuItem = {
         title: "Add video",
         icon: setIconElement("icon-youtube-play"),
-        run: insertYoutube()
+        run: insertVideo()
     }
 
     return new MenuItem(menuItem)
 }
 
-export { youtubeNodeSpec, getYoutubeMenus }
+export { videoServiceNodeSpec, getVideoServiceMenus }
