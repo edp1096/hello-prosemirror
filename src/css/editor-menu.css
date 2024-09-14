@@ -16,8 +16,9 @@
 }
 
 .ProseMirror-menuseparator {
-    border-right: 1px solid #ddd;
+    border-right: 1px solid #bbb;
     margin-right: 3px;
+    height: 1em;
 }
 
 .ProseMirror-menu-dropdown,

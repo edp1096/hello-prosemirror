@@ -88,23 +88,40 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemJoinUp = new MenuItem({ title: "Join with above block", run: joinUp, select: state => joinUp(state), icon: setIconElement("icon-call-merge") })
     const itemOutdent = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: setIconElement("icon-indent-left") })
 
-    const menuInline: MenuElement[][] = [cut([
+    const menuInline: MenuElement[][] = [cut([])]
+    // const menuInline: MenuElement[][] = [cut([
+    //     itemTextSizeDropdown, itemFontColor, itemFontBackgroundColor,
+    //     itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink
+    // ])]
+
+    const menuFontStyle = cut([
         itemTextSizeDropdown, itemFontColor, itemFontBackgroundColor,
-        itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink
-    ])]
-    const menuLineType = cut([itemLineSetPlain, ...itemsAlign, itemLineSetCode, new Dropdown(cut(itemsHeading), { label: "H1" })])
+        itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline,
+        itemToggleCode
+    ])
+    const menuTextLineStyle = cut([
+        itemLineSetPlain, ...itemsAlign
+    ])
     const menuHistory = [itemUndo, itemRedo]
     const menuInsertUpload = cut([
-        itemInsertHR, itemInsertTable,
+        itemInsertHR,
+        itemToggleLink,
+        itemInsertTable,
         itemInsertImage, itemUploadImage,
         itemInsertYoutube
     ])
     const menuBlock = cut([
+        itemLineSetCode,
+        new Dropdown(cut(itemsHeading), { label: "H1" }),
         itemBulletList, itemOrderedList, itemBlockQuote,
         itemJoinUp, itemOutdent
     ])
 
-    const result = menuInline.concat([menuLineType], [menuHistory], [menuInsertUpload], [menuBlock])
+    const result = menuInline.concat(
+        [menuHistory],
+        [menuFontStyle], [menuTextLineStyle],
+        [menuInsertUpload], [menuBlock]
+    )
 
     return result
 }
