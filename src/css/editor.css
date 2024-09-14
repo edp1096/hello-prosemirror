@@ -23,6 +23,7 @@
 }
 
 .Editor-base-setup-style img {
+    max-width: 90%;
     cursor: default;
 }
 
