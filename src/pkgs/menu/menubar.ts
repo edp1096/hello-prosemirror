@@ -49,8 +49,9 @@ class MenuBarView {
     this.menu = this.wrapper.appendChild(crel("div", {class: prefix}))
     this.menu.className = prefix
 
-    if (editorView.dom.parentNode)
+    if (editorView.dom.parentNode) {
       editorView.dom.parentNode.replaceChild(this.wrapper, editorView.dom)
+    }
     this.wrapper.appendChild(editorView.dom)
 
     let {dom, update} = renderGrouped(this.editorView, this.options.content)
@@ -90,7 +91,7 @@ class MenuBarView {
       }
       if (this.menu.offsetHeight > this.maxHeight) {
         this.maxHeight = this.menu.offsetHeight
-        this.menu.style.minHeight = this.maxHeight + "px"
+        // this.menu.style.minHeight = this.maxHeight + "px" // Must not use
       }
     }
   }
