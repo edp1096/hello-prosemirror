@@ -18,10 +18,16 @@ function createResizePlugin(): Plugin<any> {
 
             function onMouseDown(e: MouseEvent) {
                 e.preventDefault()
+
+                const iframes = container.querySelectorAll("iframe")
+                iframes.forEach((iframe: HTMLIFrameElement) => {
+                    iframe.style.pointerEvents = 'none'
+                })
+
                 startY = e.clientY
                 // startHeight = editorView.dom.offsetHeight
                 startHeight = container.offsetHeight
-                document.addEventListener('mousemove', onMouseMove)
+                document.addEventListener('mousemove', onMouseMove, { passive: true })
                 document.addEventListener('mouseup', onMouseUp)
             }
 
@@ -32,6 +38,11 @@ function createResizePlugin(): Plugin<any> {
             }
 
             function onMouseUp() {
+                const iframes = container.querySelectorAll("iframe")
+                iframes.forEach((iframe: HTMLIFrameElement) => {
+                    iframe.style.pointerEvents = 'unset'
+                })
+
                 document.removeEventListener('mousemove', onMouseMove)
                 document.removeEventListener('mouseup', onMouseUp)
             }
