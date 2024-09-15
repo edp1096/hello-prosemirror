@@ -10,6 +10,7 @@ const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/svg+xml"]
 
 let editorView: EditorView
 
+let UploadInputName = "" // let UploadInputName = "upload-files[]"
 let UploadURI = "" // let UploadURI = "http://localhost:8864/upload"
 let AccessURI = "" // let AccessURI = "http://localhost:8864/files"
 let CallbackFunction: Function | null = null
@@ -20,7 +21,8 @@ uploadFileForm.setAttribute("multiple", "")
 uploadFileForm.setAttribute("accept", ".jpg,.png,.bmp")
 uploadFileForm.onchange = uploadHandler
 
-function setUploadURIs(uploadURI: string, accessURI: string, callbackFunction: Function | null) {
+function setUploadURIs(uploadInputName: string, uploadURI: string, accessURI: string, callbackFunction: Function | null) {
+    UploadInputName = uploadInputName
     UploadURI = uploadURI
     AccessURI = accessURI
     CallbackFunction = callbackFunction
@@ -33,12 +35,12 @@ function dispatchImage(view: EditorView, pos: number, schema: Schema, imageURI: 
     view.dispatch(tr.replaceWith(pos, pos, image).scrollIntoView())
 }
 
-async function uploadImage(view: EditorView, schema: Schema, event: Event, files: FileList, uploadURI: string, accessURI: string): Promise<void> {
+async function uploadImage(view: EditorView, schema: Schema, event: Event, files: FileList, uploadInputName: string, uploadURI: string, accessURI: string): Promise<void> {
     for (const file of files) {
         if (!imageTypes.includes(file.type)) { return }  // Not an image
 
         const formData = new FormData()
-        formData.append('upload-files[]', file)
+        formData.append(uploadInputName, file)
 
         const r = await fetch(uploadURI, { method: 'POST', body: formData })
         if (r.ok) {
@@ -53,7 +55,7 @@ async function uploadImage(view: EditorView, schema: Schema, event: Event, files
     }
 }
 
-function imageDropHandler(schema: Schema, uploadURI: string, accessURI: string): Plugin<any> {
+function imageDropHandler(schema: Schema, uploadInputName: string, uploadURI: string, accessURI: string): Plugin<any> {
     const plugin = new Plugin({
         props: {
             handleDOMEvents: {
@@ -61,7 +63,7 @@ function imageDropHandler(schema: Schema, uploadURI: string, accessURI: string):
                     const files = (event as DragEvent).dataTransfer?.files
                     if (files == undefined || files?.length == 0) { return }
                     if (event.preventDefault != undefined) { event.preventDefault() }
-                    uploadImage(view, schema, event, files, uploadURI, accessURI)
+                    uploadImage(view, schema, event, files, uploadInputName, uploadURI, accessURI)
                 }
             }
         }

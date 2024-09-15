@@ -6,6 +6,8 @@ import {
     wrapItem, blockTypeItem, Dropdown, DropdownSubmenu,
     selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
 } from "../pkgs/menu"
+import { EditorState } from "prosemirror-state"
+import { EditorView } from "prosemirror-view"
 import { Schema } from "prosemirror-model"
 import { lift, joinUp } from "prosemirror-commands"
 import { undo, redo } from "prosemirror-history"
@@ -27,6 +29,59 @@ import {
 const cut = <T>(arr: T[]) => arr.filter(x => x) as NonNullable<T>[]
 let itemTextSizeDropdown
 
+function getCurrentFontSize(state: EditorState): string {
+    const { from, to } = state.selection
+    let fontSize = ''
+    state.doc.nodesBetween(from, to, (node) => {
+        if (node.marks.length > 0) {
+            const fontSizeMark = node.marks.find(mark => mark.type.name == 'fontstyle')
+            if (fontSizeMark && fontSizeMark.attrs.fontSize) {
+                fontSize = fontSizeMark.attrs.fontSize
+                return false
+            }
+        }
+        return true
+    })
+    return fontSize
+}
+
+function createFontSizeDropdown(schema: Schema, fontSizeList: number[]): Dropdown | undefined {
+    if (!schema.marks.fontstyle) { return undefined }
+
+    const itemsFontSize = fontSizeList.map(size =>
+        markItemFontSize(schema.marks.fontstyle, {
+            title: `Set font size to ${size}pt`,
+            label: `${size}pt`,
+            attrs: { fontSize: size }
+        })
+    )
+
+    const dropdown = new Dropdown(itemsFontSize, { title: "Set font size", label: "Aa" })
+
+    const originalRender = dropdown.render.bind(dropdown)
+    dropdown.render = (view: EditorView) => {
+        const renderResult = originalRender(view)
+        const originalUpdate = renderResult.update
+
+        renderResult.update = (state: EditorState) => {
+            const currentSize = getCurrentFontSize(state)
+            const label = currentSize ? `${currentSize}pt` : "Aa"
+
+            const fontSizeSelector = 'div[title="Set font size"]'
+            const labelElement = renderResult.dom.querySelector(fontSizeSelector)
+            if (labelElement) {
+                labelElement.textContent = label
+            }
+
+            return originalUpdate(state)
+        }
+
+        return renderResult
+    }
+
+    return dropdown
+}
+
 function buildMenuItems(schema: Schema): MenuElement[][] {
     const fontSizeList = FontSizeList
     const itemsFontSize: MenuItem[] = new Array<MenuItem>;
@@ -37,7 +92,8 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
         }
     }
 
-    itemTextSizeDropdown = (schema.marks.fontstyle) ? new Dropdown(cut(itemsFontSize), { title: "Set font size", label: "Aa" }) : undefined
+    // itemTextSizeDropdown = (schema.marks.fontstyle) ? new Dropdown(cut(itemsFontSize), { title: "Set font size", label: "Aa" }) : undefined
+    itemTextSizeDropdown = createFontSizeDropdown(schema, fontSizeList)
 
     const itemFontColor = (schema.marks.fontstyle) ? getColorPickerMenuItem(schema.marks.fontstyle) : undefined
     const itemFontBackgroundColor = (schema.marks.fontstyle) ? getBackgroundColorPickerMenuItem(schema.marks.fontstyle) : undefined

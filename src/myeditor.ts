@@ -37,6 +37,7 @@ import { createResizePlugin } from "./helper/resizer"
 
 
 interface EditorOptionType {
+    uploadInputName: string
     uploadActionURI: string
     uploadAccessURI: string
     uploadCallback: Function
@@ -47,22 +48,25 @@ class MyEditor {
     state: EditorState
     content: HTMLElement
     view: EditorView
+    uploadInputName: string
     uploadActionURI: string
     uploadAccessURI: string
     uploadCallback: Function | null
 
     constructor(data: string, editorContainer: HTMLElement, options: EditorOptionType) {
+        this.uploadInputName = "upload-files[]"
         this.uploadActionURI = "http://localhost:8864/upload"
         this.uploadAccessURI = "http://localhost:8864/files"
         this.uploadCallback = null
 
         if (options != undefined) {
+            if (options.uploadInputName) { this.uploadInputName = options.uploadInputName }
             if (options.uploadActionURI) { this.uploadActionURI = options.uploadActionURI }
             if (options.uploadAccessURI) { this.uploadAccessURI = options.uploadAccessURI }
             if (options.uploadCallback) { this.uploadCallback = options.uploadCallback }
         }
 
-        setUploadURIs(this.uploadActionURI, this.uploadAccessURI, this.uploadCallback)
+        setUploadURIs(this.uploadInputName, this.uploadActionURI, this.uploadAccessURI, this.uploadCallback)
 
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
@@ -84,7 +88,7 @@ class MyEditor {
             menuContent: (menus as MenuItem[][]),
             floatingMenu: false
         })
-        const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadActionURI, this.uploadAccessURI)
+        const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadInputName, this.uploadActionURI, this.uploadAccessURI)
         const tablePlugins = [
             fontStyleContextMenuHandler(),
             columnResizing({}), tableEditing(),

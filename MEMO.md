@@ -1,17 +1,16 @@
 ## TODO
 
-* [ ] Setting for input tag name for upload
-* [ ] Font Size - Show current size
+* [x] Input tag name setting for upload
+* [x] Font Size - Show current size
 * [x] full size vertical resize bar
 * [x] Menu icons
 * [x] ListItem ul, ol not work. ~~Modify wrapInList toolbars - List item menu. ul, ol~~
 * [x] Enter to plain text - Make Aa disabled -> `give up`
 
-### Waived
-
-* ~~Table - cell colors menus~~
-* ~~Video - Size parameterize~~
-* ~~Clean up codes~~
+* Waived
+    * ~~Table - cell colors menus~~
+    * ~~Video - Size parameterize~~ - css instead
+    * ~~Clean up codes~~
 
 ## For ref.
 
