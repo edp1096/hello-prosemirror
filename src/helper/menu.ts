@@ -1,7 +1,4 @@
-// import {
-//     wrapItem, blockTypeItem, Dropdown, DropdownSubmenu,
-//     selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
-// } from "prosemirror-menu"
+// import { ... } from "prosemirror-menu"
 import {
     wrapItem, blockTypeItem, Dropdown, DropdownSubmenu,
     selectParentNodeItem, icons, IconSpec, MenuItem, MenuElement, MenuItemSpec
@@ -90,11 +87,12 @@ function getCurrentHeadingLevel(state: EditorState): number | null {
             return node.attrs.level
         }
     }
+
     return null
 }
 
 function createHeadingDropdown(schema: Schema): Dropdown | undefined {
-    if (!schema.nodes.heading) return undefined
+    if (!schema.nodes.heading) { return undefined }
 
     const items = []
     for (let i = 1; i <= 6; i++) {
@@ -141,8 +139,6 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
             itemsFontSize.push(markItemFontSize(schema.marks.fontstyle, { title: `Set font size to ${fontSizeList[i]}pt`, label: `${fontSizeList[i]}pt`, attrs: { fontSize: `${fontSizeList[i]}` } }))
         }
     }
-
-    // itemTextSizeDropdown = (schema.marks.fontstyle) ? new Dropdown(cut(itemsFontSize), { title: "Set font size", label: "Aa" }) : undefined
     itemTextSizeDropdown = createFontSizeDropdown(schema, fontSizeList)
 
     const itemFontColor = (schema.marks.fontstyle) ? getColorPickerMenuItem(schema.marks.fontstyle) : undefined
@@ -165,12 +161,6 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     // Give up to make to seek both paragraph and alignment("p") as same status
     const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Aa", icon: setIconElement("icon-fontsize") }) : undefined
     const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("icon-code") }) : undefined
-    // const itemsHeading: MenuItem[] = new Array<MenuItem>;
-    // if (schema.nodes.heading) {
-    //     for (let i = 1; i <= 6; i++) {
-    //         itemsHeading.push(blockTypeItem(schema.nodes.heading, { title: "Change to heading " + i, label: "H" + i, attrs: { level: i } }))
-    //     }
-    // }
     const itemsHeading = createHeadingDropdown(schema)
 
     const itemUndo = new MenuItem({ title: "Undo last change", run: undo, enable: state => undo(state), icon: setIconElement("icon-undo") })
@@ -216,7 +206,6 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     ])
     const menuBlock = cut([
         itemLineSetCode,
-        // new Dropdown(cut(itemsHeading), { label: "H1" }),
         itemsHeading,
         itemBulletList, itemOrderedList, itemBlockQuote,
         itemJoinUp, itemOutdent
