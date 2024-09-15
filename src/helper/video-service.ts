@@ -1,4 +1,4 @@
-import { NodeSelection, EditorState } from "prosemirror-state"
+import { NodeSelection, EditorState, Transaction } from "prosemirror-state"
 import { NodeSpec, Node, Attrs } from "prosemirror-model"
 // import { MenuItem, MenuElement } from "prosemirror-menu"
 import { MenuItem, MenuElement } from "../pkgs/menu"
@@ -45,7 +45,7 @@ const videoServiceNodeSpec: NodeSpec = {
 function insertVideo() {
     let uri: string
 
-    return function (state: EditorState, dispatch: any, view: EditorView) {
+    const cmd = function (state: EditorState, dispatch: ((tr: Transaction) => void), view: EditorView) {
         let attrs = null
         const { $from } = state.selection, index = $from.index()
         const videoType = state.schema.nodes.video_service
@@ -94,6 +94,8 @@ function insertVideo() {
             }
         }, editorElement)
     }
+
+    return cmd
 }
 
 function getVideoServiceMenus(): MenuElement {

@@ -142,7 +142,6 @@ function SetFontStyleSchemaMark(marks: OrderedMap<MarkSpec>): OrderedMap<MarkSpe
     }
 
     marks = marks.addToEnd(`fontstyle`, fontSizeMarkSpec)
-
     return marks
 }
 

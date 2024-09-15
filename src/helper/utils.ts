@@ -1,4 +1,4 @@
-// import { IconSpec, MenuItem, MenuItemSpec } from "prosemirror-menu"
+// import { ... } from "prosemirror-menu"
 import { IconSpec, MenuItem, MenuItemSpec } from "../pkgs/menu"
 import { Node, NodeType, Mark, MarkType, Attrs, ResolvedPos } from "prosemirror-model"
 import { NodeSelection, EditorState, TextSelection, SelectionRange, Command, Transaction } from "prosemirror-state"
@@ -31,7 +31,7 @@ function canInsert(state: EditorState, nodeType: NodeType) {
 }
 
 function insertImageItem(nodeType: NodeType) {
-    return new MenuItem({
+    const menuItem = new MenuItem({
         title: "Insert image",
         label: "Image",
         icon: setIconElement("icon-picture"),
@@ -60,6 +60,8 @@ function insertImageItem(nodeType: NodeType) {
             }, editorElement)
         }
     })
+
+    return menuItem
 }
 
 function cmdItem(cmd: Command, options: Partial<MenuItemSpec>) {
@@ -98,15 +100,11 @@ function markItemFontSize(markType: MarkType, options: Object) {
         (passedOptions as any)[prop] = (options as any)[prop]
     }
 
-    // return cmdItem(setMark(markType, (passedOptions as any).attrs), passedOptions)
     return cmdItem(setMarkFontStyle(markType, (passedOptions as any).attrs), passedOptions)
 }
 
 function linkItem(markType: MarkType, icon: IconSpec) {
-    // options error - prosemirror bug. version upgrade is required
-    // const targets = new SelectField({ options: [{ label: "This window", value: "_self" }] })
-
-    return new MenuItem({
+    const menuItem = new MenuItem({
         title: "Add or remove link",
         icon: icon,
         active(state) { return markActive(state, markType) },
@@ -127,7 +125,6 @@ function linkItem(markType: MarkType, icon: IconSpec) {
                         required: true
                     }),
                     title: new TextField({ label: "Title" }),
-                    // target: targets
                 },
                 callback(attrs) {
                     toggleMark(markType, attrs)(view.state, view.dispatch)
@@ -136,6 +133,8 @@ function linkItem(markType: MarkType, icon: IconSpec) {
             }, editorElement)
         }
     })
+
+    return menuItem
 }
 
 function wrapListItem(nodeType: NodeType, options: Partial<MenuItemSpec>) {
@@ -162,7 +161,7 @@ function markApplies(doc: Node, ranges: SelectionRange[], type: MarkType) {
 // https://codesandbox.io/s/h5e2e?file=/src/commands-extra.ts
 /* copy-paste of toggleMark but never removes mark */
 function setMark(markType: MarkType, attrs?: | { [key: string]: any } | undefined): Command {
-    return (state: EditorState, dispatch: ((tr: Transaction) => void) | undefined) => {
+    const cmd = (state: EditorState, dispatch: ((tr: Transaction) => void) | undefined) => {
         const { empty, $cursor, ranges } = state.selection as TextSelection
         if ((empty && !$cursor) || !markApplies(state.doc, (ranges as SelectionRange[]), markType)) { return false }
         if (dispatch) {
@@ -190,11 +189,13 @@ function setMark(markType: MarkType, attrs?: | { [key: string]: any } | undefine
 
         return true
     }
+
+    return cmd
 }
 
 // https://discuss.prosemirror.net/t/how-to-get-the-determined-attributes-from-a-mark/853/3
 function setMarkFontStyle(markType: MarkType, attrs?: | { [key: string]: any } | undefined): Command {
-    return function (state, dispatch) {
+    const cmd = function (state: EditorState, dispatch: ((tr: Transaction) => void) | undefined) {
         const { empty, $cursor, ranges } = state.selection as TextSelection
         if ((empty && !$cursor) || !markApplies(state.doc, (ranges as SelectionRange[]), markType)) { return false }
         if (dispatch) {
@@ -248,10 +249,12 @@ function setMarkFontStyle(markType: MarkType, attrs?: | { [key: string]: any } |
 
         return true
     }
+
+    return cmd
 }
 
 function ToggleMarkForReference(markType: MarkType, attrs?: | { [key: string]: any } | undefined): Command {
-    return function (state, dispatch) {
+    const cmd = function (state: EditorState, dispatch: ((tr: Transaction) => void) | undefined) {
         const { empty, $cursor, ranges } = state.selection as TextSelection
         if ((empty && !$cursor) || !markApplies(state.doc, (ranges as SelectionRange[]), markType)) return false
         if (dispatch) {
@@ -283,11 +286,13 @@ function ToggleMarkForReference(markType: MarkType, attrs?: | { [key: string]: a
         }
         return true
     }
+
+    return cmd
 }
 
 
 function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
-    return function (state, dispatch) {
+    const cmd = function (state: EditorState, dispatch: ((tr: Transaction) => void) | undefined) {
         let applicable = false
 
         for (let i = 0; i < state.selection.ranges.length && !applicable; i++) {
@@ -329,6 +334,8 @@ function aligner(nodeType: NodeType, attrs: Attrs | null = null): Command {
 
         return true
     }
+
+    return cmd
 }
 
 function AlignItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attrs?: Attrs | null }) {
@@ -342,7 +349,10 @@ function AlignItemMy(nodeType: NodeType, options: Partial<MenuItemSpec> & { attr
             return to <= $from.end() && $from.parent.hasMarkup(nodeType, options.attrs)
         }
     }
-    for (const prop in options) { (passedOptions as any)[prop] = (options as any)[prop] }
+
+    for (const prop in options) {
+        (passedOptions as any)[prop] = (options as any)[prop]
+    }
 
     return new MenuItem(passedOptions)
 }

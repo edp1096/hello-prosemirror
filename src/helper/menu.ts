@@ -34,11 +34,14 @@ function getCurrentFontSize(state: EditorState): string {
             const fontSizeMark = node.marks.find(mark => mark.type.name == 'fontstyle')
             if (fontSizeMark && fontSizeMark.attrs.fontSize) {
                 fontSize = fontSizeMark.attrs.fontSize
+
                 return false
             }
         }
+
         return true
     })
+
     return fontSize
 }
 

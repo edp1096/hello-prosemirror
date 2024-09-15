@@ -4,7 +4,7 @@ import { EditorView } from 'prosemirror-view'
 const resizePluginKey = new PluginKey('resize')
 
 function createResizePlugin(): Plugin<any> {
-    return new Plugin({
+    const plugin = new Plugin({
         key: resizePluginKey,
         view(editorView) {
             const resizeBar = document.createElement('div')
@@ -80,6 +80,8 @@ function createResizePlugin(): Plugin<any> {
             }
         }
     })
+
+    return plugin
 }
 
 export { resizePluginKey, createResizePlugin }
