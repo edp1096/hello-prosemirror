@@ -12,8 +12,9 @@ import { wrapInList } from "./schema-list"
 function setIconElement(iconName: string): IconSpec {
     const iconEL = document.createElement("i")
     iconEL.setAttribute("class", iconName)
-    iconEL.setAttribute("style", `font-size: 1.3em; margin: -0.1em;`)
-    // iconEL.setAttribute("style", "font-size: 1.3em; margin: -0.3em;")
+
+    let styleValues = "font-size: 1.3em; margin: -0.1em;"
+    iconEL.setAttribute("style", styleValues)
 
     const result = { dom: iconEL }
     return result

@@ -140,15 +140,12 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const itemBulletList = (schema.nodes.bullet_list) ? wrapListItem(schema.nodes.bullet_list, { title: "Wrap in bullet list", icon: setIconElement("icon-list-bullet") }) : undefined
     const itemOrderedList = (schema.nodes.ordered_list) ? wrapListItem(schema.nodes.ordered_list, { title: "Wrap in ordered list", icon: setIconElement("icon-list-numbered") }) : undefined
     const itemBlockQuote = (schema.nodes.blockquote) ? wrapItem(schema.nodes.blockquote, { title: "Wrap in block quote", icon: setIconElement("icon-quote-right") }) : undefined
+
     // TODO: join up -> Key event "shift + enter" support
     const itemJoinUp = new MenuItem({ title: "Join with above block", run: joinUp, select: state => joinUp(state), icon: setIconElement("icon-call-merge") })
     const itemOutdent = new MenuItem({ title: "Lift out of enclosing block", run: lift, select: state => lift(state), icon: setIconElement("icon-indent-left") })
 
     const menuInline: MenuElement[][] = [cut([])]
-    // const menuInline: MenuElement[][] = [cut([
-    //     itemTextSizeDropdown, itemFontColor, itemFontBackgroundColor,
-    //     itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline, itemToggleCode, itemToggleLink
-    // ])]
 
     const menuFontStyle = cut([
         itemTextSizeDropdown, itemFontColor, itemFontBackgroundColor,
