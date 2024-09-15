@@ -8,7 +8,7 @@ import {
 } from "../pkgs/menu"
 import { EditorState } from "prosemirror-state"
 import { EditorView } from "prosemirror-view"
-import { Schema } from "prosemirror-model"
+import { Schema, NodeType } from "prosemirror-model"
 import { lift, joinUp } from "prosemirror-commands"
 import { undo, redo } from "prosemirror-history"
 
@@ -82,6 +82,56 @@ function createFontSizeDropdown(schema: Schema, fontSizeList: number[]): Dropdow
     return dropdown
 }
 
+function getCurrentHeadingLevel(state: EditorState): number | null {
+    const $head = state.selection.$head
+    for (let d = $head.depth; d > 0; d--) {
+        const node = $head.node(d)
+        if (node.type.name === 'heading') {
+            return node.attrs.level
+        }
+    }
+    return null
+}
+
+function createHeadingDropdown(schema: Schema): Dropdown | undefined {
+    if (!schema.nodes.heading) return undefined
+
+    const items = []
+    for (let i = 1; i <= 6; i++) {
+        items.push(blockTypeItem(schema.nodes.heading, {
+            title: `Change to heading ${i}`,
+            label: `H${i}`,
+            attrs: { level: i }
+        }))
+    }
+
+    const dropdown = new Dropdown(items, { title: "Change heading level", label: "H" })
+
+    const originalRender = dropdown.render.bind(dropdown)
+    dropdown.render = (view: EditorView) => {
+        const renderResult = originalRender(view)
+        const originalUpdate = renderResult.update
+
+        renderResult.update = (state: EditorState) => {
+            const hasFocus = view.hasFocus()
+            const currentLevel = getCurrentHeadingLevel(state)
+            const label = (hasFocus && currentLevel) ? `H${currentLevel}` : "H"
+
+            const headingSelector = 'div[title="Change heading level"]'
+            const labelElement = renderResult.dom.querySelector(headingSelector)
+            if (labelElement) {
+                labelElement.textContent = label
+            }
+
+            return originalUpdate(state)
+        }
+
+        return renderResult
+    }
+
+    return dropdown
+}
+
 function buildMenuItems(schema: Schema): MenuElement[][] {
     const fontSizeList = FontSizeList
     const itemsFontSize: MenuItem[] = new Array<MenuItem>;
@@ -115,12 +165,13 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     // Give up to make to seek both paragraph and alignment("p") as same status
     const itemLineSetPlain = (schema.nodes.paragraph) ? blockTypeItem(schema.nodes.paragraph, { title: "Change to plain text", label: "Aa", icon: setIconElement("icon-fontsize") }) : undefined
     const itemLineSetCode = (schema.nodes.code_block) ? blockTypeItem(schema.nodes.code_block, { title: "Change to code block", label: "Code", icon: setIconElement("icon-code") }) : undefined
-    const itemsHeading: MenuItem[] = new Array<MenuItem>;
-    if (schema.nodes.heading) {
-        for (let i = 1; i <= 6; i++) {
-            itemsHeading.push(blockTypeItem(schema.nodes.heading, { title: "Change to heading " + i, label: "H" + i, attrs: { level: i } }))
-        }
-    }
+    // const itemsHeading: MenuItem[] = new Array<MenuItem>;
+    // if (schema.nodes.heading) {
+    //     for (let i = 1; i <= 6; i++) {
+    //         itemsHeading.push(blockTypeItem(schema.nodes.heading, { title: "Change to heading " + i, label: "H" + i, attrs: { level: i } }))
+    //     }
+    // }
+    const itemsHeading = createHeadingDropdown(schema)
 
     const itemUndo = new MenuItem({ title: "Undo last change", run: undo, enable: state => undo(state), icon: setIconElement("icon-undo") })
     const itemRedo = new MenuItem({ title: "Redo last undone change", run: redo, enable: state => redo(state), icon: setIconElement("icon-redo") })
@@ -165,7 +216,8 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     ])
     const menuBlock = cut([
         itemLineSetCode,
-        new Dropdown(cut(itemsHeading), { label: "H1" }),
+        // new Dropdown(cut(itemsHeading), { label: "H1" }),
+        itemsHeading,
         itemBulletList, itemOrderedList, itemBlockQuote,
         itemJoinUp, itemOutdent
     ])

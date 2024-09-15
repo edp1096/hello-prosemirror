@@ -8,7 +8,7 @@ import { TextField, openPrompt } from "./prompt"
 import { setIconElement } from "./utils"
 
 
-const videoServiceFormats = ["youtube", "dailymotion", "vimeo", "nicodong", "chzzk", "navertv"]
+const videoServiceFormats = ["youtube", "dailymotion", "vimeo", "nicovideo", "chzzk", "tv.naver"]
 
 const videoServiceNodeSpec: NodeSpec = {
     attrs: {
@@ -62,13 +62,19 @@ function insertVideo() {
                 if (!attrs.src) { return false }
 
                 if (dispatch) {
-                    uri = (attrs.src as string).replace("youtu.be", "youtube.com/embed")
+                    uri = attrs.src as string
+
+                    uri = uri.replace("youtu.be", "youtube.com/embed")
                     uri = uri.replace("youtube.com/shorts/", "youtube.com/embed/")
                     uri = uri.replace("www.youtube.com/watch?v=", "youtube.com/embed/")
+
                     uri = uri.replace("dai.ly", "www.dailymotion.com/embed/video")
                     uri = uri.replace("www.dailymotion.com/video", "www.dailymotion.com/embed/video")
+
                     uri = uri.replace("vimeo.com/", "player.vimeo.com/video/")
+
                     uri = uri.replace("www.nicovideo.jp/watch/", "embed.nicovideo.jp/watch/")
+
                     uri = uri.replace("chzzk.naver.com/clips", "chzzk.naver.com/embed/clip")
                     uri = uri.replace("tv.naver.com/v/", "tv.naver.com/embed/")
                     uri = uri.replace("tv.naver.com/h/", "tv.naver.com/embed/")
