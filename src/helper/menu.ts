@@ -192,7 +192,8 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     const menuInline: MenuElement[][] = [cut([])]
 
     const menuFontStyle = cut([
-        itemTextSizeDropdown, itemFontColor, itemFontBackgroundColor,
+        itemTextSizeDropdown, itemsHeading,
+        itemFontColor, itemFontBackgroundColor,
         itemToggleStrong, itemToggleEM, itemToggleStrike, itemToggleUnderline,
         itemToggleCode
     ])
@@ -209,7 +210,6 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
     ])
     const menuBlock = cut([
         itemLineSetCode,
-        itemsHeading,
         itemBulletList, itemOrderedList, itemBlockQuote,
         itemJoinUp, itemOutdent
     ])
