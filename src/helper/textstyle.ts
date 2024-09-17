@@ -46,9 +46,26 @@ function setColorPickerStyleAndAction() {
 }
 
 function callColorPicker(state: EditorState, dispatch: any, view: EditorView, event: Event): boolean {
-    colorPicker.style.left = `${(event as MouseEvent).clientX}px`
-    colorPicker.style.top = `${(event as MouseEvent).clientY}px`
-    colorPicker.onchange = () => { fontColorHandler(state, dispatch, view) }
+    const rects = (event.target as HTMLElement).getBoundingClientRect()
+
+    colorPicker.blur()
+
+    colorPicker.style.left = `${rects.x}px`
+    colorPicker.style.top = `${rects.y}px`
+    colorPicker.style.width = `${rects.width}px`
+    colorPicker.style.height = `${rects.height}px`
+
+    colorPicker.style.display = "block"
+    colorPicker.style.position = "fixed"
+    colorPicker.style.opacity = '0'
+
+    colorPicker.onchange = () => { backgroundColorHandler(state, dispatch, view) }
+    colorPicker.onblur = () => {
+        colorPicker.style.display = "none"
+        colorPicker.style.position = "absolute"
+        colorPicker.style.left = "-10px"
+        colorPicker.style.top = "-10px"
+    }
 
     colorPicker.focus()
     colorPicker.click()
@@ -57,9 +74,26 @@ function callColorPicker(state: EditorState, dispatch: any, view: EditorView, ev
 }
 
 function callBackgroundColorPicker(state: EditorState, dispatch: any, view: EditorView, event: Event): boolean {
-    colorPicker.style.left = `${(event as MouseEvent).clientX}px`
-    colorPicker.style.top = `${(event as MouseEvent).clientY}px`
+    const rects = (event.target as HTMLElement).getBoundingClientRect()
+
+    colorPicker.blur()
+
+    colorPicker.style.left = `${rects.x}px`
+    colorPicker.style.top = `${rects.y}px`
+    colorPicker.style.width = `${rects.width}px`
+    colorPicker.style.height = `${rects.height}px`
+
+    colorPicker.style.display = "block"
+    colorPicker.style.position = "fixed"
+    colorPicker.style.opacity = '0'
+
     colorPicker.onchange = () => { backgroundColorHandler(state, dispatch, view) }
+    colorPicker.onblur = () => {
+        colorPicker.style.display = "none"
+        colorPicker.style.position = "absolute"
+        colorPicker.style.left = "-10px"
+        colorPicker.style.top = "-10px"
+    }
 
     colorPicker.focus()
     colorPicker.click()
