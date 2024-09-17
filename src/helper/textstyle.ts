@@ -59,7 +59,7 @@ function callColorPicker(state: EditorState, dispatch: any, view: EditorView, ev
     colorPicker.style.position = "fixed"
     colorPicker.style.opacity = '0'
 
-    colorPicker.onchange = () => { backgroundColorHandler(state, dispatch, view) }
+    colorPicker.onchange = () => { fontColorHandler(state, dispatch, view) }
     colorPicker.onblur = () => {
         colorPicker.style.display = "none"
         colorPicker.style.position = "absolute"
