@@ -11,21 +11,21 @@
     "watch": "node esbuild.watch.js"
   },
   "devDependencies": {
-    "esbuild": "^0.23.1",
-    "eslint": "^9.9.1"
+    "esbuild": "^0.24.0",
+    "eslint": "^9.16.0"
   },
   "dependencies": {
     "crelt": "^1.0.6",
-    "prosemirror-commands": "^1.6.0",
+    "prosemirror-commands": "^1.6.2",
     "prosemirror-dropcursor": "^1.8.1",
     "prosemirror-gapcursor": "^1.3.2",
     "prosemirror-history": "^1.4.1",
     "prosemirror-inputrules": "^1.4.0",
-    "prosemirror-model": "^1.22.3",
-    "prosemirror-schema-list": "^1.4.1",
+    "prosemirror-model": "^1.24.0",
+    "prosemirror-schema-list": "^1.5.0",
     "prosemirror-state": "^1.4.3",
-    "prosemirror-tables": "^1.5.0",
-    "prosemirror-view": "^1.34.2",
+    "prosemirror-tables": "^1.6.1",
+    "prosemirror-view": "^1.37.0",
     "zlib": "^1.0.5"
   }
 }
