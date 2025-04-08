@@ -18,7 +18,7 @@ let CallbackFunction: Function | null = null
 const uploadFileForm = document.createElement("input")
 uploadFileForm.setAttribute("type", "file")
 uploadFileForm.setAttribute("multiple", "")
-uploadFileForm.setAttribute("accept", ".jpg,.png,.bmp")
+uploadFileForm.setAttribute("accept", ".jpg,.jpeg,.png,.gif,.webp,.svg")
 uploadFileForm.onchange = uploadHandler
 
 function setUploadURIs(uploadInputName: string, uploadURI: string, accessURI: string, callbackFunction: Function | null) {
