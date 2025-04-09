@@ -60,7 +60,8 @@ export const nodes = {
         attrs: {
             src: {},
             alt: { default: null },
-            title: { default: null }
+            title: { default: null },
+            animate: { default: null }
         },
         group: "inline",
         draggable: true,
@@ -69,11 +70,12 @@ export const nodes = {
                 return {
                     src: dom.getAttribute("src"),
                     title: dom.getAttribute("title"),
-                    alt: dom.getAttribute("alt")
+                    alt: dom.getAttribute("alt"),
+                    animate: dom.getAttribute("animate")
                 }
             }
         }],
-        toDOM(node) { let { src, alt, title } = node.attrs; return ["img", { src, alt, title }] }
+        toDOM(node) { let { src, alt, title, animate } = node.attrs; return ["img", { src, alt, title, animate }] }
     } as NodeSpec,
     hard_break: {
         inline: true,

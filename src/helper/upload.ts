@@ -14,6 +14,7 @@ let UploadInputName = "" // let UploadInputName = "upload-files[]"
 let UploadURI = "" // let UploadURI = "http://localhost:8864/upload"
 let AccessURI = "" // let AccessURI = "http://localhost:8864/files"
 let CallbackFunction: Function | null = null
+const animatedImages = new Map<string, boolean>();
 
 const uploadFileForm = document.createElement("input")
 uploadFileForm.setAttribute("type", "file")
@@ -28,9 +29,44 @@ function setUploadURIs(uploadInputName: string, uploadURI: string, accessURI: st
     CallbackFunction = callbackFunction
 }
 
+async function isAnimatedImage(file: File): Promise<boolean> {
+    if (file.name.toLowerCase().endsWith('.gif')) {
+        return true;
+    }
+
+    if (file.name.toLowerCase().endsWith('.webp')) {
+        try {
+            const buffer = await file.arrayBuffer();
+            const view = new Uint8Array(buffer);
+
+            const searchPattern = (pattern: string) => {
+                const patternBytes = new TextEncoder().encode(pattern);
+                for (let i = 0; i < view.length - patternBytes.length; i++) {
+                    let found = true;
+                    for (let j = 0; j < patternBytes.length; j++) {
+                        if (view[i + j] !== patternBytes[j]) {
+                            found = false;
+                            break;
+                        }
+                    }
+                    if (found) return true;
+                }
+                return false;
+            };
+
+            return searchPattern('ANMF') || searchPattern('ANIM');
+        } catch (error) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 function dispatchImage(view: EditorView, pos: number, schema: Schema, imageURI: string): void {
     const tr = view.state.tr
-    const image = schema.nodes.image.create({ src: imageURI })
+    const isAnimated = animatedImages.get(imageURI) || false;
+    const image = schema.nodes.image.create({ src: imageURI, animate: isAnimated ? "true" : null })
 
     view.dispatch(tr.replaceWith(pos, pos, image).scrollIntoView())
 }
@@ -49,7 +85,14 @@ async function uploadImage(view: EditorView, schema: Schema, event: Event, files
 
             if (CallbackFunction) { CallbackFunction(response) }
             for (const f of response.files) {
-                dispatchImage(view, pos!.pos, schema, `${accessURI}/${f.storagename}`)
+                // dispatchImage(view, pos!.pos, schema, `${accessURI}/${f.storagename}`)
+                // const isAnimated = isAnimatedImage(file.type, file.name);
+                const isAnimated = await isAnimatedImage(file);
+                const imageURL = `${accessURI}/${f.storagename}`;
+
+                animatedImages.set(imageURL, isAnimated);
+
+                dispatchImage(view, pos!.pos, schema, imageURL);
             }
         }
     }
@@ -105,7 +148,14 @@ async function uploadHandler() {
 
             if (CallbackFunction) { CallbackFunction(response) }
             for (const f of response.files) {
-                insertImage(`${AccessURI}/${f.storagename}`)
+                // // insertImage(`${AccessURI}/${f.storagename}`)
+                // const isAnimated = isAnimatedImage(file.type, file.name);
+                const isAnimated = await isAnimatedImage(file);
+                const imageURL = `${AccessURI}/${f.storagename}`;
+
+                animatedImages.set(imageURL, isAnimated);
+
+                insertImage(imageURL);
             }
         }
     }
