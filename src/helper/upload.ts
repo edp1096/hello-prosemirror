@@ -6,7 +6,7 @@ import { MenuItem, MenuElement } from "../pkgs/menu"
 import { setIconElement } from "./utils"
 
 
-const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/svg+xml"]
+const imageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"]
 
 let editorView: EditorView
 
@@ -14,6 +14,7 @@ let UploadInputName = "" // let UploadInputName = "upload-files[]"
 let UploadURI = "" // let UploadURI = "http://localhost:8864/upload"
 let AccessURI = "" // let AccessURI = "http://localhost:8864/files"
 let CallbackFunction: Function | null = null
+let uploadErrorCallback: Function | null = null
 const animatedImages = new Map<string, boolean>();
 
 const uploadFileForm = document.createElement("input")
@@ -22,11 +23,18 @@ uploadFileForm.setAttribute("multiple", "")
 uploadFileForm.setAttribute("accept", ".jpg,.jpeg,.png,.gif,.webp,.svg")
 uploadFileForm.onchange = uploadHandler
 
-function setUploadURIs(uploadInputName: string, uploadURI: string, accessURI: string, callbackFunction: Function | null) {
+function setUploadURIs(
+    uploadInputName: string,
+    uploadURI: string,
+    accessURI: string,
+    callbackFunction: Function | null,
+    errorCallback: Function | null,
+): void {
     UploadInputName = uploadInputName
     UploadURI = uploadURI
     AccessURI = accessURI
     CallbackFunction = callbackFunction
+    uploadErrorCallback = errorCallback
 }
 
 async function isAnimatedImage(file: File): Promise<boolean> {
@@ -85,8 +93,6 @@ async function uploadImage(view: EditorView, schema: Schema, event: Event, files
 
             if (CallbackFunction) { CallbackFunction(response) }
             for (const f of response.files) {
-                // dispatchImage(view, pos!.pos, schema, `${accessURI}/${f.storagename}`)
-                // const isAnimated = isAnimatedImage(file.type, file.name);
                 const isAnimated = await isAnimatedImage(file);
                 const imageURL = `${accessURI}/${f.storagename}`;
 
@@ -94,6 +100,17 @@ async function uploadImage(view: EditorView, schema: Schema, event: Event, files
 
                 dispatchImage(view, pos!.pos, schema, imageURL);
             }
+
+            continue;
+        }
+
+        const error = await r.json()
+
+        if (uploadErrorCallback) {
+            uploadErrorCallback(error)
+        } else {
+            console.error("Upload error:", error)
+            alert("Upload error: " + error)
         }
     }
 }
@@ -134,13 +151,13 @@ function insertImage(imageURI: string): void {
 }
 
 async function uploadHandler() {
-    if (uploadFileForm.files == null) { return }
+    if (uploadFileForm.files == null || uploadFileForm.files.length === 0) { return }
 
-    for (const file of uploadFileForm.files!) {
-        if (file == undefined) { return [] } // Selected nothing
+    for (const file of uploadFileForm.files) {
+        if (!file) continue;
 
         const formData = new FormData()
-        formData.append('upload-files[]', file)
+        formData.append(UploadInputName, file)
 
         const r = await fetch(UploadURI, { method: 'POST', body: formData })
         if (r.ok) {
@@ -148,8 +165,6 @@ async function uploadHandler() {
 
             if (CallbackFunction) { CallbackFunction(response) }
             for (const f of response.files) {
-                // // insertImage(`${AccessURI}/${f.storagename}`)
-                // const isAnimated = isAnimatedImage(file.type, file.name);
                 const isAnimated = await isAnimatedImage(file);
                 const imageURL = `${AccessURI}/${f.storagename}`;
 
@@ -157,6 +172,17 @@ async function uploadHandler() {
 
                 insertImage(imageURL);
             }
+
+            continue;
+        }
+
+        const error = await r.json()
+
+        if (uploadErrorCallback) {
+            uploadErrorCallback(error)
+        } else {
+            console.error("Upload error:", error)
+            // alert("Upload error: " + error.message)
         }
     }
 }
