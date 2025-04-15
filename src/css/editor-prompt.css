@@ -1,6 +1,8 @@
 .ProseMirror-prompt {
-    position: fixed;
-    max-width: 30em;
+    /* position: fixed; */
+    position: absolute;
+    min-width: 320px;
+    max-width: 25em;
     padding: 5px 10px 5px 15px;
     background: white;
     border: 1px solid silver;

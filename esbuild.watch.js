@@ -59,6 +59,6 @@ const serveOptions = {
 }
 
 const { host, port } = await ctx.serve(serveOptions)
-console.log(`Watching.. ${host} ${port}`)
+console.log(`Watching.. ${serveHOST} ${port}`)
 
 // ctx.dispose()

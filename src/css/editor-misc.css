@@ -1,20 +1,25 @@
 /* Web Video */
 
-.ProseMirror p:has(iframe) {
-    position: relative;
-}
+.ProseMirror {
+    p:has(iframe) {
+        position: relative;
 
-.ProseMirror p>iframe {
-    position: relative;
-    width: calc(100% - 2em);
-    aspect-ratio: 16 / 9;
-    max-width: 800px;
-}
+        @media(max-width: 960px) {
+            width: 82vw;
+            height: calc(82vw * 0.565);
+        }
+    }
 
-@media(max-width: 960px) {
-    .ProseMirror p:has(iframe) {
-        width: 82vw;
-        height: calc(82vw * 0.565);
+    p>iframe.video {
+        position: relative;
+        width: calc(100% - 2em);
+        aspect-ratio: 16 / 9;
+        max-width: 800px;
+
+        &.vertical {
+            max-width: 360px;
+            aspect-ratio: 9 / 19;
+        }
     }
 }
 

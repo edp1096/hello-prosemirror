@@ -116,7 +116,7 @@ function createHeadingDropdown(schema: Schema): Dropdown | undefined {
         renderResult.update = (state: EditorState) => {
             const hasFocus = view.hasFocus()
             const currentLevel = getCurrentHeadingLevel(state)
-            const label = (hasFocus && currentLevel) ? `H${currentLevel}` : "H"
+            const label = (hasFocus && currentLevel) ? `H${currentLevel}` : "Hn"
 
             const headingSelector = 'div[title="Change heading level"]'
             const labelElement = renderResult.dom.querySelector(headingSelector)

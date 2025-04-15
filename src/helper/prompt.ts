@@ -54,9 +54,16 @@ export function openPrompt(options: {
 
     form.appendChild(buttons)
 
+    console.log(editorElement.offsetLeft);
+
+    const editorRect = editorElement.getBoundingClientRect();
+    wrapper.style.position = "absolute";
+    wrapper.style.padding = "10px";
     const box = wrapper.getBoundingClientRect()
-    wrapper.style.top = ((window.innerHeight - box.height) / 2) + "px"
-    wrapper.style.left = ((window.innerWidth - box.width) / 2) + "px"
+    const leftOffset = editorElement.offsetLeft + (editorRect.width - box.width) / 2;
+    const topOffset = editorElement.offsetTop + (editorRect.height - box.height) / 2;
+    wrapper.style.left = Math.max(0, leftOffset) + "px";
+    wrapper.style.top = Math.max(0, topOffset) + "px";
     wrapper.style.padding = "10px"
 
     const submit = () => {
