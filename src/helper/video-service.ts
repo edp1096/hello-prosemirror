@@ -115,11 +115,11 @@ function insertVideo() {
                     if (uri.includes("bilibili.com/video")) {
                         const bvidMatch = uri.match(/\/video\/(BV[a-zA-Z0-9]+)/);
                         if (bvidMatch && bvidMatch[1]) {
-                            uri = "https://player.bilibili.com/player.html?bvid=" + bvidMatch[1] + "&high_quality=1&danmaku=0";
+                            uri = "https://player.bilibili.com/player.html?bvid=" + bvidMatch[1] + "&high_quality=1&danmaku=0&autoplay=false";
                         }
                         const avidMatch = uri.match(/\/video\/av(\d+)/);
                         if (avidMatch && avidMatch[1]) {
-                            uri = "https://player.bilibili.com/player.html?aid=" + avidMatch[1] + "&high_quality=1&danmaku=0";
+                            uri = "https://player.bilibili.com/player.html?aid=" + avidMatch[1] + "&high_quality=1&danmaku=0&autoplay=false";
                         }
                     }
 
