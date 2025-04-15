@@ -54,8 +54,6 @@ export function openPrompt(options: {
 
     form.appendChild(buttons)
 
-    console.log(editorElement.offsetLeft);
-
     const editorRect = editorElement.getBoundingClientRect();
     wrapper.style.position = "absolute";
     wrapper.style.padding = "10px";
