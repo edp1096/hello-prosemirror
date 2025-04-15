@@ -190,7 +190,11 @@ class MyEditor {
 
     setHTML(content: string | null | undefined): void {
         if (content == undefined || content == null) { content = "" }
-        this.view.dom.innerHTML = content
+        // this.view.dom.innerHTML = content
+        this.content.innerHTML = content
+        const doc = DOMParser.fromSchema(this.schema).parse(this.content)
+        this.view.dispatch(this.view.state.tr.replaceWith(0, this.view.state.doc.content.size, doc.content))
+        // this.view.focus()
     }
 
     insertImage(imageURI: string): void {
