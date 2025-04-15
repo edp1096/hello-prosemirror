@@ -24,7 +24,8 @@ const videoServiceNodeSpec: NodeSpec = {
     attrs: {
         uri: { default: "" },
         title: { default: "Video streaming" },
-        vertical: { default: false }
+        vertical: { default: false },
+        class: { default: "video" }
     },
     inline: true,
     group: "inline",
@@ -51,10 +52,12 @@ const videoServiceNodeSpec: NodeSpec = {
         tag: "iframe[video-type]",
         getAttrs: dom => {
             // const videoType = (dom as HTMLElement).getAttribute("video-type")
-            const uri = (dom as HTMLElement).getAttribute("src")
-            const title = (dom as HTMLElement).getAttribute("title")
+            const uri = (dom as HTMLElement).getAttribute("src");
+            const title = (dom as HTMLElement).getAttribute("title");
+            const vertical = (dom as HTMLElement).getAttribute("class") == "video vertical" ? true : false;
+            if (!uri) { return false; }
 
-            return { uri, title };
+            return { uri, title, vertical };
         }
     }]
 }
