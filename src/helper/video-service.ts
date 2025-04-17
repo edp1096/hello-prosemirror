@@ -86,6 +86,16 @@ function insertVideo() {
 
                     uri = attrs.src as string
 
+                    const portraitURLs = [
+                        "tv.naver.com/h/",
+                        "youtube.com/shorts/",
+                        "tiktok.com"
+                    ];
+
+                    if (portraitURLs.some(p => uri.includes(p))) {
+                        vertical = true;
+                    }
+
                     uri = uri.replace("youtu.be", "youtube.com/embed")
                     uri = uri.replace("youtube.com/shorts/", "youtube.com/embed/")
                     uri = uri.replace("www.youtube.com/watch?v=", "youtube.com/embed/")
@@ -111,7 +121,6 @@ function insertVideo() {
                         const videoIdMatch = uri.match(/\/video\/(\d+)/);
                         if (videoIdMatch && videoIdMatch[1]) {
                             uri = "https://www.tiktok.com/embed/v2/" + videoIdMatch[1];
-                            vertical = true;
                         }
                     }
 
