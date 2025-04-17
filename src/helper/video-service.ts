@@ -25,21 +25,20 @@ const videoServiceNodeSpec: NodeSpec = {
         uri: { default: "" },
         title: { default: "Video streaming" },
         vertical: { default: false },
-        class: { default: "video" }
+        className: { default: "video" }
     },
     inline: true,
     group: "inline",
     draggable: false,
 
     toDOM: (node: Node) => {
-
         const attrs = {
             "video-type": "video-stream-service",
             src: node.attrs.uri,
             // width: "720",
             // height: "405",
             title: node.attrs.title,
-            class: "video"
+            class: node.attrs.className,
         }
 
         if (node.attrs.vertical) {
@@ -55,9 +54,10 @@ const videoServiceNodeSpec: NodeSpec = {
             const uri = (dom as HTMLElement).getAttribute("src");
             const title = (dom as HTMLElement).getAttribute("title");
             const vertical = (dom as HTMLElement).getAttribute("class") == "video vertical" ? true : false;
+            const className = (dom as HTMLElement).getAttribute("class") ? (dom as HTMLElement).getAttribute("class") : "video";
             if (!uri) { return false; }
 
-            return { uri, title, vertical };
+            return { uri, title, vertical, className };
         }
     }]
 }
@@ -84,6 +84,7 @@ function insertVideo() {
 
                 if (dispatch) {
                     let vertical = false;
+                    let className = "video"
 
                     uri = attrs.src as string
 
@@ -95,6 +96,11 @@ function insertVideo() {
 
                     if (portraitURLs.some(p => uri.includes(p))) {
                         vertical = true;
+                    }
+
+                    const soundURLs = ["soundcloud.com"];
+                    if (soundURLs.some(p => uri.includes(p))) {
+                        className = "sound";
                     }
 
                     uri = uri.replace("youtu.be", "youtube.com/embed")
@@ -114,7 +120,7 @@ function insertVideo() {
 
                     if (uri.includes("soundcloud.com")) {
                         if (!uri.includes("w.soundcloud.com/player")) {
-                            uri = "https://w.soundcloud.com/player/?url=" + encodeURIComponent(uri) + "&hide_related=true&show_comments=false&show_reposts=false&show_teaser=false&visual=true";
+                            uri = "https://w.soundcloud.com/player/?url=" + encodeURIComponent(uri) + "&hide_related=true&show_comments=false&show_reposts=false&show_teaser=false&visual=false";
                         }
                     }
 
@@ -149,7 +155,7 @@ function insertVideo() {
                         return false;
                     }
 
-                    const vnode = videoType.create({ uri, title, vertical })
+                    const vnode = videoType.create({ uri, title, vertical, className })
                     dispatch(state.tr.replaceSelectionWith(vnode))
                 }
                 view.focus()
