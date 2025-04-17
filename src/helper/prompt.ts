@@ -5,6 +5,7 @@ const prefix = "ProseMirror-prompt"
 
 export function openPrompt(options: {
     title: string,
+    description?: string,
     fields: { [name: string]: Field },
     callback: (attrs: Attrs) => void
 }, editorElement: HTMLElement) {
@@ -44,6 +45,7 @@ export function openPrompt(options: {
 
     const form = wrapper.appendChild(document.createElement("form"))
     if (options.title) form.appendChild(document.createElement("h5")).textContent = options.title
+    if (options.description) form.appendChild(document.createElement("h6")).textContent = options.description
     domFields.forEach(field => { form.appendChild(document.createElement("div")).appendChild(field) })
 
     const buttons = form.appendChild(document.createElement("div"))

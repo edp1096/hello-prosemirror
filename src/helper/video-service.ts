@@ -76,7 +76,8 @@ function insertVideo() {
         const editorElement = view.dom.parentElement as HTMLElement
 
         openPrompt({
-            title: "Paste link from Youtube, Vimeo, DailyMotion, Niconico douga, chzzk(clip), Naver TV, SoundCloud, TikTok, Bilibili.com",
+            title: "Insert media",
+            description: "Paste link from Youtube, Vimeo, DailyMotion, Niconico douga, chzzk(clip), Naver TV, SoundCloud, TikTok, Bilibili.com",
             fields: { src: new TextField({ label: "URL", required: true, value: attrs && attrs.src }) },
             callback: (attrs: Attrs) => {
                 if (!attrs.src) { return false }

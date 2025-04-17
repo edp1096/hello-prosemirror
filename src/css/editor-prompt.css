@@ -18,6 +18,11 @@
     color: #444;
 }
 
+.ProseMirror-prompt h6 {
+    margin: 0;
+    color: #444;
+}
+
 .ProseMirror-prompt input[type="text"],
 .ProseMirror-prompt textarea {
     background: #eee;
