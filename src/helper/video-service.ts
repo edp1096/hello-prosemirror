@@ -15,9 +15,11 @@ const videoServiceFormats = [
     "nicovideo",
     "chzzk.naver.com",
     "tv.naver.com",
-    "soundcloud.com",
     "tiktok.com",
-    "bilibili.com"
+    "bilibili.com",
+    "soundcloud.com",
+    "nonoki.com",
+    "mixcloud.com",
 ]
 
 const videoServiceNodeSpec: NodeSpec = {
@@ -39,6 +41,7 @@ const videoServiceNodeSpec: NodeSpec = {
             // height: "405",
             title: node.attrs.title,
             class: node.attrs.className,
+            scrolling: "no",
         }
 
         if (node.attrs.vertical) {
@@ -62,6 +65,11 @@ const videoServiceNodeSpec: NodeSpec = {
     }]
 }
 
+const videoLinkUriModalDescription = `
+Paste link from
+Youtube, Vimeo, DailyMotion, Niconico douga, chzzk(clip), Naver TV, TikTok, Bilibili.com,
+SoundCloud, Nonoki, MixCloud`;
+
 function insertVideo() {
     let uri: string
 
@@ -77,9 +85,9 @@ function insertVideo() {
 
         openPrompt({
             title: "Insert media",
-            description: "Paste link from Youtube, Vimeo, DailyMotion, Niconico douga, chzzk(clip), Naver TV, SoundCloud, TikTok, Bilibili.com",
+            description: videoLinkUriModalDescription,
             fields: { src: new TextField({ label: "URL", required: true, value: attrs && attrs.src }) },
-            callback: (attrs: Attrs) => {
+            callback: async (attrs: Attrs) => {
                 if (!attrs.src) { return false }
 
                 if (dispatch) {
@@ -98,7 +106,11 @@ function insertVideo() {
                         vertical = true;
                     }
 
-                    const soundURLs = ["soundcloud.com"];
+                    const soundURLs = [
+                        "soundcloud.com",
+                        "nonoki.com",
+                        "mixcloud.com"
+                    ];
                     if (soundURLs.some(p => uri.includes(p))) {
                         className = "sound";
                     }
@@ -123,6 +135,19 @@ function insertVideo() {
                             uri = "https://w.soundcloud.com/player/?url=" + encodeURIComponent(uri) + "&hide_related=true&show_comments=false&show_reposts=false&show_teaser=false&visual=false";
                         }
                     }
+                    if (uri.includes("nonoki.com")) {
+                        const feedMatch = uri.match(/nonoki.com\/music\/track\/([^/]+)\/([^/]+)/);
+                        if (feedMatch && feedMatch[1] && feedMatch[2]) {
+                            uri = "https://nonoki.com/music/track/" + feedMatch[1] + "/" + feedMatch[2] + "/embed";
+                        }
+                    }
+                    if (uri.includes("mixcloud.com")) {
+                        const feedMatch = uri.match(/www.mixcloud.com\/([^/]+)\/([^/]+)/);
+                        if (feedMatch && feedMatch[1] && feedMatch[2]) {
+                            uri = "https://player-widget.mixcloud.com/widget/iframe/?hide_cover=1&feed=/" + feedMatch[1] + "/" + feedMatch[2] + "/";
+                        }
+                    }
+
 
                     if (uri.includes("tiktok.com")) {
                         const videoIdMatch = uri.match(/\/video\/(\d+)/);
