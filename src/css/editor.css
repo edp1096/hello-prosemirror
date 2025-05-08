@@ -160,3 +160,12 @@ img.ProseMirror-separator {
 .ProseMirror p {
     margin-bottom: 1em;
 }
+
+.ProseMirror video {
+    width: 90%;
+    max-width: 800px;
+    height: auto;
+    border-radius: 4px;
+    display: block;
+    margin: 1em 0;
+}

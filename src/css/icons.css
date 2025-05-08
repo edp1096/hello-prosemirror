@@ -91,6 +91,8 @@
 .icon-sq-minus:before { content: '\f147'; } /* '' */
 .icon-youtube-play:before { content: '\f16a'; } /* '' */
 .icon-vimeo-squared:before { content: '\f194'; } /* '' */
+.icon-file-image:before { content: '\f1c5'; } /* '' */
+.icon-file-video:before { content: '\f1c8'; } /* '' */
 .icon-header:before { content: '\f1dc'; } /* '' */
 .icon-paragraph:before { content: '\f1dd'; } /* '' */
 .icon-object-ungroup:before { content: '\f248'; } /* '' */

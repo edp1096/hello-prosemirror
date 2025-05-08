@@ -11,7 +11,8 @@ import { undo, redo } from "prosemirror-history"
 
 import { AlignmentDefinitions } from "./alignment"
 import { getColorPickerMenuItem, getBackgroundColorPickerMenuItem, FontSizeList } from "./textstyle"
-import { getImageUploadMenus } from "./upload"
+import { getImageUploadMenus } from "./image-upload"
+import { getVideoUploadMenus } from "./video-upload"
 import { getVideoServiceMenus } from "./video-service"
 import { getTableMenus } from "./table"
 import {
@@ -177,9 +178,10 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
         run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(schema.nodes.horizontal_rule.create())) }
     }) : undefined
     const itemInsertTable = getTableMenus()
-    const itemInsertImage = (schema.nodes.image) ? insertImageItem(schema.nodes.image) : undefined
-    const itemUploadImage = getImageUploadMenus()
+    const itemInsertImageLink = (schema.nodes.image) ? insertImageItem(schema.nodes.image) : undefined
     const itemInsertVideoService = getVideoServiceMenus()
+    const itemUploadImage = getImageUploadMenus()
+    const itemUploadVideo = getVideoUploadMenus()
 
     const itemBulletList = (schema.nodes.bullet_list) ? wrapListItem(schema.nodes.bullet_list, { title: "Wrap in bullet list", icon: setIconElement("icon-list-bullet") }) : undefined
     const itemOrderedList = (schema.nodes.ordered_list) ? wrapListItem(schema.nodes.ordered_list, { title: "Wrap in ordered list", icon: setIconElement("icon-list-numbered") }) : undefined
@@ -205,8 +207,8 @@ function buildMenuItems(schema: Schema): MenuElement[][] {
         itemInsertHR,
         itemToggleLink,
         itemInsertTable,
-        itemInsertImage, itemUploadImage,
-        itemInsertVideoService
+        itemInsertImageLink, itemInsertVideoService,
+        itemUploadImage, itemUploadVideo
     ])
     const menuBlock = cut([
         itemLineSetCode,

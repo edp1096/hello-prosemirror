@@ -56,13 +56,13 @@ export const nodes = {
     } as NodeSpec,
     text: { group: "inline" } as NodeSpec,
     image: {
-        inline: true,
         attrs: {
             src: {},
             alt: { default: null },
             title: { default: null },
             animate: { default: null }
         },
+        inline: true,
         group: "inline",
         draggable: true,
         parseDOM: [{
@@ -76,6 +76,40 @@ export const nodes = {
             }
         }],
         toDOM(node) { let { src, alt, title, animate } = node.attrs; return ["img", { src, alt, title, animate }] }
+    } as NodeSpec,
+    video: {
+        attrs: {
+            src: {},
+            title: { default: null },
+            autoplay: { default: false },
+            controls: { default: true },
+            loop: { default: false },
+            muted: { default: false }
+        },
+        inline: true,
+        group: "inline",
+        draggable: true,
+        parseDOM: [{
+            tag: "video[src]", getAttrs(dom: HTMLElement) {
+                return {
+                    src: dom.getAttribute("src"),
+                    title: dom.getAttribute("title"),
+                    autoplay: dom.hasAttribute("autoplay"),
+                    controls: dom.hasAttribute("controls"),
+                    loop: dom.hasAttribute("loop"),
+                    muted: dom.hasAttribute("muted")
+                }
+            }
+        }],
+        toDOM(node) {
+            const { src, title, autoplay, controls, loop, muted } = node.attrs
+            const attrs: any = { src, title }
+            if (autoplay) attrs.autoplay = "autoplay"
+            if (controls) attrs.controls = "controls"
+            if (loop) attrs.loop = "loop"
+            if (muted) attrs.muted = "muted"
+            return ["video", attrs]
+        }
     } as NodeSpec,
     hard_break: {
         inline: true,

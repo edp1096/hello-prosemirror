@@ -30,9 +30,13 @@ import { buildKeymap } from "./helper/keymap"
 import { buildInputRules } from "./helper/inputrules"
 import { SetAlignSchemaNode } from "./helper/alignment"
 import { SetFontStyleSchemaMark, fontStyleContextMenuHandler } from "./helper/textstyle"
-import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/upload"
+// import { imageDropHandler, dispatchImage, getImageUploadMenus, setUploadURIs } from "./helper/image-upload"
+import { dispatchImage, getImageUploadMenus, setImageUploadURIs } from "./helper/image-upload"
 import { setTableNodes, getTableMenus, tableContextMenuHandler } from "./helper/table"
 import { videoServiceNodeSpec, getVideoServiceMenus } from "./helper/video-service"
+// import { videoDropHandler, setUploadURIs as setVideoUploadURIs } from "./helper/video-upload"
+import { setUploadURIs as setVideoUploadURIs } from "./helper/video-upload"
+import { fileDropHandler } from "./helper/file-upload"
 import { createResizePlugin } from "./helper/resizer"
 
 
@@ -70,7 +74,8 @@ class MyEditor {
             if (options.uploadErrorCallback) { this.uploadErrorCallback = options.uploadErrorCallback }
         }
 
-        setUploadURIs(this.uploadInputName, this.uploadActionURI, this.uploadAccessURI, this.uploadCallback, this.uploadErrorCallback)
+        setImageUploadURIs(this.uploadInputName, this.uploadActionURI, this.uploadAccessURI, this.uploadCallback, this.uploadErrorCallback)
+        setVideoUploadURIs(this.uploadInputName, this.uploadActionURI, this.uploadAccessURI, this.uploadCallback, this.uploadErrorCallback)
 
         this.content = document.implementation.createHTMLDocument().body
         this.content.innerHTML = data
@@ -92,7 +97,9 @@ class MyEditor {
             menuContent: (menus as MenuItem[][]),
             floatingMenu: false
         })
-        const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadInputName, this.uploadActionURI, this.uploadAccessURI)
+        // const pluginImageDropHandler = imageDropHandler(this.schema, this.uploadInputName, this.uploadActionURI, this.uploadAccessURI)
+        // const pluginVideoDropHandler = videoDropHandler(this.schema, this.uploadInputName, this.uploadActionURI, this.uploadAccessURI)
+        const pluginFileDropHandler = fileDropHandler(this.schema, this.uploadInputName, this.uploadActionURI, this.uploadAccessURI)
         const tablePlugins = [
             fontStyleContextMenuHandler(),
             columnResizing({}), tableEditing(),
@@ -100,7 +107,8 @@ class MyEditor {
             tableContextMenuHandler()
         ]
 
-        const mergedPlugins = basePlugin.concat(pluginImageDropHandler, ...tablePlugins, createResizePlugin())
+        // const mergedPlugins = basePlugin.concat(pluginImageDropHandler, pluginVideoDropHandler, ...tablePlugins, createResizePlugin())
+        const mergedPlugins = [...basePlugin, pluginFileDropHandler, ...tablePlugins, createResizePlugin()]
 
         this.state = EditorState.create({
             doc: DOMParser.fromSchema(this.schema).parse(this.content),

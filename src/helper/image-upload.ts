@@ -23,7 +23,7 @@ uploadFileForm.setAttribute("multiple", "")
 uploadFileForm.setAttribute("accept", ".jpg,.jpeg,.png,.gif,.webp,.svg")
 uploadFileForm.onchange = uploadHandler
 
-function setUploadURIs(
+function setImageUploadURIs(
     uploadInputName: string,
     uploadURI: string,
     accessURI: string,
@@ -81,7 +81,7 @@ function dispatchImage(view: EditorView, pos: number, schema: Schema, imageURI: 
 
 async function uploadImage(view: EditorView, schema: Schema, event: Event, files: FileList, uploadInputName: string, uploadURI: string, accessURI: string): Promise<void> {
     for (const file of files) {
-        if (!imageTypes.includes(file.type)) { return }  // Not an image
+        if (!imageTypes.includes(file.type)) { continue }  // Not an image
 
         const formData = new FormData()
         formData.append(uploadInputName, file)
@@ -190,7 +190,8 @@ async function uploadHandler() {
 function getImageUploadMenus(): MenuElement {
     const menuItemUploadImage = {
         title: "Upload image",
-        icon: setIconElement("icon-picture-1"),
+        // icon: setIconElement("icon-picture-1"),
+        icon: setIconElement("icon-file-image"),
         run: callBrowseFile
     }
     const uploadMenu = new MenuItem(menuItemUploadImage)
@@ -198,4 +199,5 @@ function getImageUploadMenus(): MenuElement {
     return uploadMenu
 }
 
-export { dispatchImage, imageDropHandler, getImageUploadMenus, setUploadURIs }
+// export { dispatchImage, imageDropHandler, getImageUploadMenus, setImageUploadURIs }
+export { dispatchImage, getImageUploadMenus, setImageUploadURIs }
